@@ -194,4 +194,85 @@ export const useAppState = () => {
     const newCorrectCount = entry.correctCount + 1;
 
     try {
-      const { data } = await
+      const { data } = await supabase
+        .from('glossary_entries')
+        .update({
+          correct_count: newCorrectCount,
+          review_count: entry.reviewCount + 1,
+          mastered: newCorrectCount >= 3,
+          last_reviewed_at: new Date().toISOString()
+        })
+        .eq('student_id', student.id)
+        .eq('word', word)
+        .select()
+        .single();
+
+      if (data) {
+        setGlossary(prev => 
+          prev.map(e => e.word === word ? {
+            ...e,
+            correctCount: newCorrectCount,
+            reviewCount: e.reviewCount + 1,
+            mastered: newCorrectCount >= 3
+          } : e)
+        );
+      }
+    } catch (err) {
+      console.error('Error en markWordCorrect:', err);
+    }
+  };
+
+  const markWordIncorrect = async (word: string) => {
+    if (!student?.id) return;
+
+    const entry = glossary.find(e => e.word === word);
+    if (!entry) return;
+
+    try {
+      const { data } = await supabase
+        .from('glossary_entries')
+        .update({
+          wrong_count: entry.wrongCount + 1,
+          review_count: entry.reviewCount + 1,
+          last_reviewed_at: new Date().toISOString()
+        })
+        .eq('student_id', student.id)
+        .eq('word', word)
+        .select()
+        .single();
+
+      if (data) {
+        setGlossary(prev => 
+          prev.map(e => e.word === word ? {
+            ...e,
+            wrongCount: e.wrongCount + 1,
+            reviewCount: e.reviewCount + 1
+          } : e)
+        );
+      }
+    } catch (err) {
+      console.error('Error en markWordIncorrect:', err);
+    }
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
+    setStudent(null);
+    setProgress([]);
+    setGlossary([]);
+    localStorage.removeItem('student');
+  };
+
+  return {
+    student,
+    setStudent,
+    progress,
+    updateProgress,
+    glossary,
+    addToGlossary,
+    markWordCorrect,
+    markWordIncorrect,
+    logout,
+    loading
+  };
+};
