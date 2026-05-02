@@ -1,106 +1,266 @@
 import { useState, useEffect } from 'react';
-import { Student, WeekProgress, VocabularyEntry } from '../types';
+import { supabase } from '../lib/supabase';
+import type { Student, WeeklyProgress, GlossaryEntry } from '../lib/supabase';
 import { weeks } from '../data/weeks/index';
 
 export const useAppState = () => {
-  const [student, setStudent] = useState<Student | null>(() => {
+  const [student, setStudent] = useState<any | null>(() => {
     const saved = localStorage.getItem('student');
     return saved ? JSON.parse(saved) : null;
   });
+  const [progress, setProgress] = useState<any[]>([]);
+  const [glossary, setGlossary] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const [progress, setProgress] = useState<WeekProgress[]>(() => {
-    const saved = localStorage.getItem('progress');
-    return saved ? JSON.parse(saved) : [];
-  });
-
-  const [glossary, setGlossary] = useState<VocabularyEntry[]>(() => {
-    const saved = localStorage.getItem('glossary');
-    return saved ? JSON.parse(saved) : [];
-  });
-
+  // Guardar estudiante en localStorage
   useEffect(() => {
-    localStorage.setItem('student', JSON.stringify(student));
-  }, [student]);
+    if (student) {
+      localStorage.setItem('student', JSON.stringify(student));
+      loadStudentData();
+    } else {
+      localStorage.removeItem('student');
+      setProgress([]);
+      setGlossary([]);
+    }
+  }, [student?.id]);
 
-  useEffect(() => {
-    localStorage.setItem('progress', JSON.stringify(progress));
-  }, [progress]);
+  // Cargar datos del estudiante desde Supabase
+  const loadStudentData = async () => {
+    if (!student?.id) {
+      setLoading(false);
+      return;
+    }
 
-  useEffect(() => {
-    localStorage.setItem('glossary', JSON.stringify(glossary));
-  }, [glossary]);
+    try {
+      // Cargar progreso
+      const { data: progressData } = await supabase
+        .from('weekly_progress')
+        .select('*')
+        .eq('student_id', student.id)
+        .order('week_number', { ascending: true });
 
-  const updateProgress = (week: number, score: number) => {
-    setProgress(prev => {
-      const existing = prev.find(p => p.week === week);
-      if (existing) {
-        return prev.map(p => p.week === week ? {
-          ...p,
-          lastScore: score,
-          bestScore: Math.max(p.bestScore, score),
-          attempts: p.attempts + 1,
-          completed: p.completed || score >= 70
-        } : p);
+      if (progressData) {
+        // Convertir a formato antiguo para compatibilidad
+        const formattedProgress = progressData.map((p: WeeklyProgress) => ({
+          week: p.week_number,
+          lastScore: p.last_score || 0,
+          bestScore: p.best_score || 0,
+          attempts: p.attempts,
+          completed: p.completed
+        }));
+        setProgress(formattedProgress);
       }
-      return [...prev, {
-        week,
-        lastScore: score,
-        bestScore: score,
-        attempts: 1,
-        completed: score >= 70
-      }];
-    });
+
+      // Cargar glosario
+      const { data: glossaryData } = await supabase
+        .from('glossary_entries')
+        .select('*')
+        .eq('student_id', student.id)
+        .order('week_introduced', { ascending: true });
+
+      if (glossaryData) {
+        // Convertir a formato antiguo para compatibilidad
+        const formattedGlossary = glossaryData.map((g: GlossaryEntry) => ({
+          word: g.word,
+          meaning: g.meaning,
+          example: g.example,
+          context: g.context,
+          mastered: g.mastered,
+          reviewCount: g.review_count,
+          correctCount: g.correct_count,
+          wrongCount: g.wrong_count,
+          weekIntroduced: g.week_introduced
+        }));
+        setGlossary(formattedGlossary);
+      }
+
+    } catch (error) {
+      console.error('Error cargando datos:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const addToGlossary = (weekNumber: number) => {
+  const updateProgress = async (week: number, score: number) => {
+    if (!student?.id) return;
+
+    const existing = progress.find(p => p.week === week);
+    const newData = {
+      student_id: student.id,
+      week_number: week,
+      last_score: score,
+      best_score: existing ? Math.max(existing.bestScore || 0, score) : score,
+      attempts: (existing?.attempts || 0) + 1,
+      completed: score >= 70,
+      completed_at: score >= 70 ? new Date().toISOString() : existing?.completed_at,
+      updated_at: new Date().toISOString()
+    };
+
+    try {
+      const { data, error } = await supabase
+        .from('weekly_progress')
+        .upsert(newData, { onConflict: 'student_id,week_number' })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error guardando progreso:', error);
+        return;
+      }
+
+      // Actualizar estado local
+      setProgress(prev => {
+        const filtered = prev.filter(p => p.week !== week);
+        const newProgress = {
+          week: week,
+          lastScore: score,
+          bestScore: newData.best_score,
+          attempts: newData.attempts,
+          completed: newData.completed
+        };
+        return [...filtered, newProgress].sort((a, b) => a.week - b.week);
+      });
+
+      // Registrar actividad
+      await supabase.from('activity_log').insert({
+        student_id: student.id,
+        action_type: 'evaluation_completed',
+        week_number: week,
+        metadata: { score, completed: score >= 70 }
+      });
+
+    } catch (err) {
+      console.error('Error en updateProgress:', err);
+    }
+  };
+
+  const addToGlossary = async (weekNumber: number) => {
+    if (!student?.id) return;
+
     const weekData = weeks.find(w => w.week === weekNumber);
     if (!weekData) return;
 
-    setGlossary(prev => {
-      const newEntries = weekData.vocabulary
-        .filter(v => !prev.some(p => p.word === v.word))
-        .map(v => ({
-          ...v,
-          mastered: false,
-          reviewCount: 0,
-          correctCount: 0,
-          wrongCount: 0,
-          weekIntroduced: weekNumber
+    const newEntries = weekData.vocabulary.map(v => ({
+      student_id: student.id,
+      word: v.word,
+      meaning: v.meaning,
+      example: v.example,
+      context: v.context,
+      mastered: false,
+      review_count: 0,
+      correct_count: 0,
+      wrong_count: 0,
+      week_introduced: weekNumber
+    }));
+
+    try {
+      const { data, error } = await supabase
+        .from('glossary_entries')
+        .upsert(newEntries, { onConflict: 'student_id,word', ignoreDuplicates: true })
+        .select();
+
+      if (!error && data) {
+        // Actualizar estado local
+        const formattedNew = data.map((g: GlossaryEntry) => ({
+          word: g.word,
+          meaning: g.meaning,
+          example: g.example,
+          context: g.context,
+          mastered: g.mastered,
+          reviewCount: g.review_count,
+          correctCount: g.correct_count,
+          wrongCount: g.wrong_count,
+          weekIntroduced: g.week_introduced
         }));
-      return [...prev, ...newEntries];
-    });
-  };
 
-  const markWordCorrect = (word: string) => {
-    setGlossary(prev => prev.map(entry => {
-      if (entry.word === word) {
-        const newCorrectCount = entry.correctCount + 1;
-        return {
-          ...entry,
-          correctCount: newCorrectCount,
-          reviewCount: entry.reviewCount + 1,
-          mastered: newCorrectCount >= 3
-        };
+        setGlossary(prev => {
+          const existing = prev.filter(e => 
+            !formattedNew.some((n: any) => n.word === e.word)
+          );
+          return [...existing, ...formattedNew];
+        });
       }
-      return entry;
-    }));
+    } catch (err) {
+      console.error('Error en addToGlossary:', err);
+    }
   };
 
-  const markWordIncorrect = (word: string) => {
-    setGlossary(prev => prev.map(entry => {
-      if (entry.word === word) {
-        return {
-          ...entry,
-          wrongCount: entry.wrongCount + 1,
-          reviewCount: entry.reviewCount + 1
-        };
+  const markWordCorrect = async (word: string) => {
+    if (!student?.id) return;
+
+    const entry = glossary.find(e => e.word === word);
+    if (!entry) return;
+
+    const newCorrectCount = entry.correctCount + 1;
+
+    try {
+      const { data } = await supabase
+        .from('glossary_entries')
+        .update({
+          correct_count: newCorrectCount,
+          review_count: entry.reviewCount + 1,
+          mastered: newCorrectCount >= 3,
+          last_reviewed_at: new Date().toISOString()
+        })
+        .eq('student_id', student.id)
+        .eq('word', word)
+        .select()
+        .single();
+
+      if (data) {
+        setGlossary(prev => 
+          prev.map(e => e.word === word ? {
+            ...e,
+            correctCount: newCorrectCount,
+            reviewCount: e.reviewCount + 1,
+            mastered: newCorrectCount >= 3
+          } : e)
+        );
       }
-      return entry;
-    }));
+    } catch (err) {
+      console.error('Error en markWordCorrect:', err);
+    }
   };
 
-  const logout = () => {
+  const markWordIncorrect = async (word: string) => {
+    if (!student?.id) return;
+
+    const entry = glossary.find(e => e.word === word);
+    if (!entry) return;
+
+    try {
+      const { data } = await supabase
+        .from('glossary_entries')
+        .update({
+          wrong_count: entry.wrongCount + 1,
+          review_count: entry.reviewCount + 1,
+          last_reviewed_at: new Date().toISOString()
+        })
+        .eq('student_id', student.id)
+        .eq('word', word)
+        .select()
+        .single();
+
+      if (data) {
+        setGlossary(prev => 
+          prev.map(e => e.word === word ? {
+            ...e,
+            wrongCount: e.wrongCount + 1,
+            reviewCount: e.reviewCount + 1
+          } : e)
+        );
+      }
+    } catch (err) {
+      console.error('Error en markWordIncorrect:', err);
+    }
+  };
+
+  const logout = async () => {
+    await supabase.auth.signOut();
     setStudent(null);
+    setProgress([]);
+    setGlossary([]);
+    localStorage.removeItem('student');
   };
 
   return {
@@ -112,6 +272,7 @@ export const useAppState = () => {
     addToGlossary,
     markWordCorrect,
     markWordIncorrect,
-    logout
+    logout,
+    loading
   };
 };
