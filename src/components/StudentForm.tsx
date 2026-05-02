@@ -13,7 +13,6 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [isFirstTime, setIsFirstTime] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,14 +43,6 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
       });
 
       if (authError) {
-        // Si falla, podría ser primera vez (contraseña temporal)
-        if (formData.password === formData.nie.substring(0, 4)) {
-          setIsFirstTime(true);
-          setError('Primera vez: usa los primeros 4 dígitos de tu NIE como contraseña, luego te pediremos cambiarla.');
-          setLoading(false);
-          return;
-        }
-        
         setError('Contraseña incorrecta. Si es tu primera vez, usa los primeros 4 dígitos de tu NIE.');
         setLoading(false);
         return;
@@ -103,13 +94,6 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
               <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
               <span>{error}</span>
-            </div>
-          )}
-
-          {isFirstTime && (
-            <div className="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-3 rounded-lg text-sm">
-              <p className="font-medium mb-1">Primera vez detectada</p>
-              <p>Después de iniciar sesión, te pediremos cambiar tu contraseña.</p>
             </div>
           )}
 
