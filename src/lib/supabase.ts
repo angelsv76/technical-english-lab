@@ -60,4 +60,3 @@ export type ActivityLog = {
   metadata?: any;
   timestamp: string;
 };
-
