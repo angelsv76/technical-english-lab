@@ -30,7 +30,7 @@ export const week10: WeekData = {
       context: "Maintenance",
       phonetic: "/fɪks/",
       audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fix.wav"
-      },
+    },
     {
       word: "Patch",
       meaning: "Parche de seguridad o corrección rápida",
