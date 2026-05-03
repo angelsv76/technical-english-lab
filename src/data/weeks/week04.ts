@@ -11,31 +11,41 @@ export const week04: WeekData = {
       word: "Copy",
       meaning: "Copiar un elemento al portapapeles",
       example: "Copy the text",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈkɑːpi/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/copy.wav"
     },
     {
       word: "Paste",
       meaning: "Pegar el contenido del portapapeles",
       example: "Paste the image",
-      context: "Action"
+      context: "Action",
+      phonetic: "/peɪst/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/paste.wav"
     },
     {
       word: "Cut",
       meaning: "Cortar (mover) un elemento",
       example: "Cut the file",
-      context: "Action"
+      context: "Action",
+      phonetic: "/kʌt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/cut.wav"
     },
     {
       word: "Undo",
       meaning: "Deshacer la última acción",
       example: "Undo the deletion",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ʌnˈduː/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/undo.wav"
     },
     {
       word: "Redo",
       meaning: "Rehacer la acción deshecha",
       example: "Redo the changes",
-      context: "Action"
+      context: "Action",
+      phonetic: "/riːˈduː/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/redo.wav"
     }
   ],
   simulation: {
