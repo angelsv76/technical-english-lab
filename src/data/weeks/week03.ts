@@ -11,31 +11,41 @@ export const week03: WeekData = {
       word: "Save",
       meaning: "Guardar los cambios",
       example: "Save your work",
-      context: "Action"
+      context: "Action",
+      phonetic: "/seɪv/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/save.wav"
     },
     {
       word: "Open",
       meaning: "Abrir un archivo o programa",
       example: "Open the document",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈoʊpən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/open.wav"
     },
     {
       word: "Close",
       meaning: "Cerrar una ventana o archivo",
       example: "Close the window",
-      context: "Action"
+      context: "Action",
+      phonetic: "/kloʊz/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/close.wav"
     },
     {
       word: "Edit",
       meaning: "Modificar contenido existente",
       example: "Edit the profile",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈɛdɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/edit.wav"
     },
     {
       word: "Delete",
       meaning: "Eliminar o borrar un elemento",
       example: "Delete the folder",
-      context: "Action"
+      context: "Action",
+      phonetic: "/dɪˈliːt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/delete.wav"
     }
   ],
   simulation: {
