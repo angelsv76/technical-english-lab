@@ -13,7 +13,7 @@ export const week03: WeekData = {
       example: "Save your work",
       context: "Action",
       phonetic: "/seɪv/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/save.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week03/save.wav"
     },
     {
       word: "Open",
@@ -21,7 +21,7 @@ export const week03: WeekData = {
       example: "Open the document",
       context: "Action",
       phonetic: "/ˈoʊpən/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/open.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week03/open.wav"
     },
     {
       word: "Close",
@@ -29,7 +29,7 @@ export const week03: WeekData = {
       example: "Close the window",
       context: "Action",
       phonetic: "/kloʊz/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/close.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week03/close.wav"
     },
     {
       word: "Edit",
@@ -37,7 +37,7 @@ export const week03: WeekData = {
       example: "Edit the profile",
       context: "Action",
       phonetic: "/ˈɛdɪt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/edit.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week03/edit.wav"
     },
     {
       word: "Delete",
@@ -45,7 +45,7 @@ export const week03: WeekData = {
       example: "Delete the folder",
       context: "Action",
       phonetic: "/dɪˈliːt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/delete.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week03/delete.wav"
     }
   ],
   simulation: {
