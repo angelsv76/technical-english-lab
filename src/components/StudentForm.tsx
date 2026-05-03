@@ -35,7 +35,7 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
       }
 
       // 2. Intentar login con Supabase Auth
-      const email = `${formData.nie}@estudiantes.inti.edu.sv`;
+      const email = `${formData.nie}@inti.edu.sv`;
       
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
