@@ -27,9 +27,9 @@ export const week10: WeekData = {
       word: "Fix",
       meaning: "Corregir o reparar un error",
       example: "Fix the bug",
-      context: "Maintenance",
+      context: "Action",
       phonetic: "/fɪks/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fix.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/fix.wav"
     },
     {
       word: "Patch",
