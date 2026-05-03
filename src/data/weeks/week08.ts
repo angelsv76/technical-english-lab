@@ -13,7 +13,7 @@ export const week08: WeekData = {
       example: "Install the driver",
       context: "Action",
       phonetic: "/ɪnˈstɔːl/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/install.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week08/install.wav"
     },
     {
       word: "Uninstall",
@@ -21,7 +21,7 @@ export const week08: WeekData = {
       example: "Uninstall unused apps",
       context: "Action",
       phonetic: "/ˌʌnɪnˈstɔːl/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/uninstall.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week08/uninstall.wav"
     },
     {
       word: "Setup",
@@ -29,7 +29,7 @@ export const week08: WeekData = {
       example: "Run the setup file",
       context: "Action",
       honetic: "/ˈsɛtʌp/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/setup.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week08/setup.wav"
     },
     {
       word: "Run",
@@ -37,7 +37,7 @@ export const week08: WeekData = {
       example: "Run the script",
       context: "Action",
       phonetic: "/rʌn/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/run.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week08/run.wav"
     },
     {
       word: "Launch",
@@ -45,7 +45,7 @@ export const week08: WeekData = {
       example: "Launch the browser",
       context: "Action",
       phonetic: "/lɔːntʃ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/launch.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week08/launch.wav"
     }
   ],
   simulation: {
