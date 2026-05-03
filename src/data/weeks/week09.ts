@@ -11,31 +11,41 @@ export const week09: WeekData = {
       word: "Process",
       meaning: "Procesar información",
       example: "Process the payment",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈprɑːsɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/process.wav"
     },
     {
       word: "Submit",
       meaning: "Enviar un formulario o datos",
       example: "Submit the form",
-      context: "Action"
+      context: "Action",
+      phonetic: "/səbˈmɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/submit.wav"
     },
     {
       word: "Request",
       meaning: "Solicitar datos al servidor",
       example: "Send a data request",
-      context: "Network"
+      context: "Network",
+      phonetic: "/rɪˈkwɛst/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/request.wav"
     },
     {
       word: "Response",
       meaning: "Respuesta del servidor",
       example: "Wait for the response",
-      context: "Network"
+      context: "Network",
+      phonetic: "/rɪˈspɑːns/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/response.wav"
     },
     {
       word: "Fetch",
       meaning: "Obtener o traer datos",
       example: "Fetch the user list",
-      context: "Action"
+      context: "Action",
+      phonetic: "/fɛtʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fetch.wav"
     }
   ],
   simulation: {
