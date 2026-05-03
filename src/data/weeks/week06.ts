@@ -11,31 +11,41 @@ export const week06: WeekData = {
       word: "Rename",
       meaning: "Cambiar el nombre de un archivo",
       example: "Rename the file to 'data.txt'",
-      context: "Action"
+      context: "Action",
+      phonetic: "/riːˈneɪm/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/rename.wav"
     },
     {
       word: "Move",
       meaning: "Mover un archivo a otra ubicación",
       example: "Move the folder to Desktop",
-      context: "Action"
+      context: "Action",
+      phonetic: "/muːv/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/move.wav"
     },
     {
       word: "Upload",
       meaning: "Subir archivos a la nube o servidor",
       example: "Upload the report",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈʌploʊd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/upload.wav"
     },
     {
       word: "Refresh",
       meaning: "Actualizar la vista o contenido",
       example: "Refresh the page",
-      context: "Action"
+      context: "Action",
+      phonetic: "/rɪˈfrɛʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/refresh.wav"
     },
     {
       word: "Sort",
       meaning: "Ordenar elementos por criterios",
       example: "Sort by date",
-      context: "Action"
+      context: "Action",
+      phonetic: "/sɔːrt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/sort.wav"
     }
   ],
   simulation: {
