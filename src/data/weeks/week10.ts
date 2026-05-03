@@ -11,31 +11,40 @@ export const week10: WeekData = {
       word: "Update",
       meaning: "Actualizar a una versión más reciente",
       example: "Update the software",
-      context: "Maintenance"
+      context: "Maintenance",
+      phonetic: "/ʌpˈdeɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/update.wav"
     },
     {
       word: "Upgrade",
       meaning: "Mejorar a una versión superior o hardware",
       example: "Upgrade your plan",
-      context: "Maintenance"
+      context: "Maintenance",
+      phonetic: "/ʌpˈɡreɪd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/upgrade.wav"
     },
     {
       word: "Fix",
       meaning: "Corregir o reparar un error",
       example: "Fix the bug",
-      context: "Action"
-    },
+      context: "phonetic: "/fɪks/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fix.wav"Action",
+      },
     {
       word: "Patch",
       meaning: "Parche de seguridad o corrección rápida",
       example: "Apply the security patch",
-      context: "Maintenance"
+      context: "Maintenance",
+      phonetic: "/pætʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/patch.wav"
     },
     {
       word: "Debug",
       meaning: "Depurar o buscar errores en el código",
       example: "Debug the application",
-      context: "Development"
+      context: "Development",
+      phonetic: "/diːˈbʌɡ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/debug.wav"
     }
   ],
   simulation: {
