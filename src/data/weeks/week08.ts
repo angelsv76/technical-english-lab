@@ -11,31 +11,41 @@ export const week08: WeekData = {
       word: "Install",
       meaning: "Instalar software en el sistema",
       example: "Install the driver",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ɪnˈstɔːl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/install.wav"
     },
     {
       word: "Uninstall",
       meaning: "Desinstalar o quitar software",
       example: "Uninstall unused apps",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˌʌnɪnˈstɔːl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/uninstall.wav"
     },
     {
       word: "Setup",
       meaning: "Configuración inicial o instalador",
       example: "Run the setup file",
-      context: "Action"
+      context: "Action",
+      honetic: "/ˈsɛtʌp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/setup.wav"
     },
     {
       word: "Run",
       meaning: "Ejecutar un programa o comando",
       example: "Run the script",
-      context: "Action"
+      context: "Action",
+      phonetic: "/rʌn/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/run.wav"
     },
     {
       word: "Launch",
       meaning: "Lanzar o abrir una aplicación",
       example: "Launch the browser",
-      context: "Action"
+      context: "Action",
+      phonetic: "/lɔːntʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/launch.wav"
     }
   ],
   simulation: {
