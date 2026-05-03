@@ -1,6 +1,7 @@
 /**
  * @license
  * SPDX-License-Identifier: Apache-2.0
+ * Prueba
  */
 
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
