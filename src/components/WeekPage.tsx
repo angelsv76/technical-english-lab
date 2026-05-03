@@ -11,6 +11,7 @@ import { SimulationCard } from './SimulationCard';
 import { PracticeCard } from './PracticeCard';
 import { ReinforcementCard } from './ReinforcementCard';
 import { generateReinforcementActivity, ReinforcementActivity } from '../services/reinforcementService';
+import { VocabularyAudio } from './VocabularyAudio';
 
 interface Props {
   weekData: WeekData;
@@ -243,9 +244,16 @@ export const WeekPage: React.FC<Props> = ({
                     <div key={item.word} className="space-y-6">
                       <div className="p-6 rounded-2xl border border-zinc-100 bg-zinc-50/50">
                         <div className="flex justify-between items-start mb-4">
-                          <div className="flex items-center gap-3">
-                            <span className="text-2xl font-bold text-[#F57C00] font-mono">{item.word}</span>
-                            <span className="text-[10px] uppercase tracking-widest bg-zinc-200 px-2 py-1 rounded-lg text-zinc-600 font-bold">{item.context}</span>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className="text-2xl font-bold text-[#F57C00] font-mono">{item.word}</span>
+                              <span className="text-[10px] uppercase tracking-widest bg-zinc-200 px-2 py-1 rounded-lg text-zinc-600 font-bold">{item.context}</span>
+                            </div>
+                            <VocabularyAudio 
+                              word={item.word}
+                              phonetic={item.phonetic}
+                              audioUrl={item.audioUrl}
+                            />
                           </div>
                           <div className="flex items-center gap-1 text-emerald-600">
                             <Sparkles size={16} />
