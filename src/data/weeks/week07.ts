@@ -11,31 +11,41 @@ export const week07: WeekData = {
       word: "Login",
       meaning: "Iniciar sesión en el sistema",
       example: "Please login to continue",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ˈlɔːɡɪn/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/login.wav"
     },
     {
       word: "Logout",
       meaning: "Cerrar la sesión actual",
       example: "Don't forget to logout",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ˈlɔːɡaʊt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/logout.wav"
     },
     {
       word: "Sign up",
       meaning: "Registrarse como nuevo usuario",
       example: "Sign up for a new account",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ˈsaɪnʌp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/sign_up.wav"
     },
     {
       word: "Password",
       meaning: "Contraseña de acceso",
       example: "Enter your password",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ˈpæswɜːrd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/password.wav"
     },
     {
       word: "Reset",
       meaning: "Restablecer o reiniciar (ej. contraseña)",
       example: "Reset your password",
-      context: "Action"
+      context: "Action",
+      phonetic: "/riːˈsɛt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/reset.wav"
     }
   ],
   simulation: {
