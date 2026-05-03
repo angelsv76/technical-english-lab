@@ -11,31 +11,41 @@ export const week05: WeekData = {
       word: "Success",
       meaning: "Operación completada con éxito",
       example: "Upload success",
-      context: "Status"
+      context: "Status",
+      honetic: "/səkˈsɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/success.wav"
     },
     {
       word: "Warning",
       meaning: "Advertencia sobre un posible problema",
       example: "Low battery warning",
-      context: "Status"
+      context: "Status",
+      phonetic: "/ˈwɔːrnɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/warning.wav"
     },
     {
       word: "Alert",
       meaning: "Alerta que requiere atención inmediata",
       example: "Security alert",
-      context: "Status"
+      context: "Status",
+      phonetic: "/əˈlɜːrt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/alert.wav"
     },
     {
       word: "Info",
       meaning: "Información general del sistema",
       example: "System info",
-      context: "Status"
+      context: "Status",
+      phonetic: "/ˈɪnfoʊ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/info.wav"
     },
     {
       word: "Loading",
       meaning: "Cargando datos o procesos",
       example: "Loading data...",
-      context: "Status"
+      context: "Status",
+      phonetic: "/ˈloʊdɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/loading.wav"
     }
   ],
   simulation: {
