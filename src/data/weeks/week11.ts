@@ -13,7 +13,7 @@ export const week11: WeekData = {
       example: "Click the icon",
       context: "Action",
       phonetic: "/klɪk/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/click.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/click.wav"
     },
     {
       word: "Double-click",
@@ -21,7 +21,7 @@ export const week11: WeekData = {
       example: "Double-click to open",
       context: "Action",
       phonetic: "/ˈdʌbəl klɪk/", 
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/double-click.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/double-click.wav"
     },  
     {
       word: "Right-click",
@@ -29,7 +29,7 @@ export const week11: WeekData = {
       example: "Right-click for options",
       context: "Action",
       phonetic: "/ˈraɪt klɪk/", 
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/right-click.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/right-click.wav"
     },
     {
       word: "Drag",
@@ -37,7 +37,7 @@ export const week11: WeekData = {
       example: "Drag the file",
       context: "Action",
       phonetic: "/dræɡ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/drag.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/drag.wav"
     },
     {
       word: "Drop",
@@ -45,7 +45,7 @@ export const week11: WeekData = {
       example: "Drop it in the folder",
       context: "Action",
       phonetic: "/drɑːp/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/drop.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/drop.wav"
     }
   ],
   simulation: {
