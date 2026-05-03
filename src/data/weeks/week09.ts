@@ -13,7 +13,7 @@ export const week09: WeekData = {
       example: "Process the payment",
       context: "Action",
       phonetic: "/ˈprɑːsɛs/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/process.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week09/process.wav"
     },
     {
       word: "Submit",
@@ -21,7 +21,7 @@ export const week09: WeekData = {
       example: "Submit the form",
       context: "Action",
       phonetic: "/səbˈmɪt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/submit.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week09/submit.wav"
     },
     {
       word: "Request",
@@ -29,7 +29,7 @@ export const week09: WeekData = {
       example: "Send a data request",
       context: "Network",
       phonetic: "/rɪˈkwɛst/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/request.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week09/request.wav"
     },
     {
       word: "Response",
@@ -37,7 +37,7 @@ export const week09: WeekData = {
       example: "Wait for the response",
       context: "Network",
       phonetic: "/rɪˈspɑːns/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/response.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week09/response.wav"
     },
     {
       word: "Fetch",
@@ -45,7 +45,7 @@ export const week09: WeekData = {
       example: "Fetch the user list",
       context: "Action",
       phonetic: "/fɛtʃ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fetch.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week09/fetch.wav"
     }
   ],
   simulation: {
