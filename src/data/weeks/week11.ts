@@ -11,31 +11,41 @@ export const week11: WeekData = {
       word: "Click",
       meaning: "Presionar el botón del mouse",
       example: "Click the icon",
-      context: "Action"
+      context: "Action",
+      phonetic: "/klɪk/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/click.wav"
     },
     {
       word: "Double-click",
       meaning: "Presionar dos veces rápido",
       example: "Double-click to open",
-      context: "Action"
-    },
+      context: "Action",
+      phonetic: "/ˈdʌbəl klɪk/", 
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/double-click.wav"
+    },  
     {
       word: "Right-click",
       meaning: "Presionar el botón derecho",
       example: "Right-click for options",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈraɪt klɪk/", 
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/right-click.wav"
     },
     {
       word: "Drag",
       meaning: "Arrastrar un elemento",
       example: "Drag the file",
-      context: "Action"
+      context: "Action",
+      phonetic: "/dræɡ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/drag.wav"
     },
     {
       word: "Drop",
       meaning: "Soltar un elemento arrastrado",
       example: "Drop it in the folder",
-      context: "Action"
+      context: "Action",
+      phonetic: "/drɑːp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/drop.wav"
     }
   ],
   simulation: {
