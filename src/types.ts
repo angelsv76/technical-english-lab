@@ -54,6 +54,8 @@ export interface WeekData {
     meaning: string;
     example: string;
     context: string;
+    phonetic?: string;     // 👈 NUEVO
+    audioUrl?: string;     // 👈 NUEVO
   }[];
   simulation: { simulationId: string };
   practice: Question[];
