@@ -13,7 +13,7 @@ export const week04: WeekData = {
       example: "Copy the text",
       context: "Action",
       phonetic: "/ˈkɑːpi/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/copy.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/copy.wav"
     },
     {
       word: "Paste",
@@ -21,7 +21,7 @@ export const week04: WeekData = {
       example: "Paste the image",
       context: "Action",
       phonetic: "/peɪst/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/paste.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/paste.wav"
     },
     {
       word: "Cut",
@@ -29,7 +29,7 @@ export const week04: WeekData = {
       example: "Cut the file",
       context: "Action",
       phonetic: "/kʌt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/cut.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/cut.wav"
     },
     {
       word: "Undo",
@@ -37,7 +37,7 @@ export const week04: WeekData = {
       example: "Undo the deletion",
       context: "Action",
       phonetic: "/ʌnˈduː/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/undo.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/undo.wav"
     },
     {
       word: "Redo",
@@ -45,7 +45,7 @@ export const week04: WeekData = {
       example: "Redo the changes",
       context: "Action",
       phonetic: "/riːˈduː/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/redo.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/redo.wav"
     }
   ],
   simulation: {
