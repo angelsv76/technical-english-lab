@@ -29,7 +29,7 @@ export const week10: WeekData = {
       example: "Fix the bug",
       context: "Maintenance",
       phonetic: "/fɪks/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fix.wav"Action",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week${i+1}/fix.wav"
       },
     {
       word: "Patch",
