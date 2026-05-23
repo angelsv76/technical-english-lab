@@ -1,5 +1,5 @@
 {
-  "name": "react-example",
+  "name": "technical-english-lab",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -37,5 +37,7 @@
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.0"
-  }
+  },
+  "description": "Plataforma interactiva de Inglés Técnico — INTI",
+  "author": "Ángel Sánchez — Instituto Nacional Técnico Industrial (INTI)"
 }
