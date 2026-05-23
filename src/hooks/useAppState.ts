@@ -24,6 +24,22 @@ export const useAppState = () => {
     }
   }, [student?.id]);
 
+  // Heartbeat — actualizar last_seen cada 60 segundos mientras el alumno está activo
+  useEffect(() => {
+    if (!student?.id) return;
+
+    const updateLastSeen = async () => {
+      await supabase
+        .from('students')
+        .update({ last_seen: new Date().toISOString() })
+        .eq('id', student.id);
+    };
+
+    updateLastSeen(); // inmediato al cargar
+    const interval = setInterval(updateLastSeen, 60000); // cada 60s
+    return () => clearInterval(interval);
+  }, [student?.id]);
+
   // Cargar datos del estudiante desde Supabase
   const loadStudentData = async () => {
     if (!student?.id) {
