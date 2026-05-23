@@ -448,6 +448,14 @@ export const TeacherDashboard: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Student Detail Modal */}
+      {selectedStudent && (
+        <StudentDetailModal
+          detail={selectedStudent}
+          onClose={() => setSelectedStudent(null)}
+        />
+      )}
     </div>
   );
 };
@@ -594,15 +602,6 @@ const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClos
           </div>
         </div>
       </div>
-    </div>
-
-      {/* Student Detail Modal */}
-      {selectedStudent && (
-        <StudentDetailModal
-          detail={selectedStudent}
-          onClose={() => setSelectedStudent(null)}
-        />
-      )}
     </div>
   );
 };
