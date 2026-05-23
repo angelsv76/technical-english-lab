@@ -46,26 +46,45 @@ export const TeacherDashboard: React.FC = () => {
   const loadStudents = async () => {
     try {
       setLoading(true);
-      const { data: studentsData } = await supabase
+
+      const { data: studentsData, error: studentsError } = await supabase
         .from('students')
         .select('*')
-        .eq('group_code', 'ITSI1B')
         .eq('active', true)
         .order('name');
 
-      const { data: progressData } = await supabase
+      if (studentsError) {
+        console.error('Error al consultar estudiantes:', studentsError.message, studentsError.details);
+        setStudents([]);
+        return;
+      }
+
+      if (!studentsData || studentsData.length === 0) {
+        console.warn('No se encontraron estudiantes activos. Verifica la tabla students en Supabase.');
+        setStudents([]);
+        return;
+      }
+
+      const studentIds = studentsData.map(s => s.id);
+
+      const { data: progressData, error: progressError } = await supabase
         .from('weekly_progress')
         .select('*')
+        .in('student_id', studentIds)
         .order('week_number');
 
-      const studentsWithProgress = (studentsData || []).map(student => {
+      if (progressError) {
+        console.error('Error al consultar progreso:', progressError.message, progressError.details);
+      }
+
+      const studentsWithProgress = studentsData.map(student => {
         const studentProgress = (progressData || []).filter(p => p.student_id === student.id);
         return { ...student, progress: studentProgress };
       });
 
       setStudents(studentsWithProgress);
     } catch (error) {
-      console.error('Error cargando estudiantes:', error);
+      console.error('Error inesperado cargando estudiantes:', error);
     } finally {
       setLoading(false);
     }
@@ -78,14 +97,14 @@ export const TeacherDashboard: React.FC = () => {
 
   const downloadReport = () => {
     const doc = new jsPDF() as any;
-    doc.text('Reporte de Progreso - Inglés Técnico ITSI1B - INTI', 14, 15);
+    doc.text('Reporte de Progreso - Technical English Lab - INTI', 14, 15);
     
     const tableData = students.map(s => {
       const completed = s.progress.filter((p: any) => p.completed).length;
       const scores = s.progress.map((p: any) => p.last_score).filter((sc: number | null) => sc !== null);
       const avg = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
       const lastLogin = s.last_login ? new Date(s.last_login).toLocaleDateString('es-SV') : 'Nunca';
-      return [s.nie, s.name, 'ITSI1B', `${avg}%`, `${completed}/6`, lastLogin];
+      return [s.nie, s.name, s.group_code, `${avg}%`, `${completed}/6`, lastLogin];
     });
     
     doc.autoTable({
@@ -94,7 +113,7 @@ export const TeacherDashboard: React.FC = () => {
       startY: 25,
     });
     
-    doc.save(`reporte_itsi1b_${new Date().toISOString().split('T')[0]}.pdf`);
+    doc.save(`reporte_ds1b_${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
   const calculateStats = () => {
@@ -190,7 +209,7 @@ export const TeacherDashboard: React.FC = () => {
               {activeTab === 'students' && 'Progreso de Estudiantes'}
               {activeTab === 'reports' && 'Reportes y Descargas'}
             </h2>
-            <p className="text-zinc-500">Panel de administración - ITSI1B - INTI</p>
+            <p className="text-zinc-500">Panel de administración - DS1B - INTI</p>
           </div>
           
           <div className="flex items-center gap-4">
@@ -245,9 +264,25 @@ export const TeacherDashboard: React.FC = () => {
 
         {activeTab === 'students' && (
           <div className="space-y-6">
+            <div className="flex justify-end">
+              <button
+                onClick={loadStudents}
+                disabled={loading}
+                className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-all disabled:opacity-50 shadow-sm"
+              >
+                <TrendingUp size={16} className={loading ? 'animate-spin' : ''} />
+                {loading ? 'Actualizando...' : 'Actualizar datos'}
+              </button>
+            </div>
             {loading ? (
               <div className="text-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#F57C00] mx-auto"></div>
+              </div>
+            ) : students.length === 0 ? (
+              <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm p-12 text-center">
+                <Users size={40} className="text-zinc-300 mx-auto mb-4" />
+                <h3 className="font-bold text-zinc-600 mb-2">No se encontraron estudiantes</h3>
+                <p className="text-sm text-zinc-400">Verifica que existan registros activos en la tabla <span className="font-mono bg-zinc-100 px-1 rounded">students</span> de Supabase.</p>
               </div>
             ) : (
               <>
@@ -283,7 +318,7 @@ export const TeacherDashboard: React.FC = () => {
                           <tr key={student.id} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                             <td className="p-4 font-mono text-sm text-zinc-600">{student.nie}</td>
                             <td className="p-4 font-bold text-zinc-900">{student.name}</td>
-                            <td className="p-4 text-sm text-zinc-500">ITSI1B</td>
+                            <td className="p-4 text-sm text-zinc-500">{student.group_code}</td>
                             <td className="p-4">
                               <div className="flex items-center gap-3">
                                 <div className="flex-1 h-2 bg-zinc-100 rounded-full overflow-hidden">
@@ -320,7 +355,7 @@ export const TeacherDashboard: React.FC = () => {
                 <FileText size={40} />
               </div>
               <h3 className="text-xl font-bold text-zinc-900 mb-2">Reporte de Calificaciones</h3>
-              <p className="text-zinc-500 mb-8">Descarga un documento PDF detallado con el progreso y notas de todos los estudiantes de ITSI1B.</p>
+              <p className="text-zinc-500 mb-8">Descarga un documento PDF detallado con el progreso y notas de todos los estudiantes de DS1B.</p>
               <button 
                 onClick={downloadReport}
                 disabled={loading || students.length === 0}
