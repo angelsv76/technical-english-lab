@@ -49,10 +49,15 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
       }
 
       // 3. Actualizar último login
-      await supabase
+      const { error: updateError } = await supabase
         .from('students')
         .update({ last_login: new Date().toISOString() })
         .eq('id', student.id);
+
+      if (updateError) {
+        console.warn('No se pudo actualizar last_login:', updateError.message);
+        // Continuar — no bloquear el login por esto
+      }
 
       // 4. Registrar actividad
       await supabase.from('activity_log').insert({
@@ -86,7 +91,7 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
           </div>
           <h1 className="text-2xl font-bold">Inglés Técnico</h1>
           <p className="opacity-90">Especialidad Desarrollo de Software</p>
-          <p className="text-sm mt-2 opacity-75">Grupo ITSI1B</p>
+          <p className="text-sm mt-2 opacity-75">Grupo DS1B</p>
         </div>
         
         <form onSubmit={handleLogin} className="p-8 space-y-6">
