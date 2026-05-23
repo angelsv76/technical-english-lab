@@ -25,7 +25,9 @@ interface StudentData {
   id: string;
   nie: string;
   name: string;
+  group_code: string;
   last_login: string | null;
+  last_seen: string | null;
   created_at: string;
   progress: any[];
 }
@@ -41,6 +43,13 @@ export const TeacherDashboard: React.FC = () => {
     if (activeTab === 'students' || activeTab === 'reports') {
       loadStudents();
     }
+  }, [activeTab]);
+
+  // Auto-refresh cada 30 segundos en la pestaña de estudiantes
+  useEffect(() => {
+    if (activeTab !== 'students') return;
+    const interval = setInterval(loadStudents, 30000);
+    return () => clearInterval(interval);
   }, [activeTab]);
 
   const loadStudents = async () => {
@@ -133,6 +142,12 @@ export const TeacherDashboard: React.FC = () => {
   };
 
   const stats = calculateStats();
+
+  const isOnline = (lastSeen: string | null) => {
+    if (!lastSeen) return false;
+    const diff = Date.now() - new Date(lastSeen).getTime();
+    return diff < 5 * 60 * 1000; // activo en los últimos 5 minutos
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 flex">
@@ -286,10 +301,11 @@ export const TeacherDashboard: React.FC = () => {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <StatCard icon={<Users className="text-blue-500" />} label="Total Estudiantes" value={stats.totalStudents.toString()} />
                   <StatCard icon={<TrendingUp className="text-emerald-500" />} label="Promedio General" value={`${stats.averageScore}%`} />
                   <StatCard icon={<CheckCircle className="text-[#F57C00]" />} label="Semanas Completadas" value={stats.totalWeeksCompleted.toString()} />
+                  <StatCard icon={<div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />} label="En línea ahora" value={students.filter(s => isOnline(s.last_seen)).length.toString()} />
                 </div>
 
                 <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
@@ -300,6 +316,7 @@ export const TeacherDashboard: React.FC = () => {
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Estudiante</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Grupo</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Progreso</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">En línea</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Última Actividad</th>
                       </tr>
                     </thead>
@@ -330,6 +347,19 @@ export const TeacherDashboard: React.FC = () => {
                                 <span className="text-xs font-bold text-zinc-900">{avgProgress}%</span>
                               </div>
                               <p className="text-[10px] text-zinc-400 mt-1">{completed} semanas completadas</p>
+                            </td>
+                            <td className="p-4">
+                              {isOnline(student.last_seen) ? (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                                  <span className="text-xs font-bold text-emerald-600">Activo</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center gap-2">
+                                  <div className="w-2.5 h-2.5 bg-zinc-300 rounded-full"></div>
+                                  <span className="text-xs text-zinc-400">Fuera</span>
+                                </div>
+                              )}
                             </td>
                             <td className="p-4 text-sm text-zinc-500">
                               <div className="flex items-center gap-2">
