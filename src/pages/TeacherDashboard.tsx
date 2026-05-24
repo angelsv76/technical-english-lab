@@ -73,7 +73,7 @@ export const TeacherDashboard: React.FC = () => {
 
       const { data: studentsData, error: studentsError } = await supabase
         .from('students')
-        .select('*')
+        .select('id, nie, name, group_code, last_login, last_seen, photo_url, created_at, active')
         .eq('active', true)
         .order('name');
 
@@ -116,6 +116,7 @@ export const TeacherDashboard: React.FC = () => {
       });
 
       setStudents(studentsWithProgress);
+      console.log('Fotos cargadas:', studentsWithProgress.map(s => ({ name: s.name, photo: s.photo_url })));
     } catch (error) {
       console.error('Error inesperado cargando estudiantes:', error);
     } finally {
@@ -356,13 +357,13 @@ export const TeacherDashboard: React.FC = () => {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200">
-                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Foto</th>
-                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">NIE</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-16">Foto</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-28">NIE</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Estudiante</th>
-                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Grupo</th>
-                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Progreso</th>
-                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">En línea</th>
-                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Última Actividad</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-24">Grupo</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-48">Progreso</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-28">En línea</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-36">Última Actividad</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -378,7 +379,18 @@ export const TeacherDashboard: React.FC = () => {
 
                         return (
                           <tr key={student.id} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
-                            <td className="p-4 font-mono text-sm text-zinc-600">{student.nie}</td>
+                            <td className="p-4 w-16">
+                              <div
+                                onClick={() => openStudentDetail(student)}
+                                className="w-10 h-10 rounded-xl overflow-hidden bg-[#F57C00] flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:ring-2 hover:ring-[#F57C00] hover:ring-offset-2 transition-all flex-shrink-0"
+                              >
+                                {student.photo_url
+                                  ? <img src={student.photo_url} alt={student.name} className="w-full h-full object-cover" />
+                                  : <span>{student.name.charAt(0)}</span>
+                                }
+                              </div>
+                            </td>
+                            <td className="p-4 w-28 whitespace-nowrap font-mono text-sm text-zinc-600">{student.nie}</td>
                             <td className="p-4">
                               <button
                                 onClick={() => openStudentDetail(student)}
