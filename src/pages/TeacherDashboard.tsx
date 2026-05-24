@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Users, 
@@ -16,7 +16,10 @@ import {
   X,
   Award,
   Activity,
-  Star
+  Star,
+  Upload,
+  Loader2,
+  Camera
 } from 'lucide-react';
 import { useWeeks } from '../hooks/useWeeks';
 import { TeacherPanel } from '../components/TeacherPanel';
@@ -32,6 +35,7 @@ interface StudentData {
   group_code: string;
   last_login: string | null;
   last_seen: string | null;
+  photo_url?: string | null;
   created_at: string;
   progress: any[];
 }
@@ -460,6 +464,85 @@ export const TeacherDashboard: React.FC = () => {
   );
 };
 
+const TeacherPhotoUpload = ({ student, online }: { student: any; online: boolean }) => {
+  const [uploading, setUploading] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState<string | null>(student.photo_url || null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !student.id) return;
+    if (!file.type.startsWith('image/')) { alert('Solo se permiten imágenes.'); return; }
+    if (file.size > 3 * 1024 * 1024) { alert('La imagen no debe superar 3MB.'); return; }
+
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop();
+      const path = `${student.id}/avatar.${ext}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('student-photos')
+        .upload(path, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('student-photos')
+        .getPublicUrl(path);
+
+      const url = `${data.publicUrl}?t=${Date.now()}`;
+
+      await supabase
+        .from('students')
+        .update({ photo_url: url })
+        .eq('id', student.id);
+
+      setPhotoUrl(url);
+      student.photo_url = url;
+    } catch (err) {
+      console.error('Error subiendo foto:', err);
+      alert('No se pudo subir la foto. Intenta de nuevo.');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div className="relative group">
+      <div className="w-16 h-16 bg-[#F57C00] rounded-2xl overflow-hidden flex items-center justify-center font-bold text-2xl shadow-lg">
+        {photoUrl
+          ? <img src={photoUrl} alt={student.name} className="w-full h-full object-cover" />
+          : <span className="text-white">{student.name.charAt(0)}</span>
+        }
+      </div>
+      {/* Upload overlay */}
+      <button
+        onClick={() => inputRef.current?.click()}
+        disabled={uploading}
+        className="absolute inset-0 rounded-2xl bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-0.5"
+        title="Subir foto"
+      >
+        {uploading
+          ? <Loader2 size={16} className="text-white animate-spin" />
+          : <Camera size={16} className="text-white" />
+        }
+        {!uploading && <span className="text-[9px] text-white font-bold">SUBIR</span>}
+      </button>
+      {/* Online indicator */}
+      {online && (
+        <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-zinc-900 animate-pulse" />
+      )}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="hidden"
+        onChange={handleUpload}
+      />
+    </div>
+  );
+};
+
 const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClose: () => void }) => {
   const { student, activityLog } = detail;
 
@@ -505,14 +588,7 @@ const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClos
         <div className="relative p-6 bg-gradient-to-r from-zinc-900 to-zinc-800 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="relative">
-                <div className="w-14 h-14 bg-[#F57C00] rounded-2xl flex items-center justify-center font-bold text-2xl shadow-lg">
-                  {student.name.charAt(0)}
-                </div>
-                {online && (
-                  <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 rounded-full border-2 border-zinc-900 animate-pulse" />
-                )}
-              </div>
+              <TeacherPhotoUpload student={student} online={online} />
               <div>
                 <h2 className="font-bold text-xl">{student.name}</h2>
                 <div className="flex items-center gap-2 mt-1">
