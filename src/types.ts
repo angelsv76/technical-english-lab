@@ -1,7 +1,9 @@
 export interface Student {
+  id?: string;
   nie: string;
   name: string;
   code: string;
+  photo_url?: string | null;
 }
 
 export interface VocabularyEntry {
