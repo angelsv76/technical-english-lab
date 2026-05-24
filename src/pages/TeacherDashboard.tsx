@@ -106,6 +106,13 @@ export const TeacherDashboard: React.FC = () => {
         return { ...student, progress: studentProgress };
       });
 
+      // Sort by last name (second word in full name)
+      studentsWithProgress.sort((a, b) => {
+        const lastNameA = a.name.split(' ').slice(1).join(' ').toLowerCase();
+        const lastNameB = b.name.split(' ').slice(1).join(' ').toLowerCase();
+        return lastNameA.localeCompare(lastNameB, 'es');
+      });
+
       setStudents(studentsWithProgress);
     } catch (error) {
       console.error('Error inesperado cargando estudiantes:', error);
@@ -347,6 +354,7 @@ export const TeacherDashboard: React.FC = () => {
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200">
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Foto</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">NIE</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Estudiante</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Grupo</th>
