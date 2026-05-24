@@ -106,11 +106,13 @@ export const TeacherDashboard: React.FC = () => {
         return { ...student, progress: studentProgress };
       });
 
-      // Sort by last name (second word in full name)
+      // Sort by first apellido (second-to-last word for 3+ word names, last word for 2-word names)
       studentsWithProgress.sort((a, b) => {
-        const lastNameA = a.name.split(' ').slice(1).join(' ').toLowerCase();
-        const lastNameB = b.name.split(' ').slice(1).join(' ').toLowerCase();
-        return lastNameA.localeCompare(lastNameB, 'es');
+        const wordsA = a.name.split(' ');
+        const wordsB = b.name.split(' ');
+        const apellidoA = (wordsA.length >= 3 ? wordsA[wordsA.length - 2] : wordsA[wordsA.length - 1]).toLowerCase();
+        const apellidoB = (wordsB.length >= 3 ? wordsB[wordsB.length - 2] : wordsB[wordsB.length - 1]).toLowerCase();
+        return apellidoA.localeCompare(apellidoB, 'es');
       });
 
       setStudents(studentsWithProgress);
