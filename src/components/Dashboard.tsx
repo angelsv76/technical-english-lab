@@ -55,9 +55,17 @@ export const Dashboard: React.FC<Props> = ({
               <span className="hidden sm:inline">Panel Principal</span>
             </button>
 
-            <div className="text-right hidden sm:block border-l border-zinc-200 pl-4">
-              <p className="text-sm font-bold text-zinc-900">{student.name}</p>
-              <p className="text-xs text-zinc-500">NIE: {student.nie} | Grupo: {student.code}</p>
+            <div className="flex items-center gap-3 border-l border-zinc-200 pl-4">
+              <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#F57C00] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                {student.photo_url
+                  ? <img src={student.photo_url} alt={student.name} className="w-full h-full object-cover" />
+                  : student.name?.charAt(0)
+                }
+              </div>
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-bold text-zinc-900">{student.name}</p>
+                <p className="text-xs text-zinc-500">NIE: {student.nie} | Grupo: {student.code}</p>
+              </div>
             </div>
             <button 
               onClick={onLogout}
