@@ -27,7 +27,7 @@ export default function App() {
     logout 
   } = useAppState();
 
-  const { weeks, updateWeek, toggleWeek } = useWeeks();
+  const { weeks } = useWeeks();
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const navigate = useNavigate();
 

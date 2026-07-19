@@ -100,8 +100,11 @@ export const useAppState = () => {
     }
   };
 
-  const updateProgress = async (week: number, score: number) => {
-    if (!student?.id) return;
+  // Devuelve true solo si la nota quedó guardada en Supabase.
+  // El que llama DEBE mostrar un aviso si devuelve false — un guardado
+  // fallido silencioso ya costó 2 meses de datos (incidente RLS, jul 2026).
+  const updateProgress = async (week: number, score: number): Promise<boolean> => {
+    if (!student?.id) return false;
 
     const existing = progress.find(p => p.week === week);
     const newData = {
@@ -124,7 +127,7 @@ export const useAppState = () => {
 
       if (error) {
         console.error('Error guardando progreso:', error);
-        return;
+        return false;
       }
 
       // Actualizar estado local
@@ -140,7 +143,7 @@ export const useAppState = () => {
         return [...filtered, newProgress].sort((a, b) => a.week - b.week);
       });
 
-      // Registrar actividad
+      // Registrar actividad (best-effort: no invalida el guardado de la nota)
       await supabase.from('activity_log').insert({
         student_id: student.id,
         action_type: 'evaluation_completed',
@@ -148,8 +151,10 @@ export const useAppState = () => {
         metadata: { score, completed: score >= 70 }
       });
 
+      return true;
     } catch (err) {
       console.error('Error en updateProgress:', err);
+      return false;
     }
   };
 

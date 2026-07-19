@@ -20,7 +20,7 @@ interface Props {
   progress: WeekProgress | undefined;
   glossary: VocabularyEntry[];
   onBack: () => void;
-  onComplete: (score: number) => void;
+  onComplete: (score: number) => Promise<boolean> | boolean | void;
   onWordCorrect: (word: string) => void;
   onWordIncorrect: (word: string) => void;
 }
@@ -46,6 +46,7 @@ export const WeekPage: React.FC<Props> = ({
   const [isGenerating, setIsGenerating] = useState(false);
   const [reinforcementQueue, setReinforcementQueue] = useState<ReinforcementActivity[]>([]);
   const [isGeneratingReinforcement, setIsGeneratingReinforcement] = useState(false);
+  const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
 
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>(weekData.evaluation);
   const simulation = getSimulationById(weekData.simulation.simulationId);
@@ -145,6 +146,17 @@ export const WeekPage: React.FC<Props> = ({
     );
   };
 
+  const saveScore = async (finalScore: number) => {
+    setSaveStatus('saving');
+    try {
+      const ok = await onComplete(finalScore);
+      // void (undefined) se trata como éxito para no alarmar en flujos antiguos
+      setSaveStatus(ok === false ? 'error' : 'saved');
+    } catch {
+      setSaveStatus('error');
+    }
+  };
+
   // Fix for the last question score calculation
   useEffect(() => {
     if (evalStep === 'quiz' && Object.keys(answers).length === shuffledQuestions.length) {
@@ -157,9 +169,9 @@ export const WeekPage: React.FC<Props> = ({
       const finalScore = Math.round((correctCount / shuffledQuestions.length) * 100);
       setScore(finalScore);
       setEvalStep('result');
-      onComplete(finalScore);
+      saveScore(finalScore);
     }
-  }, [answers, evalStep, shuffledQuestions, onComplete]);
+  }, [answers, evalStep, shuffledQuestions]);
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20">
@@ -408,9 +420,35 @@ export const WeekPage: React.FC<Props> = ({
                   </div>
                   
                   <h2 className="text-4xl font-black text-zinc-900 mb-2">{score}%</h2>
-                  <p className={`text-xl font-bold mb-8 ${score >= 70 ? 'text-emerald-600' : 'text-red-600'}`}>
+                  <p className={`text-xl font-bold mb-4 ${score >= 70 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {score >= 70 ? '¡APROBADO!' : 'NO APROBADO'}
                   </p>
+
+                  {/* Estado del guardado — un fallo silencioso ya costó 2 meses de datos */}
+                  <div className="mb-8">
+                    {saveStatus === 'saving' && (
+                      <p className="text-sm text-zinc-400 flex items-center justify-center gap-2">
+                        <Loader2 size={14} className="animate-spin" /> Guardando tu nota...
+                      </p>
+                    )}
+                    {saveStatus === 'saved' && (
+                      <p className="text-sm text-emerald-600 font-bold">✓ Nota guardada correctamente</p>
+                    )}
+                    {saveStatus === 'error' && (
+                      <div className="p-4 bg-red-50 border-2 border-red-300 rounded-2xl">
+                        <p className="text-sm font-bold text-red-700 mb-3">
+                          ⚠ TU NOTA NO SE GUARDÓ. Revisa tu conexión a internet y vuelve a intentarlo.
+                          Si el problema continúa, avísale a tu profesor.
+                        </p>
+                        <button
+                          onClick={() => saveScore(score)}
+                          className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-bold rounded-xl transition-colors"
+                        >
+                          Reintentar guardado
+                        </button>
+                      </div>
+                    )}
+                  </div>
 
                   <div className="grid grid-cols-2 gap-4 mb-8">
                     <div className="p-4 bg-zinc-50 rounded-2xl">

@@ -3,67 +3,45 @@ import { WeekData } from '../types';
 import { weeks as defaultWeeks } from '../data/weeks/index';
 import { courseConfigService } from '../services/courseConfigService';
 
+/**
+ * El contenido de las semanas vive en el código (src/data/weeks) — fuente única
+ * de verdad para docente y alumnos. Lo único configurable en runtime es qué
+ * semanas están activas, y eso se comparte vía Supabase (course_config).
+ *
+ * Nota: antes existía un sistema de overrides en localStorage que hacía creer
+ * al docente que editaba contenido, pero los alumnos nunca lo veían. Eliminado.
+ */
 export const useWeeks = () => {
-  const [weeks, setWeeks] = useState<WeekData[]>(() => {
-    const saved = localStorage.getItem('weeks_overrides');
-    const configs = courseConfigService.getConfigs();
-    
-    let baseWeeks = defaultWeeks;
-    if (saved) {
-      const overrides = JSON.parse(saved);
-      baseWeeks = defaultWeeks.map(dw => {
-        const override = overrides.find((o: any) => o.week === dw.week);
-        if (!override) return dw;
-        const merged = { ...dw, ...override };
-        // El vocabulario del código manda en estructura y campos nuevos
-        // (phonetic, audioUrl); el override guardado solo conserva sus ediciones
-        // por palabra. Sin esto, los datos viejos en localStorage entierran
-        // cualquier campo agregado en versiones nuevas de la app.
-        merged.vocabulary = dw.vocabulary.map(v => {
-          const ov = override.vocabulary?.find((o: any) => o.word === v.word);
-          return ov ? { ...v, ...ov } : v;
-        });
-        return merged;
-      });
-    }
-
-    // Apply active state from courseConfig
-    return baseWeeks.map(w => {
-      const config = configs[`week${w.week.toString().padStart(2, '0')}`];
-      return config ? { ...w, active: config.active } : { ...w, active: w.active ?? true };
-    });
-  });
+  const [weeks, setWeeks] = useState<WeekData[]>(
+    defaultWeeks.map(w => ({ ...w, active: w.active ?? true }))
+  );
 
   useEffect(() => {
-    const overrides = weeks.map(({ week, title, objective, introText, vocabulary, simulation, practice, evaluation, active, availableFrom, availableUntil }) => ({
-      week, title, objective, introText, vocabulary, simulation, practice, evaluation, active, availableFrom, availableUntil
-    }));
-    localStorage.setItem('weeks_overrides', JSON.stringify(overrides));
-    
-    // Also sync to courseConfig for Problem 1 requirements
-    weeks.forEach(w => {
-      courseConfigService.saveConfig(w.week, { active: !!w.active });
+    let cancelled = false;
+    courseConfigService.fetchConfigs().then(configs => {
+      if (cancelled) return;
+      setWeeks(defaultWeeks.map(w => ({
+        ...w,
+        active: configs[w.week] ?? w.active ?? true
+      })));
     });
-  }, [weeks]);
+    return () => { cancelled = true; };
+  }, []);
 
-  const updateWeek = (weekNumber: number, data: Partial<WeekData>) => {
-    setWeeks(prev => prev.map(w => w.week === weekNumber ? { ...w, ...data } : w));
+  /** Devuelve true si el cambio quedó guardado en Supabase. */
+  const toggleWeek = async (weekNumber: number): Promise<boolean> => {
+    const target = weeks.find(w => w.week === weekNumber);
+    if (!target) return false;
+    const newActive = !target.active;
+
+    // Optimista: aplicar ya, revertir si Supabase falla
+    setWeeks(prev => prev.map(w => w.week === weekNumber ? { ...w, active: newActive } : w));
+    const ok = await courseConfigService.setWeekActive(weekNumber, newActive);
+    if (!ok) {
+      setWeeks(prev => prev.map(w => w.week === weekNumber ? { ...w, active: !newActive } : w));
+    }
+    return ok;
   };
 
-  const toggleWeek = (weekNumber: number) => {
-    setWeeks(prev => {
-      const newWeeks = prev.map(w => w.week === weekNumber ? { ...w, active: !w.active } : w);
-      const targetWeek = newWeeks.find(w => w.week === weekNumber);
-      if (targetWeek) {
-        courseConfigService.saveConfig(weekNumber, { active: !!targetWeek.active });
-      }
-      return newWeeks;
-    });
-  };
-
-  return {
-    weeks,
-    updateWeek,
-    toggleWeek
-  };
+  return { weeks, toggleWeek };
 };

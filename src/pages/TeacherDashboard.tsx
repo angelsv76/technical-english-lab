@@ -23,7 +23,6 @@ import {
 } from 'lucide-react';
 import { useWeeks } from '../hooks/useWeeks';
 import { TeacherPanel } from '../components/TeacherPanel';
-import { simulations } from '../data/simulations';
 import { supabase } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -38,6 +37,10 @@ interface StudentData {
   photo_url?: string | null;
   created_at: string;
   progress: any[];
+  // Señales de estudio real (glosario): distinguen "solo entró" de "estudió"
+  wordsInGlossary: number;
+  lastWeekStudied: number | null;
+  reviewAttempts: number;
 }
 
 interface StudentDetail {
@@ -46,12 +49,14 @@ interface StudentDetail {
 }
 
 export const TeacherDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'content' | 'students' | 'reports' | 'simulations'>('content');
+  const [activeTab, setActiveTab] = useState<'content' | 'students' | 'reports'>('students');
   const [students, setStudents] = useState<StudentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState<StudentDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
-  const { weeks, updateWeek, toggleWeek } = useWeeks();
+  // Canario de integridad: fecha del último guardado real en todo el sistema
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const { weeks, toggleWeek } = useWeeks();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -95,16 +100,44 @@ export const TeacherDashboard: React.FC = () => {
         .from('weekly_progress')
         .select('*')
         .in('student_id', studentIds)
-        .order('week_number');
+        .order('week_number')
+        .range(0, 9999);
 
       if (progressError) {
         console.error('Error al consultar progreso:', progressError.message, progressError.details);
       }
 
+      // Glosario: la señal de que el alumno abrió/estudió una semana (no solo entró)
+      const { data: glossaryData, error: glossaryError } = await supabase
+        .from('glossary_entries')
+        .select('student_id, week_introduced, review_count')
+        .in('student_id', studentIds)
+        .range(0, 9999);
+
+      if (glossaryError) {
+        console.error('Error al consultar glosario:', glossaryError.message);
+      }
+
       const studentsWithProgress = studentsData.map(student => {
         const studentProgress = (progressData || []).filter(p => p.student_id === student.id);
-        return { ...student, progress: studentProgress };
+        const studentGlossary = (glossaryData || []).filter(g => g.student_id === student.id);
+        return {
+          ...student,
+          progress: studentProgress,
+          wordsInGlossary: studentGlossary.length,
+          lastWeekStudied: studentGlossary.length > 0
+            ? Math.max(...studentGlossary.map(g => g.week_introduced))
+            : null,
+          reviewAttempts: studentGlossary.reduce((sum, g) => sum + (g.review_count || 0), 0)
+        };
       });
+
+      // Canario: última escritura real de una nota en todo el sistema
+      const timestamps = (progressData || [])
+        .map(p => p.updated_at)
+        .filter(Boolean)
+        .sort();
+      setLastSavedAt(timestamps.length > 0 ? timestamps[timestamps.length - 1] : null);
 
       // Sort by first apellido (second-to-last word for 3+ word names, last word for 2-word names)
       studentsWithProgress.sort((a, b) => {
@@ -158,7 +191,7 @@ export const TeacherDashboard: React.FC = () => {
       const scores = s.progress.map((p: any) => p.last_score).filter((sc: number | null) => sc !== null);
       const avg = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
       const lastLogin = s.last_login ? new Date(s.last_login).toLocaleDateString('es-SV') : 'Nunca';
-      return [s.nie, s.name, s.group_code, `${avg}%`, `${completed}/6`, lastLogin];
+      return [s.nie, s.name, s.group_code, `${avg}%`, `${completed}/40`, lastLogin];
     });
     
     doc.autoTable({
@@ -194,6 +227,28 @@ export const TeacherDashboard: React.FC = () => {
     return diff < 5 * 60 * 1000; // activo en los últimos 5 minutos
   };
 
+  // Canario de integridad: si nadie guarda una nota en 48h de días lectivos,
+  // probablemente algo está roto (así se habrían detectado los 2 meses del RLS).
+  const hoursSinceLastSave = lastSavedAt
+    ? (Date.now() - new Date(lastSavedAt).getTime()) / 3600000
+    : Infinity;
+  const canaryAlert = hoursSinceLastSave > 48;
+  const lastSavedLabel = lastSavedAt
+    ? hoursSinceLastSave < 1
+      ? 'hace menos de 1 hora'
+      : hoursSinceLastSave < 24
+        ? `hace ${Math.round(hoursSinceLastSave)} h`
+        : `hace ${Math.round(hoursSinceLastSave / 24)} día(s)`
+    : 'nunca';
+
+  // Clasificación honesta de actividad: evaluó > estudió > solo entró
+  const studyStatus = (s: StudentData): 'evaluated' | 'studied' | 'idle' => {
+    if (s.progress.length > 0) return 'evaluated';
+    if (s.wordsInGlossary > 0) return 'studied';
+    return 'idle';
+  };
+  const idleCount = students.filter(s => studyStatus(s) === 'idle').length;
+
   return (
     <div className="min-h-screen bg-zinc-50 flex">
       {/* Sidebar */}
@@ -215,19 +270,13 @@ export const TeacherDashboard: React.FC = () => {
         </div>
 
         <nav className="flex-1 p-4 space-y-2">
-          <NavButton 
-            active={activeTab === 'content'} 
+          <NavButton
+            active={activeTab === 'content'}
             onClick={() => setActiveTab('content')}
             icon={<BookOpen size={20} />}
             label="Gestión de Contenido"
           />
-          <NavButton 
-            active={activeTab === 'simulations'} 
-            onClick={() => setActiveTab('simulations')}
-            icon={<ShieldCheck size={20} />}
-            label="Banco de Simulaciones"
-          />
-          <NavButton 
+          <NavButton
             active={activeTab === 'students'} 
             onClick={() => setActiveTab('students')}
             icon={<Users size={20} />}
@@ -265,7 +314,6 @@ export const TeacherDashboard: React.FC = () => {
           <div>
             <h2 className="text-3xl font-bold text-zinc-900">
               {activeTab === 'content' && 'Gestión de Contenido'}
-              {activeTab === 'simulations' && 'Banco de Simulaciones'}
               {activeTab === 'students' && 'Progreso de Estudiantes'}
               {activeTab === 'reports' && 'Reportes y Descargas'}
             </h2>
@@ -282,48 +330,34 @@ export const TeacherDashboard: React.FC = () => {
 
         {activeTab === 'content' && (
           <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
-            <TeacherPanel 
+            <TeacherPanel
               weeks={weeks}
-              onUpdateWeek={updateWeek}
               onToggleWeek={toggleWeek}
-              onClose={() => {}}
               isFullPage={true}
             />
           </div>
         )}
 
-        {activeTab === 'simulations' && (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {simulations.slice(0, 12).map(sim => (
-                <div key={sim.simulationId} className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden flex flex-col">
-                  <div className="p-6 border-b border-zinc-100 flex justify-between items-start">
-                    <div>
-                      <span className="text-[10px] font-bold text-[#F57C00] uppercase tracking-widest">{sim.type}</span>
-                      <h3 className="font-bold text-zinc-900">{sim.simulationId}</h3>
-                    </div>
-                    <div className="w-8 h-8 bg-zinc-50 rounded-lg flex items-center justify-center text-zinc-400">
-                      <ShieldCheck size={18} />
-                    </div>
-                  </div>
-                  <div className="p-6 flex-1 space-y-4">
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase">Instrucción</p>
-                      <p className="text-sm text-zinc-600 line-clamp-3">{sim.instruction}</p>
-                    </div>
-                    <div className="space-y-1">
-                      <p className="text-[10px] font-bold text-zinc-400 uppercase">Visual</p>
-                      <p className="text-xs font-mono text-zinc-500 bg-zinc-50 p-2 rounded-lg line-clamp-2">{sim.visual}</p>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {activeTab === 'students' && (
           <div className="space-y-6">
+            {/* Canario de integridad de datos */}
+            {!loading && students.length > 0 && (
+              <div className={`p-4 rounded-2xl border flex flex-wrap items-center gap-x-6 gap-y-2 ${
+                canaryAlert ? 'bg-red-50 border-red-300' : 'bg-white border-zinc-200'
+              }`}>
+                <div className={`text-sm font-bold ${canaryAlert ? 'text-red-700' : 'text-zinc-600'}`}>
+                  {canaryAlert ? '⚠ NINGUNA NOTA GUARDADA EN MÁS DE 48 HORAS — posible fallo del sistema de guardado' : '✓ Sistema de guardado con actividad reciente'}
+                </div>
+                <div className="text-xs text-zinc-500">
+                  Última nota guardada: <strong className="text-zinc-800">{lastSavedLabel}</strong>
+                </div>
+                {idleCount > 0 && (
+                  <div className="text-xs text-orange-700 font-bold">
+                    {idleCount} alumno{idleCount !== 1 ? 's' : ''} sin actividad real (solo login)
+                  </div>
+                )}
+              </div>
+            )}
             <div className="flex justify-end">
               <button
                 onClick={loadStudents}
@@ -361,6 +395,7 @@ export const TeacherDashboard: React.FC = () => {
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-28">NIE</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider">Estudiante</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-24">Grupo</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-32">Estudio</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-48">Progreso</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-28">En línea</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-36">Última Actividad</th>
@@ -401,6 +436,21 @@ export const TeacherDashboard: React.FC = () => {
                               </button>
                             </td>
                             <td className="p-4 text-sm text-zinc-500">{student.group_code}</td>
+                            <td className="p-4">
+                              {studyStatus(student) === 'evaluated' ? (
+                                <span className="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                  Evaluó
+                                </span>
+                              ) : studyStatus(student) === 'studied' ? (
+                                <span className="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase bg-blue-50 text-blue-700 border border-blue-200">
+                                  Estudió S{student.lastWeekStudied}
+                                </span>
+                              ) : (
+                                <span className="inline-flex px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase bg-zinc-100 text-zinc-500 border border-zinc-200">
+                                  Solo entró
+                                </span>
+                              )}
+                            </td>
                             <td className="p-4">
                               <div className="flex items-center gap-3">
                                 <div className="flex-1 h-2 bg-zinc-100 rounded-full overflow-hidden">
@@ -444,31 +494,20 @@ export const TeacherDashboard: React.FC = () => {
         )}
 
         {activeTab === 'reports' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="max-w-lg">
             <div className="bg-white p-8 rounded-3xl border border-zinc-200 shadow-sm flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-6">
                 <FileText size={40} />
               </div>
               <h3 className="text-xl font-bold text-zinc-900 mb-2">Reporte de Calificaciones</h3>
               <p className="text-zinc-500 mb-8">Descarga un documento PDF detallado con el progreso y notas de todos los estudiantes de DS1B.</p>
-              <button 
+              <button
                 onClick={downloadReport}
                 disabled={loading || students.length === 0}
                 className="w-full flex items-center justify-center gap-2 py-4 bg-zinc-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Download size={20} />
                 Descargar PDF
-              </button>
-            </div>
-
-            <div className="bg-white p-8 rounded-3xl border border-zinc-200 shadow-sm flex flex-col items-center text-center">
-              <div className="w-20 h-20 bg-emerald-50 text-emerald-500 rounded-2xl flex items-center justify-center mb-6">
-                <TrendingUp size={40} />
-              </div>
-              <h3 className="text-xl font-bold text-zinc-900 mb-2">Estadísticas de Uso</h3>
-              <p className="text-zinc-500 mb-8">Analiza qué semanas tienen mayor dificultad y el tiempo promedio de estudio por estudiante.</p>
-              <button className="w-full flex items-center justify-center gap-2 py-4 bg-zinc-100 text-zinc-400 font-bold rounded-2xl cursor-not-allowed">
-                Próximamente
               </button>
             </div>
           </div>
