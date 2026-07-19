@@ -11,31 +11,41 @@ export const week35: WeekData = {
       word: "Server",
       meaning: "Servidor (provee datos)",
       example: "The server is down",
-      context: "Networking"
+      context: "Networking",
+      phonetic: "/ˈsɜːrvər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week35/server.mp3"
     },
     {
       word: "Client",
       meaning: "Cliente (solicita datos)",
       example: "The web client",
-      context: "Networking"
+      context: "Networking",
+      phonetic: "/ˈklaɪənt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week35/client.mp3"
     },
     {
       word: "Request",
       meaning: "Petición o solicitud",
       example: "Send an HTTP request",
-      context: "Networking"
+      context: "Networking",
+      phonetic: "/rɪˈkwɛst/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week35/request.mp3"
     },
     {
       word: "Response",
       meaning: "Respuesta del servidor",
       example: "Wait for the response",
-      context: "Networking"
+      context: "Networking",
+      phonetic: "/rɪˈspɑːns/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week35/response.mp3"
     },
     {
       word: "API",
       meaning: "Interfaz de programación de aplicaciones",
       example: "Connect to the API",
-      context: "Networking"
+      context: "Networking",
+      phonetic: "/ˌeɪ piː ˈaɪ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week35/api.mp3"
     }
   ],
   simulation: {

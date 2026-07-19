@@ -11,31 +11,41 @@ export const week38: WeekData = {
       word: "Security",
       meaning: "Seguridad del sistema",
       example: "Improve the security",
-      context: "Security"
+      context: "Security",
+      phonetic: "/sɪˈkjʊrəti/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week38/security.mp3"
     },
     {
       word: "Privacy",
       meaning: "Privacidad de los datos",
       example: "Check the privacy policy",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ˈpraɪvəsi/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week38/privacy.mp3"
     },
     {
       word: "Encryption",
       meaning: "Encriptación o cifrado",
       example: "Use data encryption",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ɪnˈkrɪpʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week38/encryption.mp3"
     },
     {
       word: "Authentication",
       meaning: "Autenticación (quién eres)",
       example: "User authentication",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ɔːˌθɛntɪˈkeɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week38/authentication.mp3"
     },
     {
       word: "Authorization",
       meaning: "Autorización (qué puedes hacer)",
       example: "Check user authorization",
-      context: "Security"
+      context: "Security",
+      phonetic: "/ˌɔːθərəˈzeɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week38/authorization.mp3"
     }
   ],
   simulation: {

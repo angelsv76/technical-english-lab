@@ -11,31 +11,41 @@ export const week36: WeekData = {
       word: "Manual",
       meaning: "Manual de usuario o técnico",
       example: "Read the user manual",
-      context: "Documentation"
+      context: "Documentation",
+      phonetic: "/ˈmænjuəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week36/manual.mp3"
     },
     {
       word: "Guide",
       meaning: "Guía de pasos o referencia",
       example: "Follow the setup guide",
-      context: "Documentation"
+      context: "Documentation",
+      phonetic: "/ɡaɪd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week36/guide.mp3"
     },
     {
       word: "Readme",
       meaning: "Archivo 'Léeme' (instrucciones iniciales)",
       example: "Check the README.md file",
-      context: "Documentation"
+      context: "Documentation",
+      phonetic: "/ˈriːdmiː/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week36/readme.mp3"
     },
     {
       word: "Tutorial",
       meaning: "Tutorial de aprendizaje",
       example: "Watch the tutorial",
-      context: "Documentation"
+      context: "Documentation",
+      phonetic: "/tuːˈtɔːriəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week36/tutorial.mp3"
     },
     {
       word: "Documentation",
       meaning: "Documentación general",
       example: "Read the API documentation",
-      context: "Documentation"
+      context: "Documentation",
+      phonetic: "/ˌdɑːkjəmɛnˈteɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week36/documentation.mp3"
     }
   ],
   simulation: {

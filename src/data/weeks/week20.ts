@@ -11,31 +11,41 @@ export const week20: WeekData = {
       word: "Card",
       meaning: "Tarjeta o contenedor de información",
       example: "Display user info in a card",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/kɑːrd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week20/card.mp3"
     },
     {
       word: "Modal",
       meaning: "Ventana emergente que bloquea el fondo",
       example: "Open the confirmation modal",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈmoʊdəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week20/modal.mp3"
     },
     {
       word: "Accordion",
       meaning: "Menú desplegable vertical (acordeón)",
       example: "Click the accordion to expand",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/əˈkɔːrdiən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week20/accordion.mp3"
     },
     {
       word: "Grid",
       meaning: "Cuadrícula de organización",
       example: "Align elements in a grid",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ɡrɪd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week20/grid.mp3"
     },
     {
       word: "Container",
       meaning: "Contenedor general de elementos",
       example: "Wrap the content in a container",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/kənˈteɪnər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week20/container.mp3"
     }
   ],
   simulation: {

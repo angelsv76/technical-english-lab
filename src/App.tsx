@@ -63,7 +63,7 @@ export default function App() {
           
           <Route path="/student" element={
             student ? (
-              <Dashboard 
+              <Dashboard
                 student={student}
                 progress={progress}
                 glossary={glossary}
@@ -71,6 +71,8 @@ export default function App() {
                 onSelectWeek={handleSelectWeek}
                 onOpenGlossary={() => navigate('/student/glossary')}
                 onLogout={handleLogout}
+                onWordCorrect={markWordCorrect}
+                onWordIncorrect={markWordIncorrect}
               />
             ) : <Navigate to="/student/login" replace />
           } />

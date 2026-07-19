@@ -13,7 +13,7 @@ export const week06: WeekData = {
       example: "Rename the file to 'data.txt'",
       context: "Action",
       phonetic: "/riːˈneɪm/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/rename.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/rename.mp3"
     },
     {
       word: "Move",
@@ -21,7 +21,7 @@ export const week06: WeekData = {
       example: "Move the folder to Desktop",
       context: "Action",
       phonetic: "/muːv/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/move.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/move.mp3"
     },
     {
       word: "Upload",
@@ -29,7 +29,7 @@ export const week06: WeekData = {
       example: "Upload the report",
       context: "Action",
       phonetic: "/ˈʌploʊd/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/upload.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/upload.mp3"
     },
     {
       word: "Refresh",
@@ -37,7 +37,7 @@ export const week06: WeekData = {
       example: "Refresh the page",
       context: "Action",
       phonetic: "/rɪˈfrɛʃ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/refresh.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/refresh.mp3"
     },
     {
       word: "Sort",
@@ -45,7 +45,7 @@ export const week06: WeekData = {
       example: "Sort by date",
       context: "Action",
       phonetic: "/sɔːrt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/sort.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week06/sort.mp3"
     }
   ],
   simulation: {

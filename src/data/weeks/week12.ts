@@ -13,7 +13,7 @@ export const week12: WeekData = {
       example: "Press Enter to confirm",
       context: "Action",
       phonetic: "/prɛs/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/press.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/press.mp3"
     },
     {
       word: "Hold",
@@ -21,7 +21,7 @@ export const week12: WeekData = {
       example: "Hold the mouse button",
       context: "Action",
       phonetic: "/hoʊld/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/hold.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/hold.mp3"
     },
     {
       word: "Shortcut",
@@ -29,7 +29,7 @@ export const week12: WeekData = {
       example: "Use the Ctrl+C shortcut",
       context: "Interface",
       phonetic: "/ˈʃɔːtkət/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/shortcut.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/shortcut.mp3"
     },
     {
       word: "Key",
@@ -37,7 +37,7 @@ export const week12: WeekData = {
       example: "Press the Escape key",
       context: "Hardware",
       phonetic: "/kiː/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/key.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/key.mp3"
     },
     {
       word: "Command",
@@ -45,7 +45,7 @@ export const week12: WeekData = {
       example: "Enter the command in the terminal",
       context: "System",
       phonetic: "/kəˈmænd/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/command.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week12/command.mp3"
     }
   ],
   simulation: {

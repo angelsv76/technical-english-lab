@@ -1,0 +1,362 @@
+[
+  {
+    "folder": "week01",
+    "file": "search.mp3",
+    "word": "Search",
+    "text": "Search"
+  },
+  {
+    "folder": "week01",
+    "file": "settings.mp3",
+    "word": "Settings",
+    "text": "Settings"
+  },
+  {
+    "folder": "week01",
+    "file": "download.mp3",
+    "word": "Download",
+    "text": "Download"
+  },
+  {
+    "folder": "week01",
+    "file": "file.mp3",
+    "word": "File",
+    "text": "File"
+  },
+  {
+    "folder": "week01",
+    "file": "error.mp3",
+    "word": "Error",
+    "text": "Error"
+  },
+  {
+    "folder": "week02",
+    "file": "menu.mp3",
+    "word": "Menu",
+    "text": "Menu"
+  },
+  {
+    "folder": "week02",
+    "file": "home.mp3",
+    "word": "Home",
+    "text": "Home"
+  },
+  {
+    "folder": "week02",
+    "file": "back.mp3",
+    "word": "Back",
+    "text": "Back"
+  },
+  {
+    "folder": "week02",
+    "file": "next.mp3",
+    "word": "Next",
+    "text": "Next"
+  },
+  {
+    "folder": "week02",
+    "file": "exit.mp3",
+    "word": "Exit",
+    "text": "Exit"
+  },
+  {
+    "folder": "week03",
+    "file": "save.mp3",
+    "word": "Save",
+    "text": "Save"
+  },
+  {
+    "folder": "week03",
+    "file": "open.mp3",
+    "word": "Open",
+    "text": "Open"
+  },
+  {
+    "folder": "week03",
+    "file": "close.mp3",
+    "word": "Close",
+    "text": "Close"
+  },
+  {
+    "folder": "week03",
+    "file": "edit.mp3",
+    "word": "Edit",
+    "text": "Edit"
+  },
+  {
+    "folder": "week03",
+    "file": "delete.mp3",
+    "word": "Delete",
+    "text": "Delete"
+  },
+  {
+    "folder": "week04",
+    "file": "copy.mp3",
+    "word": "Copy",
+    "text": "Copy"
+  },
+  {
+    "folder": "week04",
+    "file": "paste.mp3",
+    "word": "Paste",
+    "text": "Paste"
+  },
+  {
+    "folder": "week04",
+    "file": "cut.mp3",
+    "word": "Cut",
+    "text": "Cut"
+  },
+  {
+    "folder": "week04",
+    "file": "undo.mp3",
+    "word": "Undo",
+    "text": "Undo"
+  },
+  {
+    "folder": "week04",
+    "file": "redo.mp3",
+    "word": "Redo",
+    "text": "Redo"
+  },
+  {
+    "folder": "week05",
+    "file": "success.mp3",
+    "word": "Success",
+    "text": "Success"
+  },
+  {
+    "folder": "week05",
+    "file": "warning.mp3",
+    "word": "Warning",
+    "text": "Warning"
+  },
+  {
+    "folder": "week05",
+    "file": "alert.mp3",
+    "word": "Alert",
+    "text": "Alert"
+  },
+  {
+    "folder": "week05",
+    "file": "info.mp3",
+    "word": "Info",
+    "text": "Info"
+  },
+  {
+    "folder": "week05",
+    "file": "loading.mp3",
+    "word": "Loading",
+    "text": "Loading"
+  },
+  {
+    "folder": "week06",
+    "file": "rename.mp3",
+    "word": "Rename",
+    "text": "Rename"
+  },
+  {
+    "folder": "week06",
+    "file": "move.mp3",
+    "word": "Move",
+    "text": "Move"
+  },
+  {
+    "folder": "week06",
+    "file": "upload.mp3",
+    "word": "Upload",
+    "text": "Upload"
+  },
+  {
+    "folder": "week06",
+    "file": "refresh.mp3",
+    "word": "Refresh",
+    "text": "Refresh"
+  },
+  {
+    "folder": "week06",
+    "file": "sort.mp3",
+    "word": "Sort",
+    "text": "Sort"
+  },
+  {
+    "folder": "week07",
+    "file": "login.mp3",
+    "word": "Login",
+    "text": "Login"
+  },
+  {
+    "folder": "week07",
+    "file": "logout.mp3",
+    "word": "Logout",
+    "text": "Logout"
+  },
+  {
+    "folder": "week07",
+    "file": "sign-up.mp3",
+    "word": "Sign up",
+    "text": "Sign up"
+  },
+  {
+    "folder": "week07",
+    "file": "password.mp3",
+    "word": "Password",
+    "text": "Password"
+  },
+  {
+    "folder": "week07",
+    "file": "reset.mp3",
+    "word": "Reset",
+    "text": "Reset"
+  },
+  {
+    "folder": "week08",
+    "file": "install.mp3",
+    "word": "Install",
+    "text": "Install"
+  },
+  {
+    "folder": "week08",
+    "file": "uninstall.mp3",
+    "word": "Uninstall",
+    "text": "Uninstall"
+  },
+  {
+    "folder": "week08",
+    "file": "setup.mp3",
+    "word": "Setup",
+    "text": "Setup"
+  },
+  {
+    "folder": "week08",
+    "file": "run.mp3",
+    "word": "Run",
+    "text": "Run"
+  },
+  {
+    "folder": "week08",
+    "file": "launch.mp3",
+    "word": "Launch",
+    "text": "Launch"
+  },
+  {
+    "folder": "week09",
+    "file": "process.mp3",
+    "word": "Process",
+    "text": "Process"
+  },
+  {
+    "folder": "week09",
+    "file": "submit.mp3",
+    "word": "Submit",
+    "text": "Submit"
+  },
+  {
+    "folder": "week09",
+    "file": "request.mp3",
+    "word": "Request",
+    "text": "Request"
+  },
+  {
+    "folder": "week09",
+    "file": "response.mp3",
+    "word": "Response",
+    "text": "Response"
+  },
+  {
+    "folder": "week09",
+    "file": "fetch.mp3",
+    "word": "Fetch",
+    "text": "Fetch"
+  },
+  {
+    "folder": "week10",
+    "file": "update.mp3",
+    "word": "Update",
+    "text": "Update"
+  },
+  {
+    "folder": "week10",
+    "file": "upgrade.mp3",
+    "word": "Upgrade",
+    "text": "Upgrade"
+  },
+  {
+    "folder": "week10",
+    "file": "fix.mp3",
+    "word": "Fix",
+    "text": "Fix"
+  },
+  {
+    "folder": "week10",
+    "file": "patch.mp3",
+    "word": "Patch",
+    "text": "Patch"
+  },
+  {
+    "folder": "week10",
+    "file": "debug.mp3",
+    "word": "Debug",
+    "text": "Debug"
+  },
+  {
+    "folder": "week11",
+    "file": "click.mp3",
+    "word": "Click",
+    "text": "Click"
+  },
+  {
+    "folder": "week11",
+    "file": "double-click.mp3",
+    "word": "Double-click",
+    "text": "Double-click"
+  },
+  {
+    "folder": "week11",
+    "file": "right-click.mp3",
+    "word": "Right-click",
+    "text": "Right-click"
+  },
+  {
+    "folder": "week11",
+    "file": "drag.mp3",
+    "word": "Drag",
+    "text": "Drag"
+  },
+  {
+    "folder": "week11",
+    "file": "drop.mp3",
+    "word": "Drop",
+    "text": "Drop"
+  },
+  {
+    "folder": "week12",
+    "file": "press.mp3",
+    "word": "Press",
+    "text": "Press"
+  },
+  {
+    "folder": "week12",
+    "file": "hold.mp3",
+    "word": "Hold",
+    "text": "Hold"
+  },
+  {
+    "folder": "week12",
+    "file": "shortcut.mp3",
+    "word": "Shortcut",
+    "text": "Shortcut"
+  },
+  {
+    "folder": "week12",
+    "file": "key.mp3",
+    "word": "Key",
+    "text": "Key"
+  },
+  {
+    "folder": "week12",
+    "file": "command.mp3",
+    "word": "Command",
+    "text": "Command"
+  }
+]

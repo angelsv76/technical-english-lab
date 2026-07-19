@@ -11,31 +11,41 @@ export const week40: WeekData = {
       word: "Review",
       meaning: "Repaso o revisión",
       example: "Final review of the course",
-      context: "General"
+      context: "General",
+      phonetic: "/rɪˈvjuː/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week40/review.mp3"
     },
     {
       word: "Project",
       meaning: "Proyecto",
       example: "Complete the final project",
-      context: "General"
+      context: "General",
+      phonetic: "/ˈprɑːdʒɛkt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week40/project.mp3"
     },
     {
       word: "Final",
       meaning: "Final",
       example: "The final exam",
-      context: "General"
+      context: "General",
+      phonetic: "/ˈfaɪnəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week40/final.mp3"
     },
     {
       word: "Summary",
       meaning: "Resumen",
       example: "Read the summary",
-      context: "General"
+      context: "General",
+      phonetic: "/ˈsʌməri/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week40/summary.mp3"
     },
     {
       word: "Success",
       meaning: "Éxito",
       example: "Success in your career",
-      context: "General"
+      context: "General",
+      phonetic: "/səkˈsɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week40/success.mp3"
     }
   ],
   simulation: {

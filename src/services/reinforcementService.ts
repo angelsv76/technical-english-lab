@@ -8,6 +8,7 @@ export interface ReinforcementActivity {
   question: string;
   options: string[];
   answer: string;
+  explanation?: string;
   type: 'action' | 'object' | 'interface' | 'instruction' | 'menu';
 }
 
@@ -31,6 +32,7 @@ export async function generateReinforcementActivity(wordData: { word: string; me
     - question: A question to identify the word or its role (e.g., "Identify the Action", "What does this button do?").
     - options: 4 multiple choice options.
     - answer: The correct option.
+    - explanation: A brief explanation (in Spanish, 1-2 sentences) of WHY the answer is correct. It will be shown to the student when they answer incorrectly, so make it teach the concept.
     - type: The type of activity.
   `;
 
@@ -48,9 +50,10 @@ export async function generateReinforcementActivity(wordData: { word: string; me
             question: { type: Type.STRING },
             options: { type: Type.ARRAY, items: { type: Type.STRING } },
             answer: { type: Type.STRING },
+            explanation: { type: Type.STRING },
             type: { type: Type.STRING, enum: ['action', 'object', 'interface', 'instruction', 'menu'] }
           },
-          required: ["word", "instruction", "question", "options", "answer", "type"]
+          required: ["word", "instruction", "question", "options", "answer", "explanation", "type"]
         }
       }
     });

@@ -11,31 +11,41 @@ export const week15: WeekData = {
       word: "Find",
       meaning: "Encontrar un término o archivo",
       example: "Find the error",
-      context: "Action"
+      context: "Action",
+      phonetic: "/faɪnd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week15/find.mp3"
     },
     {
       word: "Filter",
       meaning: "Filtrar resultados por criterios",
       example: "Filter by category",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈfɪltər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week15/filter.mp3"
     },
     {
       word: "Replace",
       meaning: "Reemplazar un texto por otro",
       example: "Find and replace",
-      context: "Action"
+      context: "Action",
+      phonetic: "/rɪˈpleɪs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week15/replace.mp3"
     },
     {
       word: "Match",
       meaning: "Coincidir o encontrar una coincidencia",
       example: "Case sensitive match",
-      context: "Action"
+      context: "Action",
+      phonetic: "/mætʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week15/match.mp3"
     },
     {
       word: "Query",
       meaning: "Consulta a una base de datos",
       example: "Run the SQL query",
-      context: "Data"
+      context: "Data",
+      phonetic: "/ˈkwɪri/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week15/query.mp3"
     }
   ],
   simulation: {

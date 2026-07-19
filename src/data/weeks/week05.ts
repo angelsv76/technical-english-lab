@@ -12,8 +12,8 @@ export const week05: WeekData = {
       meaning: "Operación completada con éxito",
       example: "Upload success",
       context: "Status",
-      honetic: "/səkˈsɛs/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/success.wav"
+      phonetic: "/səkˈsɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/success.mp3"
     },
     {
       word: "Warning",
@@ -21,7 +21,7 @@ export const week05: WeekData = {
       example: "Low battery warning",
       context: "Status",
       phonetic: "/ˈwɔːrnɪŋ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/warning.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/warning.mp3"
     },
     {
       word: "Alert",
@@ -29,7 +29,7 @@ export const week05: WeekData = {
       example: "Security alert",
       context: "Status",
       phonetic: "/əˈlɜːrt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/alert.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/alert.mp3"
     },
     {
       word: "Info",
@@ -37,7 +37,7 @@ export const week05: WeekData = {
       example: "System info",
       context: "Status",
       phonetic: "/ˈɪnfoʊ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/info.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/info.mp3"
     },
     {
       word: "Loading",
@@ -45,7 +45,7 @@ export const week05: WeekData = {
       example: "Loading data...",
       context: "Status",
       phonetic: "/ˈloʊdɪŋ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/loading.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week05/loading.mp3"
     }
   ],
   simulation: {

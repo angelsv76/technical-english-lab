@@ -13,7 +13,7 @@ export const week04: WeekData = {
       example: "Copy the text",
       context: "Action",
       phonetic: "/ˈkɑːpi/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/copy.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/copy.mp3"
     },
     {
       word: "Paste",
@@ -21,7 +21,7 @@ export const week04: WeekData = {
       example: "Paste the image",
       context: "Action",
       phonetic: "/peɪst/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/paste.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/paste.mp3"
     },
     {
       word: "Cut",
@@ -29,7 +29,7 @@ export const week04: WeekData = {
       example: "Cut the file",
       context: "Action",
       phonetic: "/kʌt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/cut.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/cut.mp3"
     },
     {
       word: "Undo",
@@ -37,7 +37,7 @@ export const week04: WeekData = {
       example: "Undo the deletion",
       context: "Action",
       phonetic: "/ʌnˈduː/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/undo.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/undo.mp3"
     },
     {
       word: "Redo",
@@ -45,7 +45,7 @@ export const week04: WeekData = {
       example: "Redo the changes",
       context: "Action",
       phonetic: "/riːˈduː/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/redo.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week04/redo.mp3"
     }
   ],
   simulation: {

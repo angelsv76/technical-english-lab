@@ -11,31 +11,41 @@ export const week23: WeekData = {
       word: "Next",
       meaning: "Siguiente paso",
       example: "Click Next to continue",
-      context: "Navigation"
+      context: "Navigation",
+      phonetic: "/nɛkst/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week23/next.mp3"
     },
     {
       word: "Previous",
       meaning: "Paso anterior",
       example: "Go to the previous page",
-      context: "Navigation"
+      context: "Navigation",
+      phonetic: "/ˈpriːviəs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week23/previous.mp3"
     },
     {
       word: "Back",
       meaning: "Atrás",
       example: "Go back to the menu",
-      context: "Navigation"
+      context: "Navigation",
+      phonetic: "/bæk/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week23/back.mp3"
     },
     {
       word: "Forward",
       meaning: "Adelante",
       example: "Move forward in the process",
-      context: "Navigation"
+      context: "Navigation",
+      phonetic: "/ˈfɔːrwərd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week23/forward.mp3"
     },
     {
       word: "Skip",
       meaning: "Omitir o saltar",
       example: "Skip the tutorial",
-      context: "Action"
+      context: "Action",
+      phonetic: "/skɪp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week23/skip.mp3"
     }
   ],
   simulation: {

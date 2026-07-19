@@ -11,31 +11,41 @@ export const week13: WeekData = {
       word: "Adjust",
       meaning: "Ajustar o adaptar parámetros",
       example: "Adjust the volume",
-      context: "Action"
+      context: "Action",
+      phonetic: "/əˈdʒʌst/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week13/adjust.mp3"
     },
     {
       word: "Enable",
       meaning: "Habilitar o activar una función",
       example: "Enable notifications",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ɪˈneɪbəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week13/enable.mp3"
     },
     {
       word: "Disable",
       meaning: "Deshabilitar o desactivar",
       example: "Disable the firewall",
-      context: "Action"
+      context: "Action",
+      phonetic: "/dɪsˈeɪbəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week13/disable.mp3"
     },
     {
       word: "Toggle",
       meaning: "Alternar entre dos estados (on/off)",
       example: "Toggle dark mode",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈtɑːɡəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week13/toggle.mp3"
     },
     {
       word: "Configure",
       meaning: "Configurar opciones del sistema",
       example: "Configure the settings",
-      context: "Action"
+      context: "Action",
+      phonetic: "/kənˈfɪɡjər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week13/configure.mp3"
     }
   ],
   simulation: {

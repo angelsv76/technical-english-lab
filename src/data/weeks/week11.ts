@@ -13,7 +13,7 @@ export const week11: WeekData = {
       example: "Click the icon",
       context: "Action",
       phonetic: "/klɪk/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/click.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/click.mp3"
     },
     {
       word: "Double-click",
@@ -21,7 +21,7 @@ export const week11: WeekData = {
       example: "Double-click to open",
       context: "Action",
       phonetic: "/ˈdʌbəl klɪk/", 
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/double-click.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/double-click.mp3"
     },  
     {
       word: "Right-click",
@@ -29,7 +29,7 @@ export const week11: WeekData = {
       example: "Right-click for options",
       context: "Action",
       phonetic: "/ˈraɪt klɪk/", 
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/right-click.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/right-click.mp3"
     },
     {
       word: "Drag",
@@ -37,7 +37,7 @@ export const week11: WeekData = {
       example: "Drag the file",
       context: "Action",
       phonetic: "/dræɡ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/drag.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/drag.mp3"
     },
     {
       word: "Drop",
@@ -45,7 +45,7 @@ export const week11: WeekData = {
       example: "Drop it in the folder",
       context: "Action",
       phonetic: "/drɑːp/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/drop.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week11/drop.mp3"
     }
   ],
   simulation: {

@@ -11,31 +11,41 @@ export const week24: WeekData = {
       word: "Confirm",
       meaning: "Confirmar una acción",
       example: "Confirm your password",
-      context: "Action"
+      context: "Action",
+      phonetic: "/kənˈfɜːrm/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week24/confirm.mp3"
     },
     {
       word: "Cancel",
       meaning: "Cancelar o anular",
       example: "Cancel the operation",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈkænsəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week24/cancel.mp3"
     },
     {
       word: "Agree",
       meaning: "Estar de acuerdo (términos)",
       example: "I agree to the terms",
-      context: "Action"
+      context: "Action",
+      phonetic: "/əˈɡriː/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week24/agree.mp3"
     },
     {
       word: "Decline",
       meaning: "Rechazar o declinar",
       example: "Decline the invitation",
-      context: "Action"
+      context: "Action",
+      phonetic: "/dɪˈklaɪn/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week24/decline.mp3"
     },
     {
       word: "Accept",
       meaning: "Aceptar",
       example: "Accept the changes",
-      context: "Action"
+      context: "Action",
+      phonetic: "/əkˈsɛpt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week24/accept.mp3"
     }
   ],
   simulation: {

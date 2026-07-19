@@ -8,11 +8,13 @@ export interface GeneratedActivities {
     question: string;
     options: string[];
     answer: string;
+    explanation?: string;
   };
   practice: {
     question: string;
     options: string[];
     answer: string;
+    explanation?: string;
   };
 }
 
@@ -34,10 +36,12 @@ export async function generateActivities(vocabulary: { word: string; meaning: st
        - question: A question about identifying or interpreting the element.
        - options: 4 multiple choice options.
        - answer: The correct option.
+       - explanation: A brief explanation (in Spanish, 1-2 sentences) of WHY the answer is correct and what the word means in this context. It will be shown to the student when they answer incorrectly, so make it teach the concept.
     2. A practice exercise:
        - question: A question about the usage or meaning of the word in a technical context.
        - options: 4 multiple choice options.
        - answer: The correct option.
+       - explanation: A brief explanation (in Spanish, 1-2 sentences) of WHY the answer is correct, shown to the student when they fail.
 
     Return the result as a JSON object where keys are the words.
   `;
@@ -60,18 +64,20 @@ export async function generateActivities(vocabulary: { word: string; meaning: st
                     visual: { type: Type.STRING },
                     question: { type: Type.STRING },
                     options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                    answer: { type: Type.STRING }
+                    answer: { type: Type.STRING },
+                    explanation: { type: Type.STRING }
                   },
-                  required: ["visual", "question", "options", "answer"]
+                  required: ["visual", "question", "options", "answer", "explanation"]
                 },
                 practice: {
                   type: Type.OBJECT,
                   properties: {
                     question: { type: Type.STRING },
                     options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                    answer: { type: Type.STRING }
+                    answer: { type: Type.STRING },
+                    explanation: { type: Type.STRING }
                   },
-                  required: ["question", "options", "answer"]
+                  required: ["question", "options", "answer", "explanation"]
                 }
               },
               required: ["simulation", "practice"]
@@ -109,6 +115,7 @@ export async function generateSinglePractice(word: string, context: string): Pro
     - question: A question about the usage or meaning of the word in a technical context.
     - options: 4 multiple choice options.
     - answer: The correct option.
+    - explanation: A brief explanation (in Spanish, 1-2 sentences) of WHY the answer is correct. It will be shown to the student when they answer incorrectly, so make it teach the concept.
 
     Return the result as a JSON object.
   `;
@@ -124,9 +131,10 @@ export async function generateSinglePractice(word: string, context: string): Pro
           properties: {
             question: { type: Type.STRING },
             options: { type: Type.ARRAY, items: { type: Type.STRING } },
-            answer: { type: Type.STRING }
+            answer: { type: Type.STRING },
+            explanation: { type: Type.STRING }
           },
-          required: ["question", "options", "answer"]
+          required: ["question", "options", "answer", "explanation"]
         }
       }
     });

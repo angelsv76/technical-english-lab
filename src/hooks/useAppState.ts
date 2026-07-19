@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Student, WeeklyProgress, GlossaryEntry } from '../lib/supabase';
 import { weeks } from '../data/weeks/index';
+import { nextReviewDate } from '../utils/srs';
 
 export const useAppState = () => {
   const [student, setStudent] = useState<any | null>(() => {
@@ -76,7 +77,7 @@ export const useAppState = () => {
 
       if (glossaryData) {
         // Convertir a formato antiguo para compatibilidad
-        const formattedGlossary = glossaryData.map((g: GlossaryEntry) => ({
+        const formattedGlossary = glossaryData.map((g: any) => ({
           word: g.word,
           meaning: g.meaning,
           example: g.example,
@@ -85,7 +86,9 @@ export const useAppState = () => {
           reviewCount: g.review_count,
           correctCount: g.correct_count,
           wrongCount: g.wrong_count,
-          weekIntroduced: g.week_introduced
+          weekIntroduced: g.week_introduced,
+          srsLevel: g.srs_level ?? 0,
+          nextReviewAt: g.next_review_at ?? null
         }));
         setGlossary(formattedGlossary);
       }
@@ -177,7 +180,7 @@ export const useAppState = () => {
 
       if (!error && data) {
         // Actualizar estado local
-        const formattedNew = data.map((g: GlossaryEntry) => ({
+        const formattedNew = data.map((g: any) => ({
           word: g.word,
           meaning: g.meaning,
           example: g.example,
@@ -186,7 +189,9 @@ export const useAppState = () => {
           reviewCount: g.review_count,
           correctCount: g.correct_count,
           wrongCount: g.wrong_count,
-          weekIntroduced: g.week_introduced
+          weekIntroduced: g.week_introduced,
+          srsLevel: g.srs_level ?? 0,
+          nextReviewAt: g.next_review_at ?? null
         }));
 
         setGlossary(prev => {
@@ -208,6 +213,10 @@ export const useAppState = () => {
     if (!entry) return;
 
     const newCorrectCount = entry.correctCount + 1;
+    // SRS: cada acierto sube de nivel y aleja el próximo repaso (1d → 3d → 7d → 21d).
+    // "Dominada" = sobrevivió al menos 3 repasos, y aun así sigue en rotación.
+    const newLevel = (entry.srsLevel ?? 0) + 1;
+    const newNextReview = nextReviewDate(newLevel);
 
     try {
       const { data } = await supabase
@@ -215,7 +224,9 @@ export const useAppState = () => {
         .update({
           correct_count: newCorrectCount,
           review_count: entry.reviewCount + 1,
-          mastered: newCorrectCount >= 3,
+          srs_level: newLevel,
+          next_review_at: newNextReview,
+          mastered: newLevel >= 3,
           last_reviewed_at: new Date().toISOString()
         })
         .eq('student_id', student.id)
@@ -224,12 +235,14 @@ export const useAppState = () => {
         .single();
 
       if (data) {
-        setGlossary(prev => 
+        setGlossary(prev =>
           prev.map(e => e.word === word ? {
             ...e,
             correctCount: newCorrectCount,
             reviewCount: e.reviewCount + 1,
-            mastered: newCorrectCount >= 3
+            srsLevel: newLevel,
+            nextReviewAt: newNextReview,
+            mastered: newLevel >= 3
           } : e)
         );
       }
@@ -244,13 +257,20 @@ export const useAppState = () => {
     const entry = glossary.find(e => e.word === word);
     if (!entry) return;
 
+    // SRS: fallar reinicia el nivel y quita el estado "dominada" — la palabra
+    // vuelve a la cola de repaso de hoy. Honestidad ante todo.
+    const failedReview = new Date().toISOString();
+
     try {
       const { data } = await supabase
         .from('glossary_entries')
         .update({
           wrong_count: entry.wrongCount + 1,
           review_count: entry.reviewCount + 1,
-          last_reviewed_at: new Date().toISOString()
+          srs_level: 0,
+          next_review_at: failedReview,
+          mastered: false,
+          last_reviewed_at: failedReview
         })
         .eq('student_id', student.id)
         .eq('word', word)
@@ -258,11 +278,14 @@ export const useAppState = () => {
         .single();
 
       if (data) {
-        setGlossary(prev => 
+        setGlossary(prev =>
           prev.map(e => e.word === word ? {
             ...e,
             wrongCount: e.wrongCount + 1,
-            reviewCount: e.reviewCount + 1
+            reviewCount: e.reviewCount + 1,
+            srsLevel: 0,
+            nextReviewAt: failedReview,
+            mastered: false
           } : e)
         );
       }

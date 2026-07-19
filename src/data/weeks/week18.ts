@@ -11,31 +11,41 @@ export const week18: WeekData = {
       word: "Input",
       meaning: "Campo de entrada de texto",
       example: "Enter your name in the input",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈɪnpʊt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week18/input.mp3"
     },
     {
       word: "Checkbox",
       meaning: "Casilla de verificación (múltiple opción)",
       example: "Check the boxes that apply",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈtʃɛkbɑːks/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week18/checkbox.mp3"
     },
     {
       word: "Radio Button",
       meaning: "Botón de opción única",
       example: "Select one radio button",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈreɪdioʊ ˈbʌtən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week18/radio-button.mp3"
     },
     {
       word: "Dropdown",
       meaning: "Menú desplegable de selección",
       example: "Select your country from the dropdown",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈdrɑːpdaʊn/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week18/dropdown.mp3"
     },
     {
       word: "Textarea",
       meaning: "Área de texto para mensajes largos",
       example: "Write your comment in the textarea",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈtɛkstˌɛriə/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week18/textarea.mp3"
     }
   ],
   simulation: {

@@ -74,7 +74,12 @@ export const ReinforcementCard: React.FC<Props> = ({ activity, onCorrect, onInco
 
       {selected && (
         <div className={`mt-6 p-4 rounded-xl text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300 ${isCorrect ? 'bg-emerald-500/10 text-emerald-700' : 'bg-red-500/10 text-red-700'}`}>
-          {isCorrect ? '¡Excelente! Refuerzo completado con éxito.' : `Sigue intentándolo. La respuesta correcta era: ${activity.answer}`}
+          <p>{isCorrect ? '¡Excelente! Refuerzo completado con éxito.' : `Sigue intentándolo. La respuesta correcta era: ${activity.answer}`}</p>
+          {!isCorrect && activity.explanation && (
+            <p className="mt-3 font-medium text-red-800 bg-white/70 p-3 rounded-lg border border-red-200">
+              💡 {activity.explanation}
+            </p>
+          )}
         </div>
       )}
     </div>

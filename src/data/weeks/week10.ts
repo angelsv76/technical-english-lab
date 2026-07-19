@@ -13,7 +13,7 @@ export const week10: WeekData = {
       example: "Update the software",
       context: "Maintenance",
       phonetic: "/ʌpˈdeɪt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/update.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/update.mp3"
     },
     {
       word: "Upgrade",
@@ -21,7 +21,7 @@ export const week10: WeekData = {
       example: "Upgrade your plan",
       context: "Maintenance",
       phonetic: "/ʌpˈɡreɪd/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/upgrade.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/upgrade.mp3"
     },
     {
       word: "Fix",
@@ -29,7 +29,7 @@ export const week10: WeekData = {
       example: "Fix the bug",
       context: "Action",
       phonetic: "/fɪks/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/fix.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/fix.mp3"
     },
     {
       word: "Patch",
@@ -37,7 +37,7 @@ export const week10: WeekData = {
       example: "Apply the security patch",
       context: "Maintenance",
       phonetic: "/pætʃ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/patch.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/patch.mp3"
     },
     {
       word: "Debug",
@@ -45,7 +45,7 @@ export const week10: WeekData = {
       example: "Debug the application",
       context: "Development",
       phonetic: "/diːˈbʌɡ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/debug.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week10/debug.mp3"
     }
   ],
   simulation: {

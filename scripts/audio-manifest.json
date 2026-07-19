@@ -1,0 +1,1402 @@
+[
+  {
+    "week": 1,
+    "folder": "week01",
+    "file": "search_example.mp3",
+    "word": "Search",
+    "text": "Search the file"
+  },
+  {
+    "week": 1,
+    "folder": "week01",
+    "file": "settings_example.mp3",
+    "word": "Settings",
+    "text": "Go to settings"
+  },
+  {
+    "week": 1,
+    "folder": "week01",
+    "file": "download_example.mp3",
+    "word": "Download",
+    "text": "Download the app"
+  },
+  {
+    "week": 1,
+    "folder": "week01",
+    "file": "file_example.mp3",
+    "word": "File",
+    "text": "Open the file"
+  },
+  {
+    "week": 1,
+    "folder": "week01",
+    "file": "error_example.mp3",
+    "word": "Error",
+    "text": "System error"
+  },
+  {
+    "week": 2,
+    "folder": "week02",
+    "file": "menu_example.mp3",
+    "word": "Menu",
+    "text": "Open the main menu"
+  },
+  {
+    "week": 2,
+    "folder": "week02",
+    "file": "home_example.mp3",
+    "word": "Home",
+    "text": "Return to home"
+  },
+  {
+    "week": 2,
+    "folder": "week02",
+    "file": "back_example.mp3",
+    "word": "Back",
+    "text": "Go back"
+  },
+  {
+    "week": 2,
+    "folder": "week02",
+    "file": "next_example.mp3",
+    "word": "Next",
+    "text": "Click next to continue"
+  },
+  {
+    "week": 2,
+    "folder": "week02",
+    "file": "exit_example.mp3",
+    "word": "Exit",
+    "text": "Exit the application"
+  },
+  {
+    "week": 3,
+    "folder": "week03",
+    "file": "save_example.mp3",
+    "word": "Save",
+    "text": "Save your work"
+  },
+  {
+    "week": 3,
+    "folder": "week03",
+    "file": "open_example.mp3",
+    "word": "Open",
+    "text": "Open the document"
+  },
+  {
+    "week": 3,
+    "folder": "week03",
+    "file": "close_example.mp3",
+    "word": "Close",
+    "text": "Close the window"
+  },
+  {
+    "week": 3,
+    "folder": "week03",
+    "file": "edit_example.mp3",
+    "word": "Edit",
+    "text": "Edit the profile"
+  },
+  {
+    "week": 3,
+    "folder": "week03",
+    "file": "delete_example.mp3",
+    "word": "Delete",
+    "text": "Delete the folder"
+  },
+  {
+    "week": 4,
+    "folder": "week04",
+    "file": "copy_example.mp3",
+    "word": "Copy",
+    "text": "Copy the text"
+  },
+  {
+    "week": 4,
+    "folder": "week04",
+    "file": "paste_example.mp3",
+    "word": "Paste",
+    "text": "Paste the image"
+  },
+  {
+    "week": 4,
+    "folder": "week04",
+    "file": "cut_example.mp3",
+    "word": "Cut",
+    "text": "Cut the file"
+  },
+  {
+    "week": 4,
+    "folder": "week04",
+    "file": "undo_example.mp3",
+    "word": "Undo",
+    "text": "Undo the deletion"
+  },
+  {
+    "week": 4,
+    "folder": "week04",
+    "file": "redo_example.mp3",
+    "word": "Redo",
+    "text": "Redo the changes"
+  },
+  {
+    "week": 5,
+    "folder": "week05",
+    "file": "success_example.mp3",
+    "word": "Success",
+    "text": "Upload success"
+  },
+  {
+    "week": 5,
+    "folder": "week05",
+    "file": "warning_example.mp3",
+    "word": "Warning",
+    "text": "Low battery warning"
+  },
+  {
+    "week": 5,
+    "folder": "week05",
+    "file": "alert_example.mp3",
+    "word": "Alert",
+    "text": "Security alert"
+  },
+  {
+    "week": 5,
+    "folder": "week05",
+    "file": "info_example.mp3",
+    "word": "Info",
+    "text": "System info"
+  },
+  {
+    "week": 5,
+    "folder": "week05",
+    "file": "loading_example.mp3",
+    "word": "Loading",
+    "text": "Loading data..."
+  },
+  {
+    "week": 6,
+    "folder": "week06",
+    "file": "rename_example.mp3",
+    "word": "Rename",
+    "text": "Rename the file to 'data.txt'"
+  },
+  {
+    "week": 6,
+    "folder": "week06",
+    "file": "move_example.mp3",
+    "word": "Move",
+    "text": "Move the folder to Desktop"
+  },
+  {
+    "week": 6,
+    "folder": "week06",
+    "file": "upload_example.mp3",
+    "word": "Upload",
+    "text": "Upload the report"
+  },
+  {
+    "week": 6,
+    "folder": "week06",
+    "file": "refresh_example.mp3",
+    "word": "Refresh",
+    "text": "Refresh the page"
+  },
+  {
+    "week": 6,
+    "folder": "week06",
+    "file": "sort_example.mp3",
+    "word": "Sort",
+    "text": "Sort by date"
+  },
+  {
+    "week": 7,
+    "folder": "week07",
+    "file": "login_example.mp3",
+    "word": "Login",
+    "text": "Please login to continue"
+  },
+  {
+    "week": 7,
+    "folder": "week07",
+    "file": "logout_example.mp3",
+    "word": "Logout",
+    "text": "Don't forget to logout"
+  },
+  {
+    "week": 7,
+    "folder": "week07",
+    "file": "sign-up_example.mp3",
+    "word": "Sign up",
+    "text": "Sign up for a new account"
+  },
+  {
+    "week": 7,
+    "folder": "week07",
+    "file": "password_example.mp3",
+    "word": "Password",
+    "text": "Enter your password"
+  },
+  {
+    "week": 7,
+    "folder": "week07",
+    "file": "reset_example.mp3",
+    "word": "Reset",
+    "text": "Reset your password"
+  },
+  {
+    "week": 8,
+    "folder": "week08",
+    "file": "install_example.mp3",
+    "word": "Install",
+    "text": "Install the driver"
+  },
+  {
+    "week": 8,
+    "folder": "week08",
+    "file": "uninstall_example.mp3",
+    "word": "Uninstall",
+    "text": "Uninstall unused apps"
+  },
+  {
+    "week": 8,
+    "folder": "week08",
+    "file": "setup_example.mp3",
+    "word": "Setup",
+    "text": "Run the setup file"
+  },
+  {
+    "week": 8,
+    "folder": "week08",
+    "file": "run_example.mp3",
+    "word": "Run",
+    "text": "Run the script"
+  },
+  {
+    "week": 8,
+    "folder": "week08",
+    "file": "launch_example.mp3",
+    "word": "Launch",
+    "text": "Launch the browser"
+  },
+  {
+    "week": 9,
+    "folder": "week09",
+    "file": "process_example.mp3",
+    "word": "Process",
+    "text": "Process the payment"
+  },
+  {
+    "week": 9,
+    "folder": "week09",
+    "file": "submit_example.mp3",
+    "word": "Submit",
+    "text": "Submit the form"
+  },
+  {
+    "week": 9,
+    "folder": "week09",
+    "file": "request_example.mp3",
+    "word": "Request",
+    "text": "Send a data request"
+  },
+  {
+    "week": 9,
+    "folder": "week09",
+    "file": "response_example.mp3",
+    "word": "Response",
+    "text": "Wait for the response"
+  },
+  {
+    "week": 9,
+    "folder": "week09",
+    "file": "fetch_example.mp3",
+    "word": "Fetch",
+    "text": "Fetch the user list"
+  },
+  {
+    "week": 10,
+    "folder": "week10",
+    "file": "update_example.mp3",
+    "word": "Update",
+    "text": "Update the software"
+  },
+  {
+    "week": 10,
+    "folder": "week10",
+    "file": "upgrade_example.mp3",
+    "word": "Upgrade",
+    "text": "Upgrade your plan"
+  },
+  {
+    "week": 10,
+    "folder": "week10",
+    "file": "fix_example.mp3",
+    "word": "Fix",
+    "text": "Fix the bug"
+  },
+  {
+    "week": 10,
+    "folder": "week10",
+    "file": "patch_example.mp3",
+    "word": "Patch",
+    "text": "Apply the security patch"
+  },
+  {
+    "week": 10,
+    "folder": "week10",
+    "file": "debug_example.mp3",
+    "word": "Debug",
+    "text": "Debug the application"
+  },
+  {
+    "week": 11,
+    "folder": "week11",
+    "file": "click_example.mp3",
+    "word": "Click",
+    "text": "Click the icon"
+  },
+  {
+    "week": 11,
+    "folder": "week11",
+    "file": "double-click_example.mp3",
+    "word": "Double-click",
+    "text": "Double-click to open"
+  },
+  {
+    "week": 11,
+    "folder": "week11",
+    "file": "right-click_example.mp3",
+    "word": "Right-click",
+    "text": "Right-click for options"
+  },
+  {
+    "week": 11,
+    "folder": "week11",
+    "file": "drag_example.mp3",
+    "word": "Drag",
+    "text": "Drag the file"
+  },
+  {
+    "week": 11,
+    "folder": "week11",
+    "file": "drop_example.mp3",
+    "word": "Drop",
+    "text": "Drop it in the folder"
+  },
+  {
+    "week": 12,
+    "folder": "week12",
+    "file": "press_example.mp3",
+    "word": "Press",
+    "text": "Press Enter to confirm"
+  },
+  {
+    "week": 12,
+    "folder": "week12",
+    "file": "hold_example.mp3",
+    "word": "Hold",
+    "text": "Hold the mouse button"
+  },
+  {
+    "week": 12,
+    "folder": "week12",
+    "file": "shortcut_example.mp3",
+    "word": "Shortcut",
+    "text": "Use the Ctrl+C shortcut"
+  },
+  {
+    "week": 12,
+    "folder": "week12",
+    "file": "key_example.mp3",
+    "word": "Key",
+    "text": "Press the Escape key"
+  },
+  {
+    "week": 12,
+    "folder": "week12",
+    "file": "command_example.mp3",
+    "word": "Command",
+    "text": "Enter the command in the terminal"
+  },
+  {
+    "week": 13,
+    "folder": "week13",
+    "file": "adjust_example.mp3",
+    "word": "Adjust",
+    "text": "Adjust the volume"
+  },
+  {
+    "week": 13,
+    "folder": "week13",
+    "file": "enable_example.mp3",
+    "word": "Enable",
+    "text": "Enable notifications"
+  },
+  {
+    "week": 13,
+    "folder": "week13",
+    "file": "disable_example.mp3",
+    "word": "Disable",
+    "text": "Disable the firewall"
+  },
+  {
+    "week": 13,
+    "folder": "week13",
+    "file": "toggle_example.mp3",
+    "word": "Toggle",
+    "text": "Toggle dark mode"
+  },
+  {
+    "week": 13,
+    "folder": "week13",
+    "file": "configure_example.mp3",
+    "word": "Configure",
+    "text": "Configure the settings"
+  },
+  {
+    "week": 14,
+    "folder": "week14",
+    "file": "select_example.mp3",
+    "word": "Select",
+    "text": "Select all files"
+  },
+  {
+    "week": 14,
+    "folder": "week14",
+    "file": "deselect_example.mp3",
+    "word": "Deselect",
+    "text": "Deselect the image"
+  },
+  {
+    "week": 14,
+    "folder": "week14",
+    "file": "check_example.mp3",
+    "word": "Check",
+    "text": "Check the box"
+  },
+  {
+    "week": 14,
+    "folder": "week14",
+    "file": "uncheck_example.mp3",
+    "word": "Uncheck",
+    "text": "Uncheck the option"
+  },
+  {
+    "week": 14,
+    "folder": "week14",
+    "file": "highlight_example.mp3",
+    "word": "Highlight",
+    "text": "Highlight the keywords"
+  },
+  {
+    "week": 15,
+    "folder": "week15",
+    "file": "find_example.mp3",
+    "word": "Find",
+    "text": "Find the error"
+  },
+  {
+    "week": 15,
+    "folder": "week15",
+    "file": "filter_example.mp3",
+    "word": "Filter",
+    "text": "Filter by category"
+  },
+  {
+    "week": 15,
+    "folder": "week15",
+    "file": "replace_example.mp3",
+    "word": "Replace",
+    "text": "Find and replace"
+  },
+  {
+    "week": 15,
+    "folder": "week15",
+    "file": "match_example.mp3",
+    "word": "Match",
+    "text": "Case sensitive match"
+  },
+  {
+    "week": 15,
+    "folder": "week15",
+    "file": "query_example.mp3",
+    "word": "Query",
+    "text": "Run the SQL query"
+  },
+  {
+    "week": 16,
+    "folder": "week16",
+    "file": "window_example.mp3",
+    "word": "Window",
+    "text": "Close the active window"
+  },
+  {
+    "week": 16,
+    "folder": "week16",
+    "file": "header_example.mp3",
+    "word": "Header",
+    "text": "The logo is in the header"
+  },
+  {
+    "week": 16,
+    "folder": "week16",
+    "file": "footer_example.mp3",
+    "word": "Footer",
+    "text": "Copyright info in the footer"
+  },
+  {
+    "week": 16,
+    "folder": "week16",
+    "file": "sidebar_example.mp3",
+    "word": "Sidebar",
+    "text": "Open the sidebar"
+  },
+  {
+    "week": 16,
+    "folder": "week16",
+    "file": "main-content_example.mp3",
+    "word": "Main Content",
+    "text": "Display data in the main content"
+  },
+  {
+    "week": 17,
+    "folder": "week17",
+    "file": "navbar_example.mp3",
+    "word": "Navbar",
+    "text": "Links in the navbar"
+  },
+  {
+    "week": 17,
+    "folder": "week17",
+    "file": "breadcrumbs_example.mp3",
+    "word": "Breadcrumbs",
+    "text": "Check the breadcrumbs"
+  },
+  {
+    "week": 17,
+    "folder": "week17",
+    "file": "pagination_example.mp3",
+    "word": "Pagination",
+    "text": "Go to page 2 in pagination"
+  },
+  {
+    "week": 17,
+    "folder": "week17",
+    "file": "link_example.mp3",
+    "word": "Link",
+    "text": "Click the link"
+  },
+  {
+    "week": 17,
+    "folder": "week17",
+    "file": "tab_example.mp3",
+    "word": "Tab",
+    "text": "Switch to the 'Settings' tab"
+  },
+  {
+    "week": 18,
+    "folder": "week18",
+    "file": "input_example.mp3",
+    "word": "Input",
+    "text": "Enter your name in the input"
+  },
+  {
+    "week": 18,
+    "folder": "week18",
+    "file": "checkbox_example.mp3",
+    "word": "Checkbox",
+    "text": "Check the boxes that apply"
+  },
+  {
+    "week": 18,
+    "folder": "week18",
+    "file": "radio-button_example.mp3",
+    "word": "Radio Button",
+    "text": "Select one radio button"
+  },
+  {
+    "week": 18,
+    "folder": "week18",
+    "file": "dropdown_example.mp3",
+    "word": "Dropdown",
+    "text": "Select your country from the dropdown"
+  },
+  {
+    "week": 18,
+    "folder": "week18",
+    "file": "textarea_example.mp3",
+    "word": "Textarea",
+    "text": "Write your comment in the textarea"
+  },
+  {
+    "week": 19,
+    "folder": "week19",
+    "file": "button_example.mp3",
+    "word": "Button",
+    "text": "Click the 'Submit' button"
+  },
+  {
+    "week": 19,
+    "folder": "week19",
+    "file": "icon_example.mp3",
+    "word": "Icon",
+    "text": "The 'Save' icon is a diskette"
+  },
+  {
+    "week": 19,
+    "folder": "week19",
+    "file": "tooltip_example.mp3",
+    "word": "Tooltip",
+    "text": "Hover to see the tooltip"
+  },
+  {
+    "week": 19,
+    "folder": "week19",
+    "file": "badge_example.mp3",
+    "word": "Badge",
+    "text": "A badge with the number of messages"
+  },
+  {
+    "week": 19,
+    "folder": "week19",
+    "file": "notification_example.mp3",
+    "word": "Notification",
+    "text": "You have a new notification"
+  },
+  {
+    "week": 20,
+    "folder": "week20",
+    "file": "card_example.mp3",
+    "word": "Card",
+    "text": "Display user info in a card"
+  },
+  {
+    "week": 20,
+    "folder": "week20",
+    "file": "modal_example.mp3",
+    "word": "Modal",
+    "text": "Open the confirmation modal"
+  },
+  {
+    "week": 20,
+    "folder": "week20",
+    "file": "accordion_example.mp3",
+    "word": "Accordion",
+    "text": "Click the accordion to expand"
+  },
+  {
+    "week": 20,
+    "folder": "week20",
+    "file": "grid_example.mp3",
+    "word": "Grid",
+    "text": "Align elements in a grid"
+  },
+  {
+    "week": 20,
+    "folder": "week20",
+    "file": "container_example.mp3",
+    "word": "Container",
+    "text": "Wrap the content in a container"
+  },
+  {
+    "week": 21,
+    "folder": "week21",
+    "file": "step_example.mp3",
+    "word": "Step",
+    "text": "Follow the next step"
+  },
+  {
+    "week": 21,
+    "folder": "week21",
+    "file": "process_example.mp3",
+    "word": "Process",
+    "text": "The installation process"
+  },
+  {
+    "week": 21,
+    "folder": "week21",
+    "file": "sequence_example.mp3",
+    "word": "Sequence",
+    "text": "Follow the correct sequence"
+  },
+  {
+    "week": 21,
+    "folder": "week21",
+    "file": "flow_example.mp3",
+    "word": "Flow",
+    "text": "Check the user flow"
+  },
+  {
+    "week": 21,
+    "folder": "week21",
+    "file": "stage_example.mp3",
+    "word": "Stage",
+    "text": "The development stage"
+  },
+  {
+    "week": 22,
+    "folder": "week22",
+    "file": "start_example.mp3",
+    "word": "Start",
+    "text": "Start the application"
+  },
+  {
+    "week": 22,
+    "folder": "week22",
+    "file": "finish_example.mp3",
+    "word": "Finish",
+    "text": "Finish the setup"
+  },
+  {
+    "week": 22,
+    "folder": "week22",
+    "file": "begin_example.mp3",
+    "word": "Begin",
+    "text": "Begin the download"
+  },
+  {
+    "week": 22,
+    "folder": "week22",
+    "file": "end_example.mp3",
+    "word": "End",
+    "text": "The end of the file"
+  },
+  {
+    "week": 22,
+    "folder": "week22",
+    "file": "complete_example.mp3",
+    "word": "Complete",
+    "text": "Complete the form"
+  },
+  {
+    "week": 23,
+    "folder": "week23",
+    "file": "next_example.mp3",
+    "word": "Next",
+    "text": "Click Next to continue"
+  },
+  {
+    "week": 23,
+    "folder": "week23",
+    "file": "previous_example.mp3",
+    "word": "Previous",
+    "text": "Go to the previous page"
+  },
+  {
+    "week": 23,
+    "folder": "week23",
+    "file": "back_example.mp3",
+    "word": "Back",
+    "text": "Go back to the menu"
+  },
+  {
+    "week": 23,
+    "folder": "week23",
+    "file": "forward_example.mp3",
+    "word": "Forward",
+    "text": "Move forward in the process"
+  },
+  {
+    "week": 23,
+    "folder": "week23",
+    "file": "skip_example.mp3",
+    "word": "Skip",
+    "text": "Skip the tutorial"
+  },
+  {
+    "week": 24,
+    "folder": "week24",
+    "file": "confirm_example.mp3",
+    "word": "Confirm",
+    "text": "Confirm your password"
+  },
+  {
+    "week": 24,
+    "folder": "week24",
+    "file": "cancel_example.mp3",
+    "word": "Cancel",
+    "text": "Cancel the operation"
+  },
+  {
+    "week": 24,
+    "folder": "week24",
+    "file": "agree_example.mp3",
+    "word": "Agree",
+    "text": "I agree to the terms"
+  },
+  {
+    "week": 24,
+    "folder": "week24",
+    "file": "decline_example.mp3",
+    "word": "Decline",
+    "text": "Decline the invitation"
+  },
+  {
+    "week": 24,
+    "folder": "week24",
+    "file": "accept_example.mp3",
+    "word": "Accept",
+    "text": "Accept the changes"
+  },
+  {
+    "week": 25,
+    "folder": "week25",
+    "file": "save_example.mp3",
+    "word": "Save",
+    "text": "Save your work"
+  },
+  {
+    "week": 25,
+    "folder": "week25",
+    "file": "exit_example.mp3",
+    "word": "Exit",
+    "text": "Exit the application"
+  },
+  {
+    "week": 25,
+    "folder": "week25",
+    "file": "quit_example.mp3",
+    "word": "Quit",
+    "text": "Quit the editor"
+  },
+  {
+    "week": 25,
+    "folder": "week25",
+    "file": "discard_example.mp3",
+    "word": "Discard",
+    "text": "Discard changes"
+  },
+  {
+    "week": 25,
+    "folder": "week25",
+    "file": "apply_example.mp3",
+    "word": "Apply",
+    "text": "Apply the settings"
+  },
+  {
+    "week": 26,
+    "folder": "week26",
+    "file": "form_example.mp3",
+    "word": "Form",
+    "text": "Fill out the form"
+  },
+  {
+    "week": 26,
+    "folder": "week26",
+    "file": "field_example.mp3",
+    "word": "Field",
+    "text": "The email field"
+  },
+  {
+    "week": 26,
+    "folder": "week26",
+    "file": "label_example.mp3",
+    "word": "Label",
+    "text": "Read the label"
+  },
+  {
+    "week": 26,
+    "folder": "week26",
+    "file": "required_example.mp3",
+    "word": "Required",
+    "text": "This field is required"
+  },
+  {
+    "week": 26,
+    "folder": "week26",
+    "file": "optional_example.mp3",
+    "word": "Optional",
+    "text": "The phone number is optional"
+  },
+  {
+    "week": 27,
+    "folder": "week27",
+    "file": "validate_example.mp3",
+    "word": "Validate",
+    "text": "Validate the input"
+  },
+  {
+    "week": 27,
+    "folder": "week27",
+    "file": "invalid_example.mp3",
+    "word": "Invalid",
+    "text": "Invalid email format"
+  },
+  {
+    "week": 27,
+    "folder": "week27",
+    "file": "error-message_example.mp3",
+    "word": "Error Message",
+    "text": "Display the error message"
+  },
+  {
+    "week": 27,
+    "folder": "week27",
+    "file": "success_example.mp3",
+    "word": "Success",
+    "text": "Success! Form sent"
+  },
+  {
+    "week": 27,
+    "folder": "week27",
+    "file": "format_example.mp3",
+    "word": "Format",
+    "text": "Check the date format"
+  },
+  {
+    "week": 28,
+    "folder": "week28",
+    "file": "alert_example.mp3",
+    "word": "Alert",
+    "text": "Security alert"
+  },
+  {
+    "week": 28,
+    "folder": "week28",
+    "file": "warning_example.mp3",
+    "word": "Warning",
+    "text": "Low battery warning"
+  },
+  {
+    "week": 28,
+    "folder": "week28",
+    "file": "caution_example.mp3",
+    "word": "Caution",
+    "text": "Use with caution"
+  },
+  {
+    "week": 28,
+    "folder": "week28",
+    "file": "notice_example.mp3",
+    "word": "Notice",
+    "text": "Read the legal notice"
+  },
+  {
+    "week": 28,
+    "folder": "week28",
+    "file": "attention_example.mp3",
+    "word": "Attention",
+    "text": "Attention required"
+  },
+  {
+    "week": 29,
+    "folder": "week29",
+    "file": "error_example.mp3",
+    "word": "Error",
+    "text": "Syntax error"
+  },
+  {
+    "week": 29,
+    "folder": "week29",
+    "file": "failure_example.mp3",
+    "word": "Failure",
+    "text": "System failure"
+  },
+  {
+    "week": 29,
+    "folder": "week29",
+    "file": "fault_example.mp3",
+    "word": "Fault",
+    "text": "Hardware fault"
+  },
+  {
+    "week": 29,
+    "folder": "week29",
+    "file": "bug_example.mp3",
+    "word": "Bug",
+    "text": "Fix the bug"
+  },
+  {
+    "week": 29,
+    "folder": "week29",
+    "file": "crash_example.mp3",
+    "word": "Crash",
+    "text": "The app crashed"
+  },
+  {
+    "week": 30,
+    "folder": "week30",
+    "file": "loading_example.mp3",
+    "word": "Loading",
+    "text": "Loading... please wait"
+  },
+  {
+    "week": 30,
+    "folder": "week30",
+    "file": "processing_example.mp3",
+    "word": "Processing",
+    "text": "Processing your request"
+  },
+  {
+    "week": 30,
+    "folder": "week30",
+    "file": "pending_example.mp3",
+    "word": "Pending",
+    "text": "Payment pending"
+  },
+  {
+    "week": 30,
+    "folder": "week30",
+    "file": "waiting_example.mp3",
+    "word": "Waiting",
+    "text": "Waiting for server"
+  },
+  {
+    "week": 30,
+    "folder": "week30",
+    "file": "progress_example.mp3",
+    "word": "Progress",
+    "text": "Check the progress bar"
+  },
+  {
+    "week": 31,
+    "folder": "week31",
+    "file": "code_example.mp3",
+    "word": "Code",
+    "text": "Write the source code"
+  },
+  {
+    "week": 31,
+    "folder": "week31",
+    "file": "variable_example.mp3",
+    "word": "Variable",
+    "text": "Declare a variable"
+  },
+  {
+    "week": 31,
+    "folder": "week31",
+    "file": "function_example.mp3",
+    "word": "Function",
+    "text": "Call the function"
+  },
+  {
+    "week": 31,
+    "folder": "week31",
+    "file": "loop_example.mp3",
+    "word": "Loop",
+    "text": "Create a for loop"
+  },
+  {
+    "week": 31,
+    "folder": "week31",
+    "file": "condition_example.mp3",
+    "word": "Condition",
+    "text": "Check the if condition"
+  },
+  {
+    "week": 32,
+    "folder": "week32",
+    "file": "string_example.mp3",
+    "word": "String",
+    "text": "The name is a string"
+  },
+  {
+    "week": 32,
+    "folder": "week32",
+    "file": "integer_example.mp3",
+    "word": "Integer",
+    "text": "Age is an integer"
+  },
+  {
+    "week": 32,
+    "folder": "week32",
+    "file": "boolean_example.mp3",
+    "word": "Boolean",
+    "text": "IsActive is a boolean"
+  },
+  {
+    "week": 32,
+    "folder": "week32",
+    "file": "operator_example.mp3",
+    "word": "Operator",
+    "text": "Use the plus operator"
+  },
+  {
+    "week": 32,
+    "folder": "week32",
+    "file": "value_example.mp3",
+    "word": "Value",
+    "text": "Assign a value"
+  },
+  {
+    "week": 33,
+    "folder": "week33",
+    "file": "compiler_example.mp3",
+    "word": "Compiler",
+    "text": "Run the compiler"
+  },
+  {
+    "week": 33,
+    "folder": "week33",
+    "file": "debugger_example.mp3",
+    "word": "Debugger",
+    "text": "Use the debugger"
+  },
+  {
+    "week": 33,
+    "folder": "week33",
+    "file": "terminal_example.mp3",
+    "word": "Terminal",
+    "text": "Open the terminal"
+  },
+  {
+    "week": 33,
+    "folder": "week33",
+    "file": "console_example.mp3",
+    "word": "Console",
+    "text": "Check the console log"
+  },
+  {
+    "week": 33,
+    "folder": "week33",
+    "file": "script_example.mp3",
+    "word": "Script",
+    "text": "Run the script"
+  },
+  {
+    "week": 34,
+    "folder": "week34",
+    "file": "database_example.mp3",
+    "word": "Database",
+    "text": "Connect to the database"
+  },
+  {
+    "week": 34,
+    "folder": "week34",
+    "file": "table_example.mp3",
+    "word": "Table",
+    "text": "Create a new table"
+  },
+  {
+    "week": 34,
+    "folder": "week34",
+    "file": "row_example.mp3",
+    "word": "Row",
+    "text": "Insert a new row"
+  },
+  {
+    "week": 34,
+    "folder": "week34",
+    "file": "column_example.mp3",
+    "word": "Column",
+    "text": "Add a column to the table"
+  },
+  {
+    "week": 34,
+    "folder": "week34",
+    "file": "record_example.mp3",
+    "word": "Record",
+    "text": "Update the record"
+  },
+  {
+    "week": 35,
+    "folder": "week35",
+    "file": "server_example.mp3",
+    "word": "Server",
+    "text": "The server is down"
+  },
+  {
+    "week": 35,
+    "folder": "week35",
+    "file": "client_example.mp3",
+    "word": "Client",
+    "text": "The web client"
+  },
+  {
+    "week": 35,
+    "folder": "week35",
+    "file": "request_example.mp3",
+    "word": "Request",
+    "text": "Send an HTTP request"
+  },
+  {
+    "week": 35,
+    "folder": "week35",
+    "file": "response_example.mp3",
+    "word": "Response",
+    "text": "Wait for the response"
+  },
+  {
+    "week": 35,
+    "folder": "week35",
+    "file": "api_example.mp3",
+    "word": "API",
+    "text": "Connect to the API"
+  },
+  {
+    "week": 36,
+    "folder": "week36",
+    "file": "manual_example.mp3",
+    "word": "Manual",
+    "text": "Read the user manual"
+  },
+  {
+    "week": 36,
+    "folder": "week36",
+    "file": "guide_example.mp3",
+    "word": "Guide",
+    "text": "Follow the setup guide"
+  },
+  {
+    "week": 36,
+    "folder": "week36",
+    "file": "readme_example.mp3",
+    "word": "Readme",
+    "text": "Check the README.md file"
+  },
+  {
+    "week": 36,
+    "folder": "week36",
+    "file": "tutorial_example.mp3",
+    "word": "Tutorial",
+    "text": "Watch the tutorial"
+  },
+  {
+    "week": 36,
+    "folder": "week36",
+    "file": "documentation_example.mp3",
+    "word": "Documentation",
+    "text": "Read the API documentation"
+  },
+  {
+    "week": 37,
+    "folder": "week37",
+    "file": "license_example.mp3",
+    "word": "License",
+    "text": "Read the MIT license"
+  },
+  {
+    "week": 37,
+    "folder": "week37",
+    "file": "copyright_example.mp3",
+    "word": "Copyright",
+    "text": "Copyright 2024"
+  },
+  {
+    "week": 37,
+    "folder": "week37",
+    "file": "author_example.mp3",
+    "word": "Author",
+    "text": "Contact the author"
+  },
+  {
+    "week": 37,
+    "folder": "week37",
+    "file": "version_example.mp3",
+    "word": "Version",
+    "text": "Version 1.0.2"
+  },
+  {
+    "week": 37,
+    "folder": "week37",
+    "file": "release_example.mp3",
+    "word": "Release",
+    "text": "The latest release"
+  },
+  {
+    "week": 38,
+    "folder": "week38",
+    "file": "security_example.mp3",
+    "word": "Security",
+    "text": "Improve the security"
+  },
+  {
+    "week": 38,
+    "folder": "week38",
+    "file": "privacy_example.mp3",
+    "word": "Privacy",
+    "text": "Check the privacy policy"
+  },
+  {
+    "week": 38,
+    "folder": "week38",
+    "file": "encryption_example.mp3",
+    "word": "Encryption",
+    "text": "Use data encryption"
+  },
+  {
+    "week": 38,
+    "folder": "week38",
+    "file": "authentication_example.mp3",
+    "word": "Authentication",
+    "text": "User authentication"
+  },
+  {
+    "week": 38,
+    "folder": "week38",
+    "file": "authorization_example.mp3",
+    "word": "Authorization",
+    "text": "Check user authorization"
+  },
+  {
+    "week": 39,
+    "folder": "week39",
+    "file": "performance_example.mp3",
+    "word": "Performance",
+    "text": "Check the app performance"
+  },
+  {
+    "week": 39,
+    "folder": "week39",
+    "file": "optimization_example.mp3",
+    "word": "Optimization",
+    "text": "Code optimization"
+  },
+  {
+    "week": 39,
+    "folder": "week39",
+    "file": "speed_example.mp3",
+    "word": "Speed",
+    "text": "Test the loading speed"
+  },
+  {
+    "week": 39,
+    "folder": "week39",
+    "file": "efficiency_example.mp3",
+    "word": "Efficiency",
+    "text": "Improve memory efficiency"
+  },
+  {
+    "week": 39,
+    "folder": "week39",
+    "file": "scale_example.mp3",
+    "word": "Scale",
+    "text": "Scale the application"
+  },
+  {
+    "week": 40,
+    "folder": "week40",
+    "file": "review_example.mp3",
+    "word": "Review",
+    "text": "Final review of the course"
+  },
+  {
+    "week": 40,
+    "folder": "week40",
+    "file": "project_example.mp3",
+    "word": "Project",
+    "text": "Complete the final project"
+  },
+  {
+    "week": 40,
+    "folder": "week40",
+    "file": "final_example.mp3",
+    "word": "Final",
+    "text": "The final exam"
+  },
+  {
+    "week": 40,
+    "folder": "week40",
+    "file": "summary_example.mp3",
+    "word": "Summary",
+    "text": "Read the summary"
+  },
+  {
+    "week": 40,
+    "folder": "week40",
+    "file": "success_example.mp3",
+    "word": "Success",
+    "text": "Success in your career"
+  }
+]

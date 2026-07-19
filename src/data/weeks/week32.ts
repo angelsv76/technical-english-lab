@@ -11,31 +11,41 @@ export const week32: WeekData = {
       word: "String",
       meaning: "Cadena de texto",
       example: "The name is a string",
-      context: "Development"
+      context: "Development",
+      phonetic: "/strɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week32/string.mp3"
     },
     {
       word: "Integer",
       meaning: "Número entero",
       example: "Age is an integer",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈɪntɪdʒər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week32/integer.mp3"
     },
     {
       word: "Boolean",
       meaning: "Valor lógico (true/false)",
       example: "IsActive is a boolean",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈbuːliən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week32/boolean.mp3"
     },
     {
       word: "Operator",
       meaning: "Operador matemático o lógico",
       example: "Use the plus operator",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈɑːpəreɪtər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week32/operator.mp3"
     },
     {
       word: "Value",
       meaning: "Valor asignado a una variable",
       example: "Assign a value",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈvæljuː/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week32/value.mp3"
     }
   ],
   simulation: {

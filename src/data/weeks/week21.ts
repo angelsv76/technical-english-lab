@@ -11,31 +11,41 @@ export const week21: WeekData = {
       word: "Step",
       meaning: "Paso individual en un proceso",
       example: "Follow the next step",
-      context: "Process"
+      context: "Process",
+      phonetic: "/stɛp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week21/step.mp3"
     },
     {
       word: "Process",
       meaning: "Proceso o conjunto de acciones",
       example: "The installation process",
-      context: "Process"
+      context: "Process",
+      phonetic: "/ˈprɑːsɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week21/process.mp3"
     },
     {
       word: "Sequence",
       meaning: "Secuencia u orden de eventos",
       example: "Follow the correct sequence",
-      context: "Process"
+      context: "Process",
+      phonetic: "/ˈsiːkwəns/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week21/sequence.mp3"
     },
     {
       word: "Flow",
       meaning: "Flujo de trabajo o navegación",
       example: "Check the user flow",
-      context: "Process"
+      context: "Process",
+      phonetic: "/floʊ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week21/flow.mp3"
     },
     {
       word: "Stage",
       meaning: "Etapa o fase de un proyecto",
       example: "The development stage",
-      context: "Process"
+      context: "Process",
+      phonetic: "/steɪdʒ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week21/stage.mp3"
     }
   ],
   simulation: {

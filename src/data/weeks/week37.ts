@@ -11,31 +11,41 @@ export const week37: WeekData = {
       word: "License",
       meaning: "Licencia de uso",
       example: "Read the MIT license",
-      context: "Legal"
+      context: "Legal",
+      phonetic: "/ˈlaɪsəns/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week37/license.mp3"
     },
     {
       word: "Copyright",
       meaning: "Derechos de autor",
       example: "Copyright 2024",
-      context: "Legal"
+      context: "Legal",
+      phonetic: "/ˈkɑːpiraɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week37/copyright.mp3"
     },
     {
       word: "Author",
       meaning: "Autor o creador",
       example: "Contact the author",
-      context: "Legal"
+      context: "Legal",
+      phonetic: "/ˈɔːθər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week37/author.mp3"
     },
     {
       word: "Version",
       meaning: "Versión del software",
       example: "Version 1.0.2",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈvɜːrʒən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week37/version.mp3"
     },
     {
       word: "Release",
       meaning: "Lanzamiento o publicación",
       example: "The latest release",
-      context: "System"
+      context: "System",
+      phonetic: "/rɪˈliːs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week37/release.mp3"
     }
   ],
   simulation: {

@@ -16,6 +16,8 @@ export interface VocabularyEntry {
   reviewCount: number;
   correctCount: number;
   wrongCount: number;
+  srsLevel?: number;
+  nextReviewAt?: string | null;
   simulation?: {
     visual: string;
     question: string;
@@ -33,6 +35,7 @@ export interface Question {
   question: string;
   options: string[];
   answer: string;
+  explanation?: string;
 }
 
 export interface Simulation {
@@ -43,6 +46,7 @@ export interface Simulation {
   question: string;
   options: string[];
   answer: string;
+  explanation?: string;
 }
 
 export interface WeekData {

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Volume2, Loader2 } from 'lucide-react';
+import { speakEnglish, isTTSAvailable } from '../utils/tts';
 
 interface VocabularyAudioProps {
   word: string;
@@ -17,7 +18,13 @@ export const VocabularyAudio: React.FC<VocabularyAudioProps> = ({
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const playAudio = async () => {
-    if (!audioUrl) return;
+    // Sin archivo de audio (semanas 13-40): usar la voz del navegador
+    if (!audioUrl) {
+      if (isPlaying) return;
+      setIsPlaying(true);
+      speakEnglish(word, { rate: 0.75, onEnd: () => setIsPlaying(false) });
+      return;
+    }
 
     try {
       setIsLoading(true);
@@ -34,9 +41,14 @@ export const VocabularyAudio: React.FC<VocabularyAudioProps> = ({
         });
 
         audioRef.current.addEventListener('error', () => {
+          // Archivo no disponible: usar la voz del navegador como respaldo
           setIsLoading(false);
-          setIsPlaying(false);
-          console.error(`Error loading audio for "${word}"`);
+          if (isTTSAvailable()) {
+            setIsPlaying(true);
+            speakEnglish(word, { rate: 0.75, onEnd: () => setIsPlaying(false) });
+          } else {
+            setIsPlaying(false);
+          }
         });
       }
 
@@ -55,7 +67,9 @@ export const VocabularyAudio: React.FC<VocabularyAudioProps> = ({
     }
   };
 
-  if (!phonetic && !audioUrl) return null;
+  const canPlay = Boolean(audioUrl) || isTTSAvailable();
+
+  if (!phonetic && !canPlay) return null;
 
   return (
     <div className="flex items-center gap-3 mt-2">
@@ -65,7 +79,7 @@ export const VocabularyAudio: React.FC<VocabularyAudioProps> = ({
         </span>
       )}
       
-      {audioUrl && (
+      {canPlay && (
         <button
           onClick={playAudio}
           disabled={isLoading}

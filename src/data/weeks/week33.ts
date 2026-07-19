@@ -11,31 +11,41 @@ export const week33: WeekData = {
       word: "Compiler",
       meaning: "Compilador (traduce código)",
       example: "Run the compiler",
-      context: "Development"
+      context: "Development",
+      phonetic: "/kəmˈpaɪlər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week33/compiler.mp3"
     },
     {
       word: "Debugger",
       meaning: "Depurador (encuentra errores)",
       example: "Use the debugger",
-      context: "Development"
+      context: "Development",
+      phonetic: "/diːˈbʌɡər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week33/debugger.mp3"
     },
     {
       word: "Terminal",
       meaning: "Terminal o consola de comandos",
       example: "Open the terminal",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈtɜːrmɪnəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week33/terminal.mp3"
     },
     {
       word: "Console",
       meaning: "Consola de salida de datos",
       example: "Check the console log",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈkɑːnsoʊl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week33/console.mp3"
     },
     {
       word: "Script",
       meaning: "Archivo de comandos o guion",
       example: "Run the script",
-      context: "Development"
+      context: "Development",
+      phonetic: "/skrɪpt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week33/script.mp3"
     }
   ],
   simulation: {

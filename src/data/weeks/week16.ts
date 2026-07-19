@@ -11,31 +11,41 @@ export const week16: WeekData = {
       word: "Window",
       meaning: "Ventana de la aplicación",
       example: "Close the active window",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈwɪndoʊ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week16/window.mp3"
     },
     {
       word: "Header",
       meaning: "Encabezado o parte superior",
       example: "The logo is in the header",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈhɛdər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week16/header.mp3"
     },
     {
       word: "Footer",
       meaning: "Pie de página o parte inferior",
       example: "Copyright info in the footer",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈfʊtər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week16/footer.mp3"
     },
     {
       word: "Sidebar",
       meaning: "Barra lateral de navegación",
       example: "Open the sidebar",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈsaɪdbɑːr/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week16/sidebar.mp3"
     },
     {
       word: "Main Content",
       meaning: "Área de contenido principal",
       example: "Display data in the main content",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/meɪn ˈkɑːntɛnt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week16/main-content.mp3"
     }
   ],
   simulation: {

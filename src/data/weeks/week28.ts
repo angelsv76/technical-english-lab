@@ -11,31 +11,41 @@ export const week28: WeekData = {
       word: "Alert",
       meaning: "Alerta o aviso urgente",
       example: "Security alert",
-      context: "System"
+      context: "System",
+      phonetic: "/əˈlɜːrt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week28/alert.mp3"
     },
     {
       word: "Warning",
       meaning: "Advertencia de posible problema",
       example: "Low battery warning",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈwɔːrnɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week28/warning.mp3"
     },
     {
       word: "Caution",
       meaning: "Precaución o cuidado",
       example: "Use with caution",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈkɔːʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week28/caution.mp3"
     },
     {
       word: "Notice",
       meaning: "Aviso o notificación informativa",
       example: "Read the legal notice",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈnoʊtɪs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week28/notice.mp3"
     },
     {
       word: "Attention",
       meaning: "Atención o llamado de enfoque",
       example: "Attention required",
-      context: "System"
+      context: "System",
+      phonetic: "/əˈtɛnʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week28/attention.mp3"
     }
   ],
   simulation: {

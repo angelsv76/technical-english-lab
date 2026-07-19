@@ -11,31 +11,41 @@ export const week27: WeekData = {
       word: "Validate",
       meaning: "Validar o verificar datos",
       example: "Validate the input",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈvælɪdeɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week27/validate.mp3"
     },
     {
       word: "Invalid",
       meaning: "Inválido o incorrecto",
       example: "Invalid email format",
-      context: "System"
+      context: "System",
+      phonetic: "/ɪnˈvælɪd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week27/invalid.mp3"
     },
     {
       word: "Error Message",
       meaning: "Mensaje de error",
       example: "Display the error message",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈɛrər ˈmɛsɪdʒ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week27/error-message.mp3"
     },
     {
       word: "Success",
       meaning: "Éxito o proceso correcto",
       example: "Success! Form sent",
-      context: "System"
+      context: "System",
+      phonetic: "/səkˈsɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week27/success.mp3"
     },
     {
       word: "Format",
       meaning: "Formato de los datos",
       example: "Check the date format",
-      context: "Data"
+      context: "Data",
+      phonetic: "/ˈfɔːrmæt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week27/format.mp3"
     }
   ],
   simulation: {

@@ -11,31 +11,41 @@ export const week22: WeekData = {
       word: "Start",
       meaning: "Iniciar o comenzar",
       example: "Start the application",
-      context: "Action"
+      context: "Action",
+      phonetic: "/stɑːrt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week22/start.mp3"
     },
     {
       word: "Finish",
       meaning: "Terminar o finalizar",
       example: "Finish the setup",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈfɪnɪʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week22/finish.mp3"
     },
     {
       word: "Begin",
       meaning: "Empezar",
       example: "Begin the download",
-      context: "Action"
+      context: "Action",
+      phonetic: "/bɪˈɡɪn/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week22/begin.mp3"
     },
     {
       word: "End",
       meaning: "Fin o finalizar",
       example: "The end of the file",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ɛnd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week22/end.mp3"
     },
     {
       word: "Complete",
       meaning: "Completar o terminar totalmente",
       example: "Complete the form",
-      context: "Action"
+      context: "Action",
+      phonetic: "/kəmˈpliːt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week22/complete.mp3"
     }
   ],
   simulation: {

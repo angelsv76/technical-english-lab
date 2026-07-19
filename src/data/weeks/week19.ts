@@ -11,31 +11,41 @@ export const week19: WeekData = {
       word: "Button",
       meaning: "Botón de acción",
       example: "Click the 'Submit' button",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈbʌtən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week19/button.mp3"
     },
     {
       word: "Icon",
       meaning: "Icono o representación gráfica",
       example: "The 'Save' icon is a diskette",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈaɪkɑːn/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week19/icon.mp3"
     },
     {
       word: "Tooltip",
       meaning: "Texto de ayuda al pasar el mouse",
       example: "Hover to see the tooltip",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈtuːltɪp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week19/tooltip.mp3"
     },
     {
       word: "Badge",
       meaning: "Insignia o indicador numérico",
       example: "A badge with the number of messages",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/bædʒ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week19/badge.mp3"
     },
     {
       word: "Notification",
       meaning: "Notificación o aviso del sistema",
       example: "You have a new notification",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˌnoʊtɪfɪˈkeɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week19/notification.mp3"
     }
   ],
   simulation: {

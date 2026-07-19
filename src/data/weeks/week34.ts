@@ -11,31 +11,41 @@ export const week34: WeekData = {
       word: "Database",
       meaning: "Base de datos",
       example: "Connect to the database",
-      context: "Data"
+      context: "Data",
+      phonetic: "/ˈdeɪtəbeɪs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week34/database.mp3"
     },
     {
       word: "Table",
       meaning: "Tabla de datos",
       example: "Create a new table",
-      context: "Data"
+      context: "Data",
+      phonetic: "/ˈteɪbəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week34/table.mp3"
     },
     {
       word: "Row",
       meaning: "Fila o registro horizontal",
       example: "Insert a new row",
-      context: "Data"
+      context: "Data",
+      phonetic: "/roʊ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week34/row.mp3"
     },
     {
       word: "Column",
       meaning: "Columna o campo vertical",
       example: "Add a column to the table",
-      context: "Data"
+      context: "Data",
+      phonetic: "/ˈkɑːləm/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week34/column.mp3"
     },
     {
       word: "Record",
       meaning: "Registro de información",
       example: "Update the record",
-      context: "Data"
+      context: "Data",
+      phonetic: "/ˈrɛkərd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week34/record.mp3"
     }
   ],
   simulation: {

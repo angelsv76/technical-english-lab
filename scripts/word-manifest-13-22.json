@@ -1,0 +1,302 @@
+[
+  {
+    "folder": "week13",
+    "file": "adjust.mp3",
+    "word": "Adjust",
+    "text": "Adjust"
+  },
+  {
+    "folder": "week13",
+    "file": "enable.mp3",
+    "word": "Enable",
+    "text": "Enable"
+  },
+  {
+    "folder": "week13",
+    "file": "disable.mp3",
+    "word": "Disable",
+    "text": "Disable"
+  },
+  {
+    "folder": "week13",
+    "file": "toggle.mp3",
+    "word": "Toggle",
+    "text": "Toggle"
+  },
+  {
+    "folder": "week13",
+    "file": "configure.mp3",
+    "word": "Configure",
+    "text": "Configure"
+  },
+  {
+    "folder": "week14",
+    "file": "select.mp3",
+    "word": "Select",
+    "text": "Select"
+  },
+  {
+    "folder": "week14",
+    "file": "deselect.mp3",
+    "word": "Deselect",
+    "text": "Deselect"
+  },
+  {
+    "folder": "week14",
+    "file": "check.mp3",
+    "word": "Check",
+    "text": "Check"
+  },
+  {
+    "folder": "week14",
+    "file": "uncheck.mp3",
+    "word": "Uncheck",
+    "text": "Uncheck"
+  },
+  {
+    "folder": "week14",
+    "file": "highlight.mp3",
+    "word": "Highlight",
+    "text": "Highlight"
+  },
+  {
+    "folder": "week15",
+    "file": "find.mp3",
+    "word": "Find",
+    "text": "Find"
+  },
+  {
+    "folder": "week15",
+    "file": "filter.mp3",
+    "word": "Filter",
+    "text": "Filter"
+  },
+  {
+    "folder": "week15",
+    "file": "replace.mp3",
+    "word": "Replace",
+    "text": "Replace"
+  },
+  {
+    "folder": "week15",
+    "file": "match.mp3",
+    "word": "Match",
+    "text": "Match"
+  },
+  {
+    "folder": "week15",
+    "file": "query.mp3",
+    "word": "Query",
+    "text": "Query"
+  },
+  {
+    "folder": "week16",
+    "file": "window.mp3",
+    "word": "Window",
+    "text": "Window"
+  },
+  {
+    "folder": "week16",
+    "file": "header.mp3",
+    "word": "Header",
+    "text": "Header"
+  },
+  {
+    "folder": "week16",
+    "file": "footer.mp3",
+    "word": "Footer",
+    "text": "Footer"
+  },
+  {
+    "folder": "week16",
+    "file": "sidebar.mp3",
+    "word": "Sidebar",
+    "text": "Sidebar"
+  },
+  {
+    "folder": "week16",
+    "file": "main-content.mp3",
+    "word": "Main Content",
+    "text": "Main Content"
+  },
+  {
+    "folder": "week17",
+    "file": "navbar.mp3",
+    "word": "Navbar",
+    "text": "Navbar"
+  },
+  {
+    "folder": "week17",
+    "file": "breadcrumbs.mp3",
+    "word": "Breadcrumbs",
+    "text": "Breadcrumbs"
+  },
+  {
+    "folder": "week17",
+    "file": "pagination.mp3",
+    "word": "Pagination",
+    "text": "Pagination"
+  },
+  {
+    "folder": "week17",
+    "file": "link.mp3",
+    "word": "Link",
+    "text": "Link"
+  },
+  {
+    "folder": "week17",
+    "file": "tab.mp3",
+    "word": "Tab",
+    "text": "Tab"
+  },
+  {
+    "folder": "week18",
+    "file": "input.mp3",
+    "word": "Input",
+    "text": "Input"
+  },
+  {
+    "folder": "week18",
+    "file": "checkbox.mp3",
+    "word": "Checkbox",
+    "text": "Checkbox"
+  },
+  {
+    "folder": "week18",
+    "file": "radio-button.mp3",
+    "word": "Radio Button",
+    "text": "Radio Button"
+  },
+  {
+    "folder": "week18",
+    "file": "dropdown.mp3",
+    "word": "Dropdown",
+    "text": "Dropdown"
+  },
+  {
+    "folder": "week18",
+    "file": "textarea.mp3",
+    "word": "Textarea",
+    "text": "Textarea"
+  },
+  {
+    "folder": "week19",
+    "file": "button.mp3",
+    "word": "Button",
+    "text": "Button"
+  },
+  {
+    "folder": "week19",
+    "file": "icon.mp3",
+    "word": "Icon",
+    "text": "Icon"
+  },
+  {
+    "folder": "week19",
+    "file": "tooltip.mp3",
+    "word": "Tooltip",
+    "text": "Tooltip"
+  },
+  {
+    "folder": "week19",
+    "file": "badge.mp3",
+    "word": "Badge",
+    "text": "Badge"
+  },
+  {
+    "folder": "week19",
+    "file": "notification.mp3",
+    "word": "Notification",
+    "text": "Notification"
+  },
+  {
+    "folder": "week20",
+    "file": "card.mp3",
+    "word": "Card",
+    "text": "Card"
+  },
+  {
+    "folder": "week20",
+    "file": "modal.mp3",
+    "word": "Modal",
+    "text": "Modal"
+  },
+  {
+    "folder": "week20",
+    "file": "accordion.mp3",
+    "word": "Accordion",
+    "text": "Accordion"
+  },
+  {
+    "folder": "week20",
+    "file": "grid.mp3",
+    "word": "Grid",
+    "text": "Grid"
+  },
+  {
+    "folder": "week20",
+    "file": "container.mp3",
+    "word": "Container",
+    "text": "Container"
+  },
+  {
+    "folder": "week21",
+    "file": "step.mp3",
+    "word": "Step",
+    "text": "Step"
+  },
+  {
+    "folder": "week21",
+    "file": "process.mp3",
+    "word": "Process",
+    "text": "Process"
+  },
+  {
+    "folder": "week21",
+    "file": "sequence.mp3",
+    "word": "Sequence",
+    "text": "Sequence"
+  },
+  {
+    "folder": "week21",
+    "file": "flow.mp3",
+    "word": "Flow",
+    "text": "Flow"
+  },
+  {
+    "folder": "week21",
+    "file": "stage.mp3",
+    "word": "Stage",
+    "text": "Stage"
+  },
+  {
+    "folder": "week22",
+    "file": "start.mp3",
+    "word": "Start",
+    "text": "Start"
+  },
+  {
+    "folder": "week22",
+    "file": "finish.mp3",
+    "word": "Finish",
+    "text": "Finish"
+  },
+  {
+    "folder": "week22",
+    "file": "begin.mp3",
+    "word": "Begin",
+    "text": "Begin"
+  },
+  {
+    "folder": "week22",
+    "file": "end.mp3",
+    "word": "End",
+    "text": "End"
+  },
+  {
+    "folder": "week22",
+    "file": "complete.mp3",
+    "word": "Complete",
+    "text": "Complete"
+  }
+]

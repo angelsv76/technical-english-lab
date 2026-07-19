@@ -11,31 +11,41 @@ export const week31: WeekData = {
       word: "Code",
       meaning: "Código o conjunto de instrucciones",
       example: "Write the source code",
-      context: "Development"
+      context: "Development",
+      phonetic: "/koʊd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week31/code.mp3"
     },
     {
       word: "Variable",
       meaning: "Espacio para almacenar datos",
       example: "Declare a variable",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈvɛriəbəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week31/variable.mp3"
     },
     {
       word: "Function",
       meaning: "Bloque de código reutilizable",
       example: "Call the function",
-      context: "Development"
+      context: "Development",
+      phonetic: "/ˈfʌŋkʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week31/function.mp3"
     },
     {
       word: "Loop",
       meaning: "Ciclo o repetición de instrucciones",
       example: "Create a for loop",
-      context: "Development"
+      context: "Development",
+      phonetic: "/luːp/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week31/loop.mp3"
     },
     {
       word: "Condition",
       meaning: "Condición o decisión lógica",
       example: "Check the if condition",
-      context: "Development"
+      context: "Development",
+      phonetic: "/kənˈdɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week31/condition.mp3"
     }
   ],
   simulation: {

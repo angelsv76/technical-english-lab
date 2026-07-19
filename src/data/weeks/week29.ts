@@ -11,31 +11,41 @@ export const week29: WeekData = {
       word: "Error",
       meaning: "Error o equivocación",
       example: "Syntax error",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈɛrər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week29/error.mp3"
     },
     {
       word: "Failure",
       meaning: "Fallo o fracaso de un proceso",
       example: "System failure",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈfeɪljər/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week29/failure.mp3"
     },
     {
       word: "Fault",
       meaning: "Falla técnica o defecto",
       example: "Hardware fault",
-      context: "System"
+      context: "System",
+      phonetic: "/fɔːlt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week29/fault.mp3"
     },
     {
       word: "Bug",
       meaning: "Error de programación (bicho)",
       example: "Fix the bug",
-      context: "Development"
+      context: "Development",
+      phonetic: "/bʌɡ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week29/bug.mp3"
     },
     {
       word: "Crash",
       meaning: "Cierre inesperado o colapso",
       example: "The app crashed",
-      context: "System"
+      context: "System",
+      phonetic: "/kræʃ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week29/crash.mp3"
     }
   ],
   simulation: {

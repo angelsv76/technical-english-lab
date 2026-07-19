@@ -12,6 +12,7 @@ import { PracticeCard } from './PracticeCard';
 import { ReinforcementCard } from './ReinforcementCard';
 import { generateReinforcementActivity, ReinforcementActivity } from '../services/reinforcementService';
 import { VocabularyAudio } from './VocabularyAudio';
+import { ExampleSentence } from './ExampleSentence';
 
 interface Props {
   weekData: WeekData;
@@ -52,7 +53,8 @@ export const WeekPage: React.FC<Props> = ({
   useEffect(() => {
     const loadActivities = async () => {
       // Check if we already have activities for this week in localStorage
-      const cacheKey = `ai_activities_week_${weekData.week}`;
+      // v2: schema includes `explanation` — old cache entries lack it, so use a new key
+      const cacheKey = `ai_activities_week_${weekData.week}_v2`;
       const cached = localStorage.getItem(cacheKey);
       
       if (cached) {
@@ -248,9 +250,7 @@ export const WeekPage: React.FC<Props> = ({
                         </div>
                       </div>
                       <p className="text-lg font-medium text-zinc-800 mb-2">{item.meaning}</p>
-                      <p className="text-sm text-zinc-500 italic bg-white p-3 rounded-xl border border-zinc-100">
-                        Example: <span className="text-zinc-700 font-medium">"{item.example}"</span>
-                      </p>
+                      <ExampleSentence example={item.example} word={item.word} week={weekData.week} />
                     </div>
                   ))}
                 </div>

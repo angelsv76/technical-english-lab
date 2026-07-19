@@ -11,31 +11,41 @@ export const week39: WeekData = {
       word: "Performance",
       meaning: "Rendimiento o desempeño",
       example: "Check the app performance",
-      context: "System"
+      context: "System",
+      phonetic: "/pərˈfɔːrməns/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week39/performance.mp3"
     },
     {
       word: "Optimization",
       meaning: "Optimización o mejora",
       example: "Code optimization",
-      context: "System"
+      context: "System",
+      phonetic: "/ˌɑːptɪməˈzeɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week39/optimization.mp3"
     },
     {
       word: "Speed",
       meaning: "Velocidad de ejecución",
       example: "Test the loading speed",
-      context: "System"
+      context: "System",
+      phonetic: "/spiːd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week39/speed.mp3"
     },
     {
       word: "Efficiency",
       meaning: "Eficiencia en el uso de recursos",
       example: "Improve memory efficiency",
-      context: "System"
+      context: "System",
+      phonetic: "/ɪˈfɪʃənsi/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week39/efficiency.mp3"
     },
     {
       word: "Scale",
       meaning: "Escalar o crecer el sistema",
       example: "Scale the application",
-      context: "System"
+      context: "System",
+      phonetic: "/skeɪl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week39/scale.mp3"
     }
   ],
   simulation: {

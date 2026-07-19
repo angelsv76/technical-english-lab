@@ -9,6 +9,7 @@ interface Props {
     question: string;
     options: string[];
     answer: string;
+    explanation?: string;
   };
 }
 
@@ -34,27 +35,13 @@ export const PracticeCard: React.FC<Props> = ({ word, context, initialPractice }
     }
   }, [word, initialPractice]);
 
-  const handleSelect = async (option: string) => {
+  const handleSelect = (option: string) => {
     if (selected || isGenerating || !currentPractice) return;
-    
+
     const correct = option === currentPractice.answer;
     setSelected(option);
     setIsCorrect(correct);
     setAttempts(prev => prev + 1);
-
-    if (!correct) {
-      // If incorrect, wait a bit then generate a new question
-      setTimeout(async () => {
-        setIsGenerating(true);
-        const newPractice = await generateHybridPractice(word, context);
-        if (newPractice) {
-          setCurrentPractice(newPractice);
-          setSelected(null);
-          setIsCorrect(null);
-        }
-        setIsGenerating(false);
-      }, 2000);
-    }
   };
 
   const handleReset = async () => {
@@ -128,23 +115,36 @@ export const PracticeCard: React.FC<Props> = ({ word, context, initialPractice }
           </div>
 
           {selected && (
-            <div className={`mt-6 p-4 rounded-xl text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300 ${isCorrect ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
-              <div className="flex justify-between items-center">
-                <span>
-                  {isCorrect 
-                    ? '¡Correcto! Has comprendido el uso técnico de la palabra.' 
-                    : 'Respuesta incorrecta, intentemos otra vez.'}
-                </span>
-                {isCorrect && (
-                  <button 
+            <div className={`mt-6 p-4 rounded-xl text-sm animate-in fade-in slide-in-from-top-2 duration-300 ${isCorrect ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'}`}>
+              {isCorrect ? (
+                <div className="flex justify-between items-center font-bold">
+                  <span>¡Correcto! Has comprendido el uso técnico de la palabra.</span>
+                  <button
                     onClick={handleReset}
                     className="flex items-center gap-1 text-emerald-600 hover:text-emerald-800 transition-colors"
                   >
                     <RotateCcw size={14} />
                     <span>Nueva</span>
                   </button>
-                )}
-              </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  <p className="font-bold">
+                    Incorrecto. La respuesta correcta era: <span className="underline">{currentPractice.answer}</span>
+                  </p>
+                  {currentPractice.explanation && (
+                    <p className="text-red-800 font-medium bg-white/60 p-3 rounded-lg border border-red-100">
+                      💡 {currentPractice.explanation}
+                    </p>
+                  )}
+                  <button
+                    onClick={handleReset}
+                    className="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl transition-colors"
+                  >
+                    Entendido, siguiente pregunta
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </>

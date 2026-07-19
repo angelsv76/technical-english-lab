@@ -12,6 +12,7 @@ interface Props {
     question: string;
     options: string[];
     answer: string;
+    explanation?: string;
   };
 }
 
@@ -95,7 +96,12 @@ export const SimulationCard: React.FC<Props> = ({ word, meaning, example, contex
 
       {selected && (
         <div className={`mt-6 p-4 rounded-xl text-sm font-bold animate-in fade-in slide-in-from-top-2 duration-300 ${isCorrect ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'}`}>
-          {isCorrect ? '¡Correcto! Has identificado el elemento correctamente.' : `Incorrecto. La respuesta correcta era: ${simulation.answer}`}
+          <p>{isCorrect ? '¡Correcto! Has identificado el elemento correctamente.' : `Incorrecto. La respuesta correcta era: ${simulation.answer}`}</p>
+          {!isCorrect && simulation.explanation && (
+            <p className="mt-3 font-medium text-red-300 bg-zinc-800 p-3 rounded-lg border border-red-500/30">
+              💡 {simulation.explanation}
+            </p>
+          )}
         </div>
       )}
     </div>

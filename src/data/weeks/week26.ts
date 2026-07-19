@@ -11,31 +11,41 @@ export const week26: WeekData = {
       word: "Form",
       meaning: "Formulario",
       example: "Fill out the form",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/fɔːrm/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week26/form.mp3"
     },
     {
       word: "Field",
       meaning: "Campo de entrada",
       example: "The email field",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/fiːld/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week26/field.mp3"
     },
     {
       word: "Label",
       meaning: "Etiqueta descriptiva del campo",
       example: "Read the label",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈleɪbəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week26/label.mp3"
     },
     {
       word: "Required",
       meaning: "Obligatorio",
       example: "This field is required",
-      context: "System"
+      context: "System",
+      phonetic: "/rɪˈkwaɪərd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week26/required.mp3"
     },
     {
       word: "Optional",
       meaning: "Opcional",
       example: "The phone number is optional",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈɑːpʃənəl/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week26/optional.mp3"
     }
   ],
   simulation: {

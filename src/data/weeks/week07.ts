@@ -13,7 +13,7 @@ export const week07: WeekData = {
       example: "Please login to continue",
       context: "Security",
       phonetic: "/ˈlɔːɡɪn/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/login.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/login.mp3"
     },
     {
       word: "Logout",
@@ -21,7 +21,7 @@ export const week07: WeekData = {
       example: "Don't forget to logout",
       context: "Security",
       phonetic: "/ˈlɔːɡaʊt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/logout.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/logout.mp3"
     },
     {
       word: "Sign up",
@@ -29,7 +29,7 @@ export const week07: WeekData = {
       example: "Sign up for a new account",
       context: "Security",
       phonetic: "/ˈsaɪnʌp/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/sign_up.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/sign-up.mp3"
     },
     {
       word: "Password",
@@ -37,7 +37,7 @@ export const week07: WeekData = {
       example: "Enter your password",
       context: "Security",
       phonetic: "/ˈpæswɜːrd/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/password.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/password.mp3"
     },
     {
       word: "Reset",
@@ -45,7 +45,7 @@ export const week07: WeekData = {
       example: "Reset your password",
       context: "Action",
       phonetic: "/riːˈsɛt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/reset.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week07/reset.mp3"
     }
   ],
   simulation: {

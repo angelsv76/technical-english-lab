@@ -13,7 +13,17 @@ export const useWeeks = () => {
       const overrides = JSON.parse(saved);
       baseWeeks = defaultWeeks.map(dw => {
         const override = overrides.find((o: any) => o.week === dw.week);
-        return override ? { ...dw, ...override } : dw;
+        if (!override) return dw;
+        const merged = { ...dw, ...override };
+        // El vocabulario del código manda en estructura y campos nuevos
+        // (phonetic, audioUrl); el override guardado solo conserva sus ediciones
+        // por palabra. Sin esto, los datos viejos en localStorage entierran
+        // cualquier campo agregado en versiones nuevas de la app.
+        merged.vocabulary = dw.vocabulary.map(v => {
+          const ov = override.vocabulary?.find((o: any) => o.word === v.word);
+          return ov ? { ...v, ...ov } : v;
+        });
+        return merged;
       });
     }
 

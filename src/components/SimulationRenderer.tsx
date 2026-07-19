@@ -60,17 +60,15 @@ export const SimulationRenderer: React.FC<Props> = ({ simulation, onAnswer }) =>
       {showFeedback && (
         <div className="mt-8 text-center animate-in fade-in slide-in-from-bottom-4">
           <p className={`text-xl font-bold ${selected === simulation.answer ? 'text-emerald-400' : 'text-red-400'}`}>
-            {selected === simulation.answer ? '¡Correcto! Well done.' : 'Incorrecto. Intenta de nuevo.'}
+            {selected === simulation.answer
+              ? '¡Correcto! Well done.'
+              : `Incorrecto. La respuesta correcta era: ${simulation.answer}`}
           </p>
-          <button 
-            onClick={() => {
-              setSelected(null);
-              setShowFeedback(false);
-            }}
-            className="mt-4 text-sm text-zinc-400 underline hover:text-white"
-          >
-            Reiniciar simulación
-          </button>
+          {selected !== simulation.answer && simulation.explanation && (
+            <p className="mt-4 text-sm text-zinc-300 bg-zinc-800 p-4 rounded-xl border border-zinc-700 text-left">
+              💡 {simulation.explanation}
+            </p>
+          )}
         </div>
       )}
     </div>

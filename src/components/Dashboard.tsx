@@ -3,6 +3,7 @@ import { BookOpen, CheckCircle, Trophy, List, LogOut, ChevronRight, Code, Lock, 
 import { Student, WeekProgress, VocabularyEntry, WeekData } from '../types';
 import { courseScheduleService } from '../services/courseScheduleService';
 import { useNavigate } from 'react-router-dom';
+import { DailyReview } from './DailyReview';
 
 interface Props {
   student: Student;
@@ -12,6 +13,8 @@ interface Props {
   onSelectWeek: (week: number) => void;
   onOpenGlossary: () => void;
   onLogout: () => void;
+  onWordCorrect: (word: string) => void;
+  onWordIncorrect: (word: string) => void;
 }
 
 export const Dashboard: React.FC<Props> = ({
@@ -21,7 +24,9 @@ export const Dashboard: React.FC<Props> = ({
   weeks,
   onSelectWeek,
   onOpenGlossary,
-  onLogout
+  onLogout,
+  onWordCorrect,
+  onWordIncorrect
 }) => {
   const navigate = useNavigate();
   const completedWeeks = progress.filter(p => p.completed).length;
@@ -107,6 +112,16 @@ export const Dashboard: React.FC<Props> = ({
             subValue={`${glossary.length - masteredCount} en proceso`}
           />
         </div>
+
+        {/* Repaso espaciado del día */}
+        {/* key: reconstruye las preguntas cuando el glosario termina de cargar
+            (cambia de tamaño), sin reiniciar un repaso en curso */}
+        <DailyReview
+          key={`${student.id}-${glossary.length}`}
+          glossary={glossary}
+          onWordCorrect={onWordCorrect}
+          onWordIncorrect={onWordIncorrect}
+        />
 
         {/* Weeks Grid */}
         <div className="mb-8">

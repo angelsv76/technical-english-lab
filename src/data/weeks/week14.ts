@@ -11,31 +11,41 @@ export const week14: WeekData = {
       word: "Select",
       meaning: "Seleccionar uno o varios elementos",
       example: "Select all files",
-      context: "Action"
+      context: "Action",
+      phonetic: "/sɪˈlɛkt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week14/select.mp3"
     },
     {
       word: "Deselect",
       meaning: "Desmarcar o quitar la selección",
       example: "Deselect the image",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˌdiːsɪˈlɛkt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week14/deselect.mp3"
     },
     {
       word: "Check",
       meaning: "Marcar una casilla (poner el gancho)",
       example: "Check the box",
-      context: "Action"
+      context: "Action",
+      phonetic: "/tʃɛk/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week14/check.mp3"
     },
     {
       word: "Uncheck",
       meaning: "Desmarcar una casilla",
       example: "Uncheck the option",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ʌnˈtʃɛk/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week14/uncheck.mp3"
     },
     {
       word: "Highlight",
       meaning: "Resaltar o subrayar texto/elementos",
       example: "Highlight the keywords",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈhaɪlaɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week14/highlight.mp3"
     }
   ],
   simulation: {

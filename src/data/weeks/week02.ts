@@ -13,7 +13,7 @@ export const week02: WeekData = {
       example: "Open the main menu",
       context: "Navigation",
       phonetic: "/ˈmɛnjuː/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/menu.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/menu.mp3"
     },
     {
       word: "Home",
@@ -21,7 +21,7 @@ export const week02: WeekData = {
       example: "Return to home",
       context: "Navigation",
       phonetic: "/hoʊm/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/home.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/home.mp3"
     },
     {
       word: "Back",
@@ -29,7 +29,7 @@ export const week02: WeekData = {
       example: "Go back",
       context: "Navigation",
       phonetic: "/bæk/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/back.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/back.mp3"
     },
     {
       word: "Next",
@@ -37,7 +37,7 @@ export const week02: WeekData = {
       example: "Click next to continue",
       context: "Navigation",
       phonetic: "/nɛkst/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/next.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/next.mp3"
     },
     {
       word: "Exit",
@@ -45,7 +45,7 @@ export const week02: WeekData = {
       example: "Exit the application",
       context: "Action",
       phonetic: "/ˈɛɡzɪt/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/exit.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week02/exit.mp3"
     }
   ],
   simulation: {

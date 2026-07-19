@@ -11,31 +11,41 @@ export const week17: WeekData = {
       word: "Navbar",
       meaning: "Barra de navegación principal",
       example: "Links in the navbar",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈnævbɑːr/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week17/navbar.mp3"
     },
     {
       word: "Breadcrumbs",
       meaning: "Ruta de navegación (migas de pan)",
       example: "Check the breadcrumbs",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˈbrɛdkrʌmz/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week17/breadcrumbs.mp3"
     },
     {
       word: "Pagination",
       meaning: "Paginación de resultados",
       example: "Go to page 2 in pagination",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/ˌpædʒɪˈneɪʃən/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week17/pagination.mp3"
     },
     {
       word: "Link",
       meaning: "Enlace o hipervínculo",
       example: "Click the link",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/lɪŋk/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week17/link.mp3"
     },
     {
       word: "Tab",
       meaning: "Pestaña de navegación",
       example: "Switch to the 'Settings' tab",
-      context: "Interface"
+      context: "Interface",
+      phonetic: "/tæb/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week17/tab.mp3"
     }
   ],
   simulation: {

@@ -13,7 +13,7 @@ export const week01: WeekData = {
       example: "Search the file",
       context: "Interface",
       phonetic: "/sɜːrtʃ/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/search.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/search.mp3"
     },
     {
       word: "Settings",
@@ -21,7 +21,7 @@ export const week01: WeekData = {
       example: "Go to settings",
       context: "Interface",
       phonetic: "/ˈsɛtɪŋz/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/settings.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/settings.mp3"
     },
     {
       word: "Download",
@@ -29,7 +29,7 @@ export const week01: WeekData = {
       example: "Download the app",
       context: "Action",
       phonetic: "/ˈdaʊnloʊd/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/download.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/download.mp3"
     },
     {
       word: "File",
@@ -37,7 +37,7 @@ export const week01: WeekData = {
       example: "Open the file",
       context: "Storage",
       phonetic: "/faɪl/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/file.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/file.mp3"
     },
     {
       word: "Error",
@@ -45,7 +45,7 @@ export const week01: WeekData = {
       example: "System error",
       context: "System",
       phonetic: "/ˈɛrər/",
-      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/error.wav"
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week01/error.mp3"
     }
   ],
   simulation: {

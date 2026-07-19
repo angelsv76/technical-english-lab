@@ -11,31 +11,41 @@ export const week30: WeekData = {
       word: "Loading",
       meaning: "Cargando datos o recursos",
       example: "Loading... please wait",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈloʊdɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week30/loading.mp3"
     },
     {
       word: "Processing",
       meaning: "Procesando información",
       example: "Processing your request",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈprɑːsɛsɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week30/processing.mp3"
     },
     {
       word: "Pending",
       meaning: "Pendiente de completar",
       example: "Payment pending",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈpɛndɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week30/pending.mp3"
     },
     {
       word: "Waiting",
       meaning: "Esperando una respuesta",
       example: "Waiting for server",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈweɪtɪŋ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week30/waiting.mp3"
     },
     {
       word: "Progress",
       meaning: "Progreso de una tarea",
       example: "Check the progress bar",
-      context: "System"
+      context: "System",
+      phonetic: "/ˈprɑːɡrɛs/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week30/progress.mp3"
     }
   ],
   simulation: {

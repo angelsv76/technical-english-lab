@@ -11,31 +11,41 @@ export const week25: WeekData = {
       word: "Save",
       meaning: "Guardar los cambios",
       example: "Save your work",
-      context: "Action"
+      context: "Action",
+      phonetic: "/seɪv/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week25/save.mp3"
     },
     {
       word: "Exit",
       meaning: "Salir de un programa o ventana",
       example: "Exit the application",
-      context: "Action"
+      context: "Action",
+      phonetic: "/ˈɛɡzɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week25/exit.mp3"
     },
     {
       word: "Quit",
       meaning: "Cerrar o abandonar (fuerza el cierre)",
       example: "Quit the editor",
-      context: "Action"
+      context: "Action",
+      phonetic: "/kwɪt/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week25/quit.mp3"
     },
     {
       word: "Discard",
       meaning: "Descartar o no guardar cambios",
       example: "Discard changes",
-      context: "Action"
+      context: "Action",
+      phonetic: "/dɪsˈkɑːrd/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week25/discard.mp3"
     },
     {
       word: "Apply",
       meaning: "Aplicar cambios sin cerrar",
       example: "Apply the settings",
-      context: "Action"
+      context: "Action",
+      phonetic: "/əˈplaɪ/",
+      audioUrl: "https://uecbylctkvdmvfqcxlzg.supabase.co/storage/v1/object/public/vocabulary-audio/week25/apply.mp3"
     }
   ],
   simulation: {
