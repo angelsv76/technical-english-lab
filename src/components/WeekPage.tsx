@@ -20,7 +20,10 @@ interface Props {
   progress: WeekProgress | undefined;
   glossary: VocabularyEntry[];
   onBack: () => void;
-  onComplete: (score: number) => Promise<boolean> | boolean | void;
+  onComplete: (
+    score: number,
+    answers?: { question: string; answer: string }[]
+  ) => Promise<{ ok: boolean; score: number; verificationCode: string | null }> | void;
   onWordCorrect: (word: string) => void;
   onWordIncorrect: (word: string) => void;
 }
@@ -47,6 +50,7 @@ export const WeekPage: React.FC<Props> = ({
   const [reinforcementQueue, setReinforcementQueue] = useState<ReinforcementActivity[]>([]);
   const [isGeneratingReinforcement, setIsGeneratingReinforcement] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
+  const [verificationCode, setVerificationCode] = useState<string | null>(null);
 
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>(weekData.evaluation);
   const simulation = getSimulationById(weekData.simulation.simulationId);
@@ -142,16 +146,32 @@ export const WeekPage: React.FC<Props> = ({
       weekData.week,
       score,
       Math.max(score, progress?.bestScore || 0),
-      score >= 70 ? 'Passed' : 'Not Passed'
+      score >= 70 ? 'Passed' : 'Not Passed',
+      verificationCode
     );
   };
 
   const saveScore = async (finalScore: number) => {
     setSaveStatus('saving');
     try {
-      const ok = await onComplete(finalScore);
-      // void (undefined) se trata como éxito para no alarmar en flujos antiguos
-      setSaveStatus(ok === false ? 'error' : 'saved');
+      // Enviar las respuestas: el servidor recalcula la nota (fuente autoritativa)
+      const answered = shuffledQuestions.map((q, idx) => ({
+        question: q.question,
+        answer: answers[`q_${idx}`] ?? ''
+      }));
+      const result = await onComplete(finalScore, answered);
+      if (result && typeof result === 'object') {
+        if (!result.ok) {
+          setSaveStatus('error');
+          return;
+        }
+        // La nota oficial es la del servidor
+        if (typeof result.score === 'number') setScore(result.score);
+        setVerificationCode(result.verificationCode);
+        setSaveStatus('saved');
+      } else {
+        setSaveStatus('saved');
+      }
     } catch {
       setSaveStatus('error');
     }

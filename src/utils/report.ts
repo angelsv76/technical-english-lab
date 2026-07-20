@@ -6,7 +6,8 @@ export const generatePDFReport = (
   weekNumber: number,
   score: number,
   bestScore: number,
-  status: 'Passed' | 'Not Passed'
+  status: 'Passed' | 'Not Passed',
+  verificationCode?: string | null
 ) => {
   const doc = new jsPDF();
   const primaryColor = '#F57C00';
@@ -50,14 +51,39 @@ export const generatePDFReport = (
   doc.setFont('helvetica', 'bold');
   doc.text(`Estado: ${status === 'Passed' ? 'APROBADO' : 'REPROBADO'}`, 20, 135);
 
+  // Bloque de verificación: el código lo genera la base de datos y solo es
+  // válido si existe en el sistema. Verificable en /verificar/<código>.
+  if (verificationCode) {
+    doc.setDrawColor(200, 200, 200);
+    doc.setLineWidth(0.3);
+    doc.roundedRect(20, 150, 170, 30, 2, 2);
+
+    doc.setTextColor(0, 0, 0);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(10);
+    doc.text('Código de verificación', 25, 158);
+
+    doc.setFont('courier', 'normal');
+    doc.setFontSize(11);
+    doc.text(verificationCode, 25, 166);
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(100, 100, 100);
+    doc.text(
+      `Verifique la autenticidad en: https://technical-english-lab.vercel.app/verificar/${verificationCode}`,
+      25, 174
+    );
+  }
+
   // Footer
   doc.setDrawColor(primaryColor);
   doc.setLineWidth(0.5);
   doc.line(20, 270, 190, 270);
-  
+
   doc.setTextColor(150, 150, 150);
   doc.setFontSize(8);
-  doc.text('Este documento es un reporte automático generado por Technical English Lab.', 105, 280, { align: 'center' });
+  doc.text('Documento informativo. La nota oficial es la registrada en el sistema, verificable con el código impreso.', 105, 280, { align: 'center' });
 
   doc.save(`Reporte_Semana_${weekNumber}_${student.name.replace(/\s+/g, '_')}.pdf`);
 };

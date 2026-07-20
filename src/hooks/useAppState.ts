@@ -100,12 +100,43 @@ export const useAppState = () => {
     }
   };
 
-  // Devuelve true solo si la nota quedó guardada en Supabase.
-  // El que llama DEBE mostrar un aviso si devuelve false — un guardado
-  // fallido silencioso ya costó 2 meses de datos (incidente RLS, jul 2026).
-  const updateProgress = async (week: number, score: number): Promise<boolean> => {
-    if (!student?.id) return false;
+  // Resultado del guardado de una evaluación. La nota autoritativa es la que
+  // calcula el servidor (Edge Function); el navegador solo la muestra.
+  // Un guardado fallido silencioso ya costó 2 meses de datos (RLS, jul 2026).
+  const updateProgress = async (
+    week: number,
+    score: number,
+    answers?: { question: string; answer: string }[]
+  ): Promise<{ ok: boolean; score: number; verificationCode: string | null }> => {
+    if (!student?.id) return { ok: false, score, verificationCode: null };
 
+    const applyLocal = (finalScore: number, bestScore: number, attempts: number, completed: boolean) => {
+      setProgress(prev => {
+        const filtered = prev.filter(p => p.week !== week);
+        return [...filtered, { week, lastScore: finalScore, bestScore, attempts, completed }]
+          .sort((a, b) => a.week - b.week);
+      });
+    };
+
+    // 1) Vía preferida: la Edge Function califica en el servidor y guarda
+    //    con la clave secreta — el navegador no puede inventarse la nota.
+    if (answers && answers.length > 0) {
+      try {
+        const { data, error } = await supabase.functions.invoke('submit-evaluation', {
+          body: { studentId: student.id, week, answers }
+        });
+        if (!error && data && typeof data.score === 'number') {
+          applyLocal(data.score, data.bestScore ?? data.score, data.attempts ?? 1, !!data.completed);
+          return { ok: true, score: data.score, verificationCode: data.verificationCode ?? null };
+        }
+        console.warn('Edge function no disponible, usando guardado directo:', error?.message || data?.error);
+      } catch (err) {
+        console.warn('Edge function falló, usando guardado directo:', err);
+      }
+    }
+
+    // 2) Respaldo: escritura directa (funciona mientras las políticas de
+    //    escritura de weekly_progress sigan abiertas; ver supabase-verificacion.sql)
     const existing = progress.find(p => p.week === week);
     const newData = {
       student_id: student.id,
@@ -113,7 +144,7 @@ export const useAppState = () => {
       last_score: score,
       best_score: existing ? Math.max(existing.bestScore || 0, score) : score,
       attempts: (existing?.attempts || 0) + 1,
-      completed: score >= 70,
+      completed: score >= 70 || existing?.completed || false,
       completed_at: score >= 70 ? new Date().toISOString() : existing?.completed_at,
       updated_at: new Date().toISOString()
     };
@@ -127,21 +158,10 @@ export const useAppState = () => {
 
       if (error) {
         console.error('Error guardando progreso:', error);
-        return false;
+        return { ok: false, score, verificationCode: null };
       }
 
-      // Actualizar estado local
-      setProgress(prev => {
-        const filtered = prev.filter(p => p.week !== week);
-        const newProgress = {
-          week: week,
-          lastScore: score,
-          bestScore: newData.best_score,
-          attempts: newData.attempts,
-          completed: newData.completed
-        };
-        return [...filtered, newProgress].sort((a, b) => a.week - b.week);
-      });
+      applyLocal(score, newData.best_score, newData.attempts, newData.completed);
 
       // Registrar actividad (best-effort: no invalida el guardado de la nota)
       await supabase.from('activity_log').insert({
@@ -151,10 +171,10 @@ export const useAppState = () => {
         metadata: { score, completed: score >= 70 }
       });
 
-      return true;
+      return { ok: true, score, verificationCode: data?.verification_code ?? null };
     } catch (err) {
       console.error('Error en updateProgress:', err);
-      return false;
+      return { ok: false, score, verificationCode: null };
     }
   };
 
