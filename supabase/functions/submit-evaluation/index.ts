@@ -52,11 +52,19 @@ Deno.serve(async (req) => {
       return json({ error: `sin claves de evaluación para la semana ${week}` }, 400);
     }
 
+    // Normaliza para comparar: distintas formas de acentos/espacios (p.ej. tras
+    // copiar el SQL a mano) no deben hacer que una respuesta correcta cuente como mal.
+    const norm = (s: unknown) =>
+      typeof s === "string" ? s.normalize("NFC").trim().replace(/\s+/g, " ") : "";
+
     // Calificación en servidor: una pregunta cuenta solo si coincide con la clave
     let correct = 0;
     for (const key of keys) {
-      const submitted = answers.find((a: { question?: string }) => a?.question === key.question);
-      if (submitted && submitted.answer === key.answer) correct++;
+      const keyQuestion = norm(key.question);
+      const submitted = answers.find(
+        (a: { question?: string }) => norm(a?.question) === keyQuestion
+      );
+      if (submitted && norm(submitted.answer) === norm(key.answer)) correct++;
     }
     const score = Math.round((correct / keys.length) * 100);
     const passed = score >= 70;
