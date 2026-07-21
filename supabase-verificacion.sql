@@ -28,10 +28,15 @@ alter table evaluation_keys enable row level security;
 
 -- ============================================================
 -- PARTE 2 — Ejecutar SOLO cuando la Edge Function submit-evaluation esté
--- desplegada Y el código nuevo de la app esté en producción.
+-- desplegada, probada, Y el código nuevo de la app esté en producción.
 -- Cierra la escritura directa de notas desde el navegador: desde entonces
--- las notas solo entran por la Edge Function (con la clave secreta).
+-- las notas solo entran por la Edge Function (que usa la service key, y
+-- por eso no se ve afectada por este REVOKE).
+--
+-- Se usa REVOKE a nivel de tabla en vez de DROP POLICY porque es una
+-- restricción de más alto nivel que Postgres aplica ANTES de evaluar
+-- cualquier política RLS — no depende de adivinar el nombre de políticas
+-- que pudieran existir de antes.
 -- ============================================================
 
--- drop policy if exists "app puede insertar progreso" on weekly_progress;
--- drop policy if exists "app puede actualizar progreso" on weekly_progress;
+revoke insert, update, delete on weekly_progress from anon, authenticated;
