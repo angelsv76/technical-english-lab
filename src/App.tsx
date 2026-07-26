@@ -148,7 +148,9 @@ const WeekPageWrapper = ({ weeks, student, progress, glossary, onComplete, onWor
       progress={weekProgress}
       glossary={glossary}
       onBack={onBack}
-      onComplete={(score: number) => onComplete(weekNum, score)}
+      onComplete={(score: number, answers?: { question: string; answer: string }[]) =>
+        onComplete(weekNum, score, answers)
+      }
       onWordCorrect={onWordCorrect}
       onWordIncorrect={onWordIncorrect}
     />
