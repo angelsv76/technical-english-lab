@@ -1,0 +1,39 @@
+# Dependencias y build
+node_modules/
+dist/
+.vite/
+*.local
+
+# Variables de entorno — NUNCA versionar.
+# .env.local tiene VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY y GEMINI_API_KEY.
+# En produccion las pone Vercel; en local viven solo en ese archivo.
+# Nota: el patron *.local de arriba ya lo cubre, pero se deja explicito para
+# que se vea al abrir el archivo.
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# Audio generado — pesa y se regenera; el definitivo vive en el bucket
+# vocabulary-audio de Supabase
+audio-upload/**/*.mp3
+audio-upload/**/*.wav
+
+# Logs
+*.log
+npm-debug.log*
+
+# Configuracion local de Claude Code
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.idea/
+.vscode/*
+!.vscode/extensions.json

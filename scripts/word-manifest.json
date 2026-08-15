@@ -1,0 +1,566 @@
+[
+  {
+    "folder": "week14",
+    "file": "highlight.mp3",
+    "word": "Highlight",
+    "text": "Highlight"
+  },
+  {
+    "folder": "week15",
+    "file": "match.mp3",
+    "word": "Match",
+    "text": "Match"
+  },
+  {
+    "folder": "week22",
+    "file": "end.mp3",
+    "word": "End",
+    "text": "End"
+  },
+  {
+    "folder": "week22",
+    "file": "complete.mp3",
+    "word": "Complete",
+    "text": "Complete"
+  },
+  {
+    "folder": "week23",
+    "file": "next.mp3",
+    "word": "Next",
+    "text": "Next"
+  },
+  {
+    "folder": "week23",
+    "file": "previous.mp3",
+    "word": "Previous",
+    "text": "Previous"
+  },
+  {
+    "folder": "week23",
+    "file": "back.mp3",
+    "word": "Back",
+    "text": "Back"
+  },
+  {
+    "folder": "week23",
+    "file": "forward.mp3",
+    "word": "Forward",
+    "text": "Forward"
+  },
+  {
+    "folder": "week23",
+    "file": "skip.mp3",
+    "word": "Skip",
+    "text": "Skip"
+  },
+  {
+    "folder": "week24",
+    "file": "confirm.mp3",
+    "word": "Confirm",
+    "text": "Confirm"
+  },
+  {
+    "folder": "week24",
+    "file": "cancel.mp3",
+    "word": "Cancel",
+    "text": "Cancel"
+  },
+  {
+    "folder": "week24",
+    "file": "agree.mp3",
+    "word": "Agree",
+    "text": "Agree"
+  },
+  {
+    "folder": "week24",
+    "file": "decline.mp3",
+    "word": "Decline",
+    "text": "Decline"
+  },
+  {
+    "folder": "week24",
+    "file": "accept.mp3",
+    "word": "Accept",
+    "text": "Accept"
+  },
+  {
+    "folder": "week25",
+    "file": "save.mp3",
+    "word": "Save",
+    "text": "Save"
+  },
+  {
+    "folder": "week25",
+    "file": "exit.mp3",
+    "word": "Exit",
+    "text": "Exit"
+  },
+  {
+    "folder": "week25",
+    "file": "quit.mp3",
+    "word": "Quit",
+    "text": "Quit"
+  },
+  {
+    "folder": "week25",
+    "file": "discard.mp3",
+    "word": "Discard",
+    "text": "Discard"
+  },
+  {
+    "folder": "week25",
+    "file": "apply.mp3",
+    "word": "Apply",
+    "text": "Apply"
+  },
+  {
+    "folder": "week26",
+    "file": "form.mp3",
+    "word": "Form",
+    "text": "Form"
+  },
+  {
+    "folder": "week26",
+    "file": "field.mp3",
+    "word": "Field",
+    "text": "Field"
+  },
+  {
+    "folder": "week26",
+    "file": "label.mp3",
+    "word": "Label",
+    "text": "Label"
+  },
+  {
+    "folder": "week26",
+    "file": "required.mp3",
+    "word": "Required",
+    "text": "Required"
+  },
+  {
+    "folder": "week26",
+    "file": "optional.mp3",
+    "word": "Optional",
+    "text": "Optional"
+  },
+  {
+    "folder": "week27",
+    "file": "validate.mp3",
+    "word": "Validate",
+    "text": "Validate"
+  },
+  {
+    "folder": "week27",
+    "file": "invalid.mp3",
+    "word": "Invalid",
+    "text": "Invalid"
+  },
+  {
+    "folder": "week27",
+    "file": "error-message.mp3",
+    "word": "Error Message",
+    "text": "Error Message"
+  },
+  {
+    "folder": "week27",
+    "file": "success.mp3",
+    "word": "Success",
+    "text": "Success"
+  },
+  {
+    "folder": "week27",
+    "file": "format.mp3",
+    "word": "Format",
+    "text": "Format"
+  },
+  {
+    "folder": "week28",
+    "file": "alert.mp3",
+    "word": "Alert",
+    "text": "Alert"
+  },
+  {
+    "folder": "week28",
+    "file": "warning.mp3",
+    "word": "Warning",
+    "text": "Warning"
+  },
+  {
+    "folder": "week28",
+    "file": "caution.mp3",
+    "word": "Caution",
+    "text": "Caution"
+  },
+  {
+    "folder": "week28",
+    "file": "notice.mp3",
+    "word": "Notice",
+    "text": "Notice"
+  },
+  {
+    "folder": "week28",
+    "file": "attention.mp3",
+    "word": "Attention",
+    "text": "Attention"
+  },
+  {
+    "folder": "week29",
+    "file": "error.mp3",
+    "word": "Error",
+    "text": "Error"
+  },
+  {
+    "folder": "week29",
+    "file": "failure.mp3",
+    "word": "Failure",
+    "text": "Failure"
+  },
+  {
+    "folder": "week29",
+    "file": "fault.mp3",
+    "word": "Fault",
+    "text": "Fault"
+  },
+  {
+    "folder": "week29",
+    "file": "bug.mp3",
+    "word": "Bug",
+    "text": "Bug"
+  },
+  {
+    "folder": "week29",
+    "file": "crash.mp3",
+    "word": "Crash",
+    "text": "Crash"
+  },
+  {
+    "folder": "week30",
+    "file": "loading.mp3",
+    "word": "Loading",
+    "text": "Loading"
+  },
+  {
+    "folder": "week30",
+    "file": "processing.mp3",
+    "word": "Processing",
+    "text": "Processing"
+  },
+  {
+    "folder": "week30",
+    "file": "pending.mp3",
+    "word": "Pending",
+    "text": "Pending"
+  },
+  {
+    "folder": "week30",
+    "file": "waiting.mp3",
+    "word": "Waiting",
+    "text": "Waiting"
+  },
+  {
+    "folder": "week30",
+    "file": "progress.mp3",
+    "word": "Progress",
+    "text": "Progress"
+  },
+  {
+    "folder": "week31",
+    "file": "code.mp3",
+    "word": "Code",
+    "text": "Code"
+  },
+  {
+    "folder": "week31",
+    "file": "variable.mp3",
+    "word": "Variable",
+    "text": "Variable"
+  },
+  {
+    "folder": "week31",
+    "file": "function.mp3",
+    "word": "Function",
+    "text": "Function"
+  },
+  {
+    "folder": "week31",
+    "file": "loop.mp3",
+    "word": "Loop",
+    "text": "Loop"
+  },
+  {
+    "folder": "week31",
+    "file": "condition.mp3",
+    "word": "Condition",
+    "text": "Condition"
+  },
+  {
+    "folder": "week32",
+    "file": "string.mp3",
+    "word": "String",
+    "text": "String"
+  },
+  {
+    "folder": "week32",
+    "file": "integer.mp3",
+    "word": "Integer",
+    "text": "Integer"
+  },
+  {
+    "folder": "week32",
+    "file": "boolean.mp3",
+    "word": "Boolean",
+    "text": "Boolean"
+  },
+  {
+    "folder": "week32",
+    "file": "operator.mp3",
+    "word": "Operator",
+    "text": "Operator"
+  },
+  {
+    "folder": "week32",
+    "file": "value.mp3",
+    "word": "Value",
+    "text": "Value"
+  },
+  {
+    "folder": "week33",
+    "file": "compiler.mp3",
+    "word": "Compiler",
+    "text": "Compiler"
+  },
+  {
+    "folder": "week33",
+    "file": "debugger.mp3",
+    "word": "Debugger",
+    "text": "Debugger"
+  },
+  {
+    "folder": "week33",
+    "file": "terminal.mp3",
+    "word": "Terminal",
+    "text": "Terminal"
+  },
+  {
+    "folder": "week33",
+    "file": "console.mp3",
+    "word": "Console",
+    "text": "Console"
+  },
+  {
+    "folder": "week33",
+    "file": "script.mp3",
+    "word": "Script",
+    "text": "Script"
+  },
+  {
+    "folder": "week34",
+    "file": "database.mp3",
+    "word": "Database",
+    "text": "Database"
+  },
+  {
+    "folder": "week34",
+    "file": "table.mp3",
+    "word": "Table",
+    "text": "Table"
+  },
+  {
+    "folder": "week34",
+    "file": "row.mp3",
+    "word": "Row",
+    "text": "Row"
+  },
+  {
+    "folder": "week34",
+    "file": "column.mp3",
+    "word": "Column",
+    "text": "Column"
+  },
+  {
+    "folder": "week34",
+    "file": "record.mp3",
+    "word": "Record",
+    "text": "Record"
+  },
+  {
+    "folder": "week35",
+    "file": "server.mp3",
+    "word": "Server",
+    "text": "Server"
+  },
+  {
+    "folder": "week35",
+    "file": "client.mp3",
+    "word": "Client",
+    "text": "Client"
+  },
+  {
+    "folder": "week35",
+    "file": "request.mp3",
+    "word": "Request",
+    "text": "Request"
+  },
+  {
+    "folder": "week35",
+    "file": "response.mp3",
+    "word": "Response",
+    "text": "Response"
+  },
+  {
+    "folder": "week35",
+    "file": "api.mp3",
+    "word": "API",
+    "text": "API"
+  },
+  {
+    "folder": "week36",
+    "file": "manual.mp3",
+    "word": "Manual",
+    "text": "Manual"
+  },
+  {
+    "folder": "week36",
+    "file": "guide.mp3",
+    "word": "Guide",
+    "text": "Guide"
+  },
+  {
+    "folder": "week36",
+    "file": "readme.mp3",
+    "word": "Readme",
+    "text": "Readme"
+  },
+  {
+    "folder": "week36",
+    "file": "tutorial.mp3",
+    "word": "Tutorial",
+    "text": "Tutorial"
+  },
+  {
+    "folder": "week36",
+    "file": "documentation.mp3",
+    "word": "Documentation",
+    "text": "Documentation"
+  },
+  {
+    "folder": "week37",
+    "file": "license.mp3",
+    "word": "License",
+    "text": "License"
+  },
+  {
+    "folder": "week37",
+    "file": "copyright.mp3",
+    "word": "Copyright",
+    "text": "Copyright"
+  },
+  {
+    "folder": "week37",
+    "file": "author.mp3",
+    "word": "Author",
+    "text": "Author"
+  },
+  {
+    "folder": "week37",
+    "file": "version.mp3",
+    "word": "Version",
+    "text": "Version"
+  },
+  {
+    "folder": "week37",
+    "file": "release.mp3",
+    "word": "Release",
+    "text": "Release"
+  },
+  {
+    "folder": "week38",
+    "file": "security.mp3",
+    "word": "Security",
+    "text": "Security"
+  },
+  {
+    "folder": "week38",
+    "file": "privacy.mp3",
+    "word": "Privacy",
+    "text": "Privacy"
+  },
+  {
+    "folder": "week38",
+    "file": "encryption.mp3",
+    "word": "Encryption",
+    "text": "Encryption"
+  },
+  {
+    "folder": "week38",
+    "file": "authentication.mp3",
+    "word": "Authentication",
+    "text": "Authentication"
+  },
+  {
+    "folder": "week38",
+    "file": "authorization.mp3",
+    "word": "Authorization",
+    "text": "Authorization"
+  },
+  {
+    "folder": "week39",
+    "file": "performance.mp3",
+    "word": "Performance",
+    "text": "Performance"
+  },
+  {
+    "folder": "week39",
+    "file": "optimization.mp3",
+    "word": "Optimization",
+    "text": "Optimization"
+  },
+  {
+    "folder": "week39",
+    "file": "speed.mp3",
+    "word": "Speed",
+    "text": "Speed"
+  },
+  {
+    "folder": "week39",
+    "file": "efficiency.mp3",
+    "word": "Efficiency",
+    "text": "Efficiency"
+  },
+  {
+    "folder": "week39",
+    "file": "scale.mp3",
+    "word": "Scale",
+    "text": "Scale"
+  },
+  {
+    "folder": "week40",
+    "file": "review.mp3",
+    "word": "Review",
+    "text": "Review"
+  },
+  {
+    "folder": "week40",
+    "file": "project.mp3",
+    "word": "Project",
+    "text": "Project"
+  },
+  {
+    "folder": "week40",
+    "file": "final.mp3",
+    "word": "Final",
+    "text": "Final"
+  },
+  {
+    "folder": "week40",
+    "file": "summary.mp3",
+    "word": "Summary",
+    "text": "Summary"
+  },
+  {
+    "folder": "week40",
+    "file": "success.mp3",
+    "word": "Success",
+    "text": "Success"
+  }
+]
