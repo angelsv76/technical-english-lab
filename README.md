@@ -104,6 +104,12 @@ Estas migraciones están preparadas en el repositorio, pero **no se han aplicado
 al proyecto Supabase de producción. El panel docente requiere los pasos anteriores.
 La verificación pública solo indica si existe un código; no revela identidad ni notas.
 
+Para comprobar las funciones SQL sin datos reales, usa un proyecto de pruebas vacío:
+aplica `supabase/test-bootstrap.sql`, las migraciones 01, 03 y 04, y ejecuta
+`supabase/test-assertions.sql`. Esta última prueba revierte sus datos ficticios.
+La migración 02 requiere una cuenta Auth docente de prueba registrada en
+`teacher_users`; luego hay que verificar RLS con cuentas reales de cada rol.
+
 ---
 
 **Desarrollado por:** Ángel Sánchez  
