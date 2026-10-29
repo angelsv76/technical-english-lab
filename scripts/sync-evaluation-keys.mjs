@@ -8,8 +8,8 @@
  *   $env:SUPABASE_SERVICE_KEY = "<service_role key>"
  *   node scripts/sync-evaluation-keys.mjs
  *
- * Reemplaza TODAS las claves existentes (borra e inserta de nuevo) — es
- * seguro re-ejecutar cada vez que cambien las evaluaciones.
+ * Requiere la migración 2026102903_atomic_evaluation_keys.sql.
+ * Reemplaza las claves en una sola transacción de base de datos.
  */
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
@@ -23,24 +23,17 @@ if (!url || !key) {
 
 const supabase = createClient(url, key);
 const rows = JSON.parse(readFileSync('scripts/evaluation-keys.json', 'utf8'));
-
-const { error: delError } = await supabase.from('evaluation_keys').delete().neq('week_number', -1);
-if (delError) {
-  console.error('Error borrando claves anteriores:', delError.message);
+if (!Array.isArray(rows) || rows.length === 0 || rows.some(row =>
+  !Number.isInteger(row.week_number) || typeof row.question !== 'string' ||
+  !row.question.trim() || typeof row.answer !== 'string' || !row.answer.trim()
+)) {
+  console.error('El archivo de claves está vacío o contiene filas inválidas.');
   process.exit(1);
 }
 
-const BATCH = 100;
-let inserted = 0;
-for (let i = 0; i < rows.length; i += BATCH) {
-  const chunk = rows.slice(i, i + BATCH);
-  const { error } = await supabase.from('evaluation_keys').insert(chunk);
-  if (error) {
-    console.error(`✗ lote ${i}-${i + chunk.length}: ${error.message}`);
-    process.exit(1);
-  }
-  inserted += chunk.length;
-  console.log(`… ${inserted}/${rows.length}`);
+const { data: count, error } = await supabase.rpc('replace_evaluation_keys', { p_rows: rows });
+if (error || count !== rows.length) {
+  console.error('No se sincronizaron las claves:', error?.message || 'recuento inesperado');
+  process.exit(1);
 }
-
-console.log(`\nListo: ${inserted} claves de evaluación sincronizadas.`);
+console.log(`Listo: ${count} claves de evaluación sincronizadas.`);

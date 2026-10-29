@@ -23,9 +23,11 @@ import {
 } from 'lucide-react';
 import { useWeeks } from '../hooks/useWeeks';
 import { TeacherPanel } from '../components/TeacherPanel';
+import { StudentAvatar } from '../components/StudentAvatar';
+import { logoutTeacher } from '../services/authService';
 import { supabase } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 interface StudentData {
   id: string;
@@ -36,6 +38,7 @@ interface StudentData {
   last_seen: string | null;
   photo_url?: string | null;
   created_at: string;
+  active: boolean;
   progress: any[];
   // Señales de estudio real (glosario): distinguen "solo entró" de "estudió"
   wordsInGlossary: number;
@@ -52,8 +55,17 @@ export const TeacherDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'content' | 'students' | 'reports'>('students');
   const [students, setStudents] = useState<StudentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
+  const loadInFlightRef = useRef(false);
+  const hasLoadedRef = useRef(false);
   const [selectedStudent, setSelectedStudent] = useState<StudentDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('active');
+  const [reportScope, setReportScope] = useState<'active' | 'all'>('active');
+  const [dataError, setDataError] = useState<string | null>(null);
+  const [reportError, setReportError] = useState<string | null>(null);
+  const [busyStudentId, setBusyStudentId] = useState<string | null>(null);
   // Canario de integridad: fecha del último guardado real en todo el sistema
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const { weeks, toggleWeek } = useWeeks();
@@ -65,62 +77,89 @@ export const TeacherDashboard: React.FC = () => {
     }
   }, [activeTab]);
 
-  // Auto-refresh cada 30 segundos en la pestaña de estudiantes
+  // Actualizar ambas vistas cuando están visibles, sin acumular consultas al
+  // volver a una pestaña que estuvo en segundo plano.
   useEffect(() => {
-    if (activeTab !== 'students') return;
-    const interval = setInterval(loadStudents, 30000);
-    return () => clearInterval(interval);
+    if (activeTab === 'content') return;
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') void loadStudents();
+    };
+    const interval = window.setInterval(refreshIfVisible, 30000);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    window.addEventListener('focus', refreshIfVisible);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+      window.removeEventListener('focus', refreshIfVisible);
+    };
   }, [activeTab]);
 
   const loadStudents = async () => {
+    if (loadInFlightRef.current) return;
+    loadInFlightRef.current = true;
     try {
-      setLoading(true);
+      if (hasLoadedRef.current) setRefreshing(true);
+      else setLoading(true);
 
-      const { data: studentsData, error: studentsError } = await supabase
-        .from('students')
-        .select('id, nie, name, group_code, last_login, last_seen, photo_url, created_at, active')
-        .eq('active', true)
-        .order('name');
-
-      if (studentsError) {
-        console.error('Error al consultar estudiantes:', studentsError.message, studentsError.details);
-        setStudents([]);
-        return;
+      const studentsData: any[] = [];
+      const pageSize = 1000;
+      for (let offset = 0; ; offset += pageSize) {
+        const { data, error } = await supabase.from('students')
+          .select('id, nie, name, group_code, last_login, last_seen, photo_url, created_at, active')
+          .order('id').range(offset, offset + pageSize - 1);
+        if (error) throw error;
+        studentsData.push(...(data || []));
+        if (!data || data.length < pageSize) break;
       }
 
-      if (!studentsData || studentsData.length === 0) {
-        console.warn('No se encontraron estudiantes activos. Verifica la tabla students en Supabase.');
+      if (studentsData.length === 0) {
+        console.warn('No se encontraron estudiantes en Supabase.');
         setStudents([]);
+        setLastSavedAt(null);
+        setLastUpdatedAt(new Date());
+        setDataError(null);
+        hasLoadedRef.current = true;
         return;
       }
 
       const studentIds = studentsData.map(s => s.id);
+      const loadAllRows = async (table: 'weekly_progress' | 'glossary_entries', columns: string) => {
+        const rows: any[] = [];
+        for (let start = 0; start < studentIds.length; start += 100) {
+          const ids = studentIds.slice(start, start + 100);
+          for (let offset = 0; ; offset += pageSize) {
+            const { data, error } = await supabase.from(table).select(columns)
+              .in('student_id', ids).order('id').range(offset, offset + pageSize - 1);
+            if (error) throw error;
+            rows.push(...(data || []));
+            if (!data || data.length < pageSize) break;
+          }
+        }
+        return rows;
+      };
 
-      const { data: progressData, error: progressError } = await supabase
-        .from('weekly_progress')
-        .select('*')
-        .in('student_id', studentIds)
-        .order('week_number')
-        .range(0, 9999);
+      const [progressData, glossaryData] = await Promise.all([
+        loadAllRows('weekly_progress', 'student_id, week_number, last_score, best_score, attempts, completed, updated_at'),
+        // Glosario: la señal de que el alumno abrió/estudió una semana.
+        loadAllRows('glossary_entries', 'student_id, week_introduced, review_count')
+      ]);
 
-      if (progressError) {
-        console.error('Error al consultar progreso:', progressError.message, progressError.details);
+      const progressByStudent = new Map<string, any[]>();
+      const glossaryByStudent = new Map<string, any[]>();
+      for (const row of progressData) {
+        const rows = progressByStudent.get(row.student_id) || [];
+        rows.push(row);
+        progressByStudent.set(row.student_id, rows);
       }
-
-      // Glosario: la señal de que el alumno abrió/estudió una semana (no solo entró)
-      const { data: glossaryData, error: glossaryError } = await supabase
-        .from('glossary_entries')
-        .select('student_id, week_introduced, review_count')
-        .in('student_id', studentIds)
-        .range(0, 9999);
-
-      if (glossaryError) {
-        console.error('Error al consultar glosario:', glossaryError.message);
+      for (const row of glossaryData) {
+        const rows = glossaryByStudent.get(row.student_id) || [];
+        rows.push(row);
+        glossaryByStudent.set(row.student_id, rows);
       }
 
       const studentsWithProgress = studentsData.map(student => {
-        const studentProgress = (progressData || []).filter(p => p.student_id === student.id);
-        const studentGlossary = (glossaryData || []).filter(g => g.student_id === student.id);
+        const studentProgress = progressByStudent.get(student.id) || [];
+        const studentGlossary = glossaryByStudent.get(student.id) || [];
         return {
           ...student,
           progress: studentProgress,
@@ -149,11 +188,36 @@ export const TeacherDashboard: React.FC = () => {
       });
 
       setStudents(studentsWithProgress);
-      console.log('Fotos cargadas:', studentsWithProgress.map(s => ({ name: s.name, photo: s.photo_url })));
+      setLastUpdatedAt(new Date());
+      setDataError(null);
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error inesperado cargando estudiantes:', error);
+      setDataError('No se pudieron cargar todos los datos. Las descargas están deshabilitadas hasta actualizar.');
     } finally {
       setLoading(false);
+      setRefreshing(false);
+      loadInFlightRef.current = false;
+    }
+  };
+
+  const toggleStudentActive = async (student: StudentData) => {
+    const nextActive = !student.active;
+    if (!nextActive && !window.confirm(`¿Deshabilitar a ${student.name}? No podrá iniciar sesión ni guardar evaluaciones.`)) return;
+    setBusyStudentId(student.id);
+    setDataError(null);
+    try {
+      const { data, error } = await supabase.from('students')
+        .update({ active: nextActive }).eq('id', student.id).select('id, active').single();
+      if (error || !data || data.active !== nextActive) throw error || new Error('No se confirmó el cambio');
+      setStudents(previous => previous.map(item => item.id === student.id ? { ...item, active: nextActive } : item));
+      setSelectedStudent(previous => previous?.student.id === student.id
+        ? { ...previous, student: { ...previous.student, active: nextActive } } : previous);
+    } catch (error) {
+      console.error('Error cambiando estado del alumno:', error);
+      setDataError('No se pudo cambiar el estado del alumno. Comprueba los permisos e intenta de nuevo.');
+    } finally {
+      setBusyStudentId(null);
     }
   };
 
@@ -177,30 +241,63 @@ export const TeacherDashboard: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('teacherLoggedIn');
+  const handleLogout = async () => {
+    await logoutTeacher();
     navigate('/teacher/login');
   };
 
   const downloadReport = () => {
-    const doc = new jsPDF() as any;
-    doc.text('Reporte de Progreso - Technical English Lab - INTI', 14, 15);
-    
-    const tableData = students.map(s => {
-      const completed = s.progress.filter((p: any) => p.completed).length;
-      const scores = s.progress.map((p: any) => p.last_score).filter((sc: number | null) => sc !== null);
-      const avg = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
-      const lastLogin = s.last_login ? new Date(s.last_login).toLocaleDateString('es-SV') : 'Nunca';
-      return [s.nie, s.name, s.group_code, `${avg}%`, `${completed}/40`, lastLogin];
-    });
-    
-    doc.autoTable({
-      head: [['NIE', 'Nombre', 'Grupo', 'Promedio', 'Semanas', 'Última Actividad']],
-      body: tableData,
-      startY: 25,
-    });
-    
-    doc.save(`reporte_ds1b_${new Date().toISOString().split('T')[0]}.pdf`);
+    if (loading || refreshing || dataError || reportStudents.length === 0) return;
+    setReportError(null);
+    try {
+      const doc = new jsPDF();
+      doc.text('Reporte de Progreso - Technical English Lab - INTI', 14, 15);
+
+      const tableData = reportStudents.map(s => {
+        const completed = s.progress.filter((p: any) => p.completed).length;
+        const scores = s.progress.map((p: any) => p.last_score).filter((sc: number | null) => sc !== null);
+        const avg = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
+        const lastLogin = s.last_login ? new Date(s.last_login).toLocaleDateString('es-SV') : 'Nunca';
+        return [s.nie, s.name, s.group_code, s.active ? 'Activo' : 'Inactivo', `${avg}%`, `${completed}/40`, lastLogin];
+      });
+
+      autoTable(doc, {
+        head: [['NIE', 'Nombre', 'Grupo', 'Estado', 'Promedio', 'Semanas', 'Último acceso']],
+        body: tableData,
+        startY: 25,
+      });
+
+      doc.save(`reporte_ds1b_${reportScope}_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Error generando el PDF docente:', error);
+      setReportError('No se pudo generar el PDF. Intenta de nuevo o descarga el CSV.');
+    }
+  };
+
+  const downloadCsv = () => {
+    if (loading || refreshing || dataError || reportStudents.length === 0) return;
+    const rows = [
+      ['NIE', 'Nombre', 'Grupo', 'Estado', 'Semana', 'Última nota', 'Mejor nota', 'Intentos', 'Completada', 'Último acceso'],
+      ...reportStudents.flatMap(student => {
+        const base = [student.nie, student.name, student.group_code, student.active ? 'Activo' : 'Inactivo'];
+        const lastLogin = student.last_login || '';
+        return student.progress.length > 0
+          ? student.progress.map(progress => [...base, progress.week_number, progress.last_score ?? '', progress.best_score ?? '', progress.attempts ?? '', progress.completed ? 'Sí' : 'No', lastLogin])
+          : [[...base, '', '', '', '', '', lastLogin]];
+      })
+    ];
+    const safeCell = (value: unknown) => {
+      const text = String(value);
+      const neutralized = /^[\s\u0000-\u001f]*[=+@-]/.test(text) ? `'${text}` : text;
+      return `"${neutralized.replace(/"/g, '""')}"`;
+    };
+    const csv = '\uFEFF' + rows.map(row => row.map(safeCell).join(',')).join('\r\n');
+    const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `calificaciones_ds1b_${reportScope}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
   };
 
   const calculateStats = () => {
@@ -220,6 +317,8 @@ export const TeacherDashboard: React.FC = () => {
   };
 
   const stats = calculateStats();
+  const visibleStudents = students.filter(student => statusFilter === 'all' || student.active === (statusFilter === 'active'));
+  const reportStudents = students.filter(student => reportScope === 'all' || student.active);
 
   const isOnline = (lastSeen: string | null) => {
     if (!lastSeen) return false;
@@ -247,7 +346,7 @@ export const TeacherDashboard: React.FC = () => {
     if (s.wordsInGlossary > 0) return 'studied';
     return 'idle';
   };
-  const idleCount = students.filter(s => studyStatus(s) === 'idle').length;
+  const idleCount = students.filter(s => s.active && studyStatus(s) === 'idle').length;
 
   return (
     <div className="min-h-screen bg-zinc-50 flex">
@@ -340,6 +439,7 @@ export const TeacherDashboard: React.FC = () => {
 
         {activeTab === 'students' && (
           <div className="space-y-6">
+            {dataError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{dataError}</p>}
             {/* Canario de integridad de datos */}
             {!loading && students.length > 0 && (
               <div className={`p-4 rounded-2xl border flex flex-wrap items-center gap-x-6 gap-y-2 ${
@@ -358,15 +458,29 @@ export const TeacherDashboard: React.FC = () => {
                 )}
               </div>
             )}
-            <div className="flex justify-end">
-              <button
-                onClick={loadStudents}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-all disabled:opacity-50 shadow-sm"
-              >
-                <TrendingUp size={16} className={loading ? 'animate-spin' : ''} />
-                {loading ? 'Actualizando...' : 'Actualizar datos'}
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <label className="text-sm font-medium text-zinc-700" htmlFor="student-status-filter">
+                Mostrar alumnos
+                <select id="student-status-filter" value={statusFilter} onChange={event => setStatusFilter(event.target.value as typeof statusFilter)}
+                  className="ml-3 rounded-lg border border-zinc-300 bg-white px-3 py-2 text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600">
+                  <option value="active">Activos</option>
+                  <option value="inactive">Inactivos</option>
+                  <option value="all">Todos</option>
+                </select>
+              </label>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-xs text-zinc-500" aria-live="polite">
+                  {lastUpdatedAt ? `Última actualización: ${lastUpdatedAt.toLocaleTimeString('es-SV')}` : 'Esperando datos'} · cada 30 s
+                </p>
+                <button
+                  onClick={loadStudents}
+                  disabled={loading || refreshing}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-all disabled:opacity-50 shadow-sm"
+                >
+                  <TrendingUp size={16} className={loading || refreshing ? 'animate-spin' : ''} />
+                  {loading || refreshing ? 'Actualizando...' : 'Actualizar datos'}
+                </button>
+              </div>
             </div>
             {loading ? (
               <div className="text-center py-12">
@@ -376,7 +490,7 @@ export const TeacherDashboard: React.FC = () => {
               <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm p-12 text-center">
                 <Users size={40} className="text-zinc-300 mx-auto mb-4" />
                 <h3 className="font-bold text-zinc-600 mb-2">No se encontraron estudiantes</h3>
-                <p className="text-sm text-zinc-400">Verifica que existan registros activos en la tabla <span className="font-mono bg-zinc-100 px-1 rounded">students</span> de Supabase.</p>
+                <p className="text-sm text-zinc-500">Verifica que existan registros en la tabla <span className="font-mono bg-zinc-100 px-1 rounded">students</span> de Supabase.</p>
               </div>
             ) : (
               <>
@@ -384,10 +498,11 @@ export const TeacherDashboard: React.FC = () => {
                   <StatCard icon={<Users className="text-blue-500" />} label="Total Estudiantes" value={stats.totalStudents.toString()} />
                   <StatCard icon={<TrendingUp className="text-emerald-500" />} label="Promedio General" value={`${stats.averageScore}%`} />
                   <StatCard icon={<CheckCircle className="text-[#F57C00]" />} label="Semanas Completadas" value={stats.totalWeeksCompleted.toString()} />
-                  <StatCard icon={<div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />} label="En línea ahora" value={students.filter(s => isOnline(s.last_seen)).length.toString()} />
+                  <StatCard icon={<div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />} label="En línea ahora" value={students.filter(s => s.active && isOnline(s.last_seen)).length.toString()} />
                 </div>
 
-                <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
+                <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-x-auto">
+                  {visibleStudents.length === 0 && <p className="p-6 text-sm text-zinc-600">No hay alumnos con este estado.</p>}
                   <table className="w-full text-left border-collapse">
                     <thead>
                       <tr className="bg-zinc-50 border-b border-zinc-200">
@@ -399,10 +514,11 @@ export const TeacherDashboard: React.FC = () => {
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-48">Progreso</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-28">En línea</th>
                         <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-36">Última Actividad</th>
+                        <th className="p-4 text-xs font-bold text-zinc-500 uppercase tracking-wider w-36">Acceso</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {students.map(student => {
+                      {visibleStudents.map(student => {
                         const completed = student.progress.filter((p: any) => p.completed).length;
                         const scores = student.progress.map((p: any) => p.last_score).filter((s: number | null) => s !== null);
                         const avgProgress = scores.length > 0 
@@ -415,15 +531,14 @@ export const TeacherDashboard: React.FC = () => {
                         return (
                           <tr key={student.id} className="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                             <td className="p-4 w-16">
-                              <div
+                              <button
+                                type="button"
                                 onClick={() => openStudentDetail(student)}
-                                className="w-10 h-10 rounded-xl overflow-hidden bg-[#F57C00] flex items-center justify-center text-white font-bold text-lg cursor-pointer hover:ring-2 hover:ring-[#F57C00] hover:ring-offset-2 transition-all flex-shrink-0"
+                                aria-label={`Ver detalles de ${student.name}`}
+                                className="w-10 h-10 rounded-xl overflow-hidden flex items-center justify-center cursor-pointer hover:ring-2 hover:ring-[#F57C00] hover:ring-offset-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 flex-shrink-0"
                               >
-                                {student.photo_url
-                                  ? <img src={student.photo_url} alt={student.name} className="w-full h-full object-cover" />
-                                  : <span>{student.name.charAt(0)}</span>
-                                }
-                              </div>
+                                <StudentAvatar name={student.name} photoUrl={student.photo_url} size={40} className="w-full h-full object-cover" />
+                              </button>
                             </td>
                             <td className="p-4 w-28 whitespace-nowrap font-mono text-sm text-zinc-600">{student.nie}</td>
                             <td className="p-4">
@@ -464,7 +579,9 @@ export const TeacherDashboard: React.FC = () => {
                               <p className="text-[10px] text-zinc-400 mt-1">{completed} semanas completadas</p>
                             </td>
                             <td className="p-4">
-                              {isOnline(student.last_seen) ? (
+                              {!student.active ? (
+                                <span className="text-xs font-bold text-zinc-600">Deshabilitado</span>
+                              ) : isOnline(student.last_seen) ? (
                                 <div className="flex items-center gap-2">
                                   <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
                                   <span className="text-xs font-bold text-emerald-600">Activo</span>
@@ -482,6 +599,14 @@ export const TeacherDashboard: React.FC = () => {
                                 {lastLogin}
                               </div>
                             </td>
+                            <td className="p-4">
+                              <button type="button" onClick={() => toggleStudentActive(student)}
+                                disabled={busyStudentId === student.id}
+                                aria-label={`${student.active ? 'Deshabilitar' : 'Habilitar'} a ${student.name}`}
+                                className={`min-h-11 rounded-lg px-3 py-2 text-xs font-bold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:opacity-50 ${student.active ? 'bg-red-50 text-red-700 hover:bg-red-100' : 'bg-emerald-50 text-emerald-800 hover:bg-emerald-100'}`}>
+                                {busyStudentId === student.id ? 'Guardando…' : student.active ? 'Deshabilitar' : 'Habilitar'}
+                              </button>
+                            </td>
                           </tr>
                         );
                       })}
@@ -494,21 +619,41 @@ export const TeacherDashboard: React.FC = () => {
         )}
 
         {activeTab === 'reports' && (
-          <div className="max-w-lg">
+          <div className="max-w-2xl space-y-4">
+            {dataError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{dataError}</p>}
+            {reportError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{reportError}</p>}
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
+              <span>{lastUpdatedAt ? `Última actualización: ${lastUpdatedAt.toLocaleTimeString('es-SV')}` : 'Esperando datos'} · cada 30 s</span>
+              <button type="button" onClick={loadStudents} disabled={loading || refreshing}
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2 font-bold text-zinc-700 hover:bg-zinc-50 disabled:opacity-50">
+                {loading || refreshing ? 'Actualizando...' : 'Actualizar datos'}
+              </button>
+            </div>
             <div className="bg-white p-8 rounded-3xl border border-zinc-200 shadow-sm flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-6">
                 <FileText size={40} />
               </div>
               <h3 className="text-xl font-bold text-zinc-900 mb-2">Reporte de Calificaciones</h3>
-              <p className="text-zinc-500 mb-8">Descarga un documento PDF detallado con el progreso y notas de todos los estudiantes de DS1B.</p>
-              <button
-                onClick={downloadReport}
-                disabled={loading || students.length === 0}
-                className="w-full flex items-center justify-center gap-2 py-4 bg-zinc-900 text-white font-bold rounded-2xl hover:bg-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Download size={20} />
-                Descargar PDF
-              </button>
+              <p className="text-zinc-600 mb-6">El PDF resume el progreso. El CSV incluye una fila por evaluación y se puede abrir en una hoja de cálculo.</p>
+              <label htmlFor="report-scope" className="w-full text-left text-sm font-medium text-zinc-700 mb-6">
+                Participantes incluidos
+                <select id="report-scope" value={reportScope} onChange={event => setReportScope(event.target.value as typeof reportScope)}
+                  className="mt-2 w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-orange-600">
+                  <option value="active">Solo activos</option>
+                  <option value="all">Todos, incluidos deshabilitados</option>
+                </select>
+              </label>
+              <p className="mb-4 text-sm text-zinc-600" aria-live="polite">{loading ? 'Cargando datos…' : `${reportStudents.length} participantes incluidos`}</p>
+              <div className="grid w-full gap-3 sm:grid-cols-2">
+                <button onClick={downloadReport} disabled={loading || refreshing || !!dataError || reportStudents.length === 0}
+                  className="flex items-center justify-center gap-2 py-4 bg-zinc-900 text-white font-bold rounded-2xl hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <Download size={20} aria-hidden="true" /> Descargar PDF
+                </button>
+                <button onClick={downloadCsv} disabled={loading || refreshing || !!dataError || reportStudents.length === 0}
+                  className="flex items-center justify-center gap-2 py-4 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:opacity-50 disabled:cursor-not-allowed">
+                  <Download size={20} aria-hidden="true" /> Descargar CSV
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -553,10 +698,11 @@ const TeacherPhotoUpload = ({ student, online }: { student: any; online: boolean
 
       const url = `${data.publicUrl}?t=${Date.now()}`;
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('students')
         .update({ photo_url: url })
         .eq('id', student.id);
+      if (updateError) throw updateError;
 
       setPhotoUrl(url);
       student.photo_url = url;
@@ -570,11 +716,8 @@ const TeacherPhotoUpload = ({ student, online }: { student: any; online: boolean
 
   return (
     <div className="relative group">
-      <div className="w-16 h-16 bg-[#F57C00] rounded-2xl overflow-hidden flex items-center justify-center font-bold text-2xl shadow-lg">
-        {photoUrl
-          ? <img src={photoUrl} alt={student.name} className="w-full h-full object-cover" />
-          : <span className="text-white">{student.name.charAt(0)}</span>
-        }
+      <div className="w-16 h-16 rounded-2xl overflow-hidden flex items-center justify-center shadow-lg">
+        <StudentAvatar name={student.name} photoUrl={photoUrl} size={64} className="w-full h-full object-cover" />
       </div>
       {/* Upload overlay */}
       <button
@@ -606,6 +749,27 @@ const TeacherPhotoUpload = ({ student, online }: { student: any; online: boolean
 
 const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClose: () => void }) => {
   const { student, activityLog } = detail;
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { onCloseRef.current(); return; }
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = Array.from(dialogRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), input:not([disabled]), a[href], select:not([disabled])'));
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    };
+    document.addEventListener('keydown', onKeyDown);
+    return () => { document.removeEventListener('keydown', onKeyDown); previousFocus?.focus(); };
+  }, []);
 
   // Raw Supabase column names: week_number, last_score, best_score, completed
   const completed = student.progress.filter((p: any) => p.completed).length;
@@ -642,6 +806,10 @@ const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClos
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4" onClick={onClose}>
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="student-detail-title"
         className="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
         onClick={e => e.stopPropagation()}
       >
@@ -651,7 +819,7 @@ const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClos
             <div className="flex items-center gap-4">
               <TeacherPhotoUpload student={student} online={online} />
               <div>
-                <h2 className="font-bold text-xl">{student.name}</h2>
+                <h2 id="student-detail-title" className="font-bold text-xl">{student.name}</h2>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="text-xs font-mono bg-white/10 px-2 py-0.5 rounded-lg">NIE {student.nie}</span>
                   <span className="text-xs bg-white/10 px-2 py-0.5 rounded-lg">{student.group_code}</span>
@@ -664,7 +832,7 @@ const StudentDetailModal = ({ detail, onClose }: { detail: StudentDetail; onClos
                 </div>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-xl transition-colors">
+            <button ref={closeRef} onClick={onClose} aria-label="Cerrar detalle del alumno" className="p-2 hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-white rounded-xl transition-colors">
               <X size={20} />
             </button>
           </div>

@@ -5,7 +5,7 @@
 //
 // Desplegar:  npx supabase functions deploy submit-evaluation
 // (SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY las inyecta Supabase automáticamente)
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { authenticatedStudent } from "../_shared/studentAuth.ts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -24,25 +24,15 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "method not allowed" }, 405);
 
   try {
+    const identity = await authenticatedStudent(req);
+    if (!identity) return json({ error: "sesión de estudiante inválida" }, 401);
     const { studentId, week, answers } = await req.json();
 
-    if (typeof studentId !== "string" || typeof week !== "number" || !Array.isArray(answers)) {
+    if (studentId !== identity.student.id || !Number.isInteger(week) || week < 1 || week > 40 ||
+        !Array.isArray(answers) || answers.length < 1 || answers.length > 100) {
       return json({ error: "payload inválido" }, 400);
     }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
-
-    const { data: student } = await supabase
-      .from("students")
-      .select("id, active")
-      .eq("id", studentId)
-      .maybeSingle();
-    if (!student || student.active === false) {
-      return json({ error: "estudiante no encontrado" }, 404);
-    }
+    const supabase = identity.service;
 
     const { data: keys } = await supabase
       .from("evaluation_keys")
@@ -67,40 +57,13 @@ Deno.serve(async (req) => {
       if (submitted && norm(submitted.answer) === norm(key.answer)) correct++;
     }
     const score = Math.round((correct / keys.length) * 100);
-    const passed = score >= 70;
-    const now = new Date().toISOString();
-
-    const { data: existing } = await supabase
-      .from("weekly_progress")
-      .select("best_score, attempts, completed, completed_at")
-      .eq("student_id", studentId)
-      .eq("week_number", week)
-      .maybeSingle();
-
-    const row = {
-      student_id: studentId,
-      week_number: week,
-      last_score: score,
-      best_score: Math.max(existing?.best_score ?? 0, score),
-      attempts: (existing?.attempts ?? 0) + 1,
-      completed: passed || existing?.completed || false,
-      completed_at: passed && !existing?.completed_at ? now : existing?.completed_at ?? null,
-      updated_at: now
-    };
-
-    const { data: saved, error } = await supabase
-      .from("weekly_progress")
-      .upsert(row, { onConflict: "student_id,week_number" })
-      .select()
-      .single();
-    if (error) return json({ error: error.message }, 500);
-
-    await supabase.from("activity_log").insert({
-      student_id: studentId,
-      action_type: "evaluation_completed",
-      week_number: week,
-      metadata: { score, completed: passed, via: "edge", answered: answers.length }
+    const { data: saved, error } = await supabase.rpc("record_evaluation", {
+      p_student_id: studentId,
+      p_week: week,
+      p_score: score,
+      p_answered: answers.length
     });
+    if (error || !saved) return json({ error: error?.message || "No se guardó la evaluación" }, 500);
 
     return json({
       score,

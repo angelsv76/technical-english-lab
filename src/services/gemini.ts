@@ -1,14 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
-
-const apiKey = process.env.GEMINI_API_KEY;
-
-export const ai = apiKey ? new GoogleGenAI({ apiKey }) : null;
+import { generateContent } from './aiClient';
 
 export const askTutor = async (question: string, context?: string) => {
-  if (!ai) {
-    throw new Error("Gemini API key not configured");
-  }
-
   const systemInstruction = `
     Eres un tutor experto en Inglés Técnico para estudiantes de Desarrollo de Software.
     Tu objetivo es ayudar a los estudiantes a entender términos técnicos en inglés, 
@@ -21,7 +13,7 @@ export const askTutor = async (question: string, context?: string) => {
     Contexto actual: ${context || 'General'}
   `;
 
-  const response = await ai.models.generateContent({
+  const response = await generateContent({
     model: "gemini-2.0-flash",
     contents: [{ role: 'user', parts: [{ text: question }] }],
     config: {

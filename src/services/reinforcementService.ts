@@ -1,6 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+import { generateContent } from './aiClient';
 
 export interface ReinforcementActivity {
   word: string;
@@ -37,21 +35,21 @@ export async function generateReinforcementActivity(wordData: { word: string; me
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
-          type: Type.OBJECT,
+          type: 'OBJECT',
           properties: {
-            word: { type: Type.STRING },
-            instruction: { type: Type.STRING },
-            question: { type: Type.STRING },
-            options: { type: Type.ARRAY, items: { type: Type.STRING } },
-            answer: { type: Type.STRING },
-            explanation: { type: Type.STRING },
-            type: { type: Type.STRING, enum: ['action', 'object', 'interface', 'instruction', 'menu'] }
+            word: { type: 'STRING' },
+            instruction: { type: 'STRING' },
+            question: { type: 'STRING' },
+            options: { type: 'ARRAY', items: { type: 'STRING' } },
+            answer: { type: 'STRING' },
+            explanation: { type: 'STRING' },
+            type: { type: 'STRING', enum: ['action', 'object', 'interface', 'instruction', 'menu'] }
           },
           required: ["word", "instruction", "question", "options", "answer", "explanation", "type"]
         }

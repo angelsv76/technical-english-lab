@@ -5,21 +5,30 @@ import { weeks } from '../data/weeks/index';
 import { nextReviewDate } from '../utils/srs';
 
 export const useAppState = () => {
-  const [student, setStudent] = useState<any | null>(() => {
-    const saved = localStorage.getItem('student');
-    return saved ? JSON.parse(saved) : null;
-  });
+  const [student, setStudent] = useState<any | null>(null);
   const [progress, setProgress] = useState<any[]>([]);
   const [glossary, setGlossary] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Guardar estudiante en localStorage
+  // Restaurar solo una sesión verificada, nunca un id editable en localStorage.
+  useEffect(() => {
+    let active = true;
+    localStorage.removeItem('student');
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!active || !user?.email?.endsWith('@inti.edu.sv')) return;
+      const nie = user.email.slice(0, -'@inti.edu.sv'.length);
+      const { data } = await supabase.from('students')
+        .select('id, nie, name, group_code, photo_url, active').eq('nie', nie).eq('active', true).maybeSingle();
+      if (active && data) setStudent({ id: data.id, nie: data.nie, name: data.name, code: data.group_code, photo_url: data.photo_url });
+    }).catch(error => console.error('Error restaurando sesión:', error))
+      .finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, []);
+
   useEffect(() => {
     if (student) {
-      localStorage.setItem('student', JSON.stringify(student));
       loadStudentData();
     } else {
-      localStorage.removeItem('student');
       setProgress([]);
       setGlossary([]);
     }
@@ -30,10 +39,11 @@ export const useAppState = () => {
     if (!student?.id) return;
 
     const updateLastSeen = async () => {
-      await supabase
-        .from('students')
-        .update({ last_seen: new Date().toISOString() })
-        .eq('id', student.id);
+      const { data, error } = await supabase.rpc('touch_student', { p_event: 'seen' });
+      if (!error && data === false) {
+        await supabase.auth.signOut();
+        setStudent(null);
+      }
     };
 
     updateLastSeen(); // inmediato al cargar
@@ -118,60 +128,18 @@ export const useAppState = () => {
       });
     };
 
-    // 1) Vía preferida: la Edge Function califica en el servidor y guarda
-    //    con la clave secreta — el navegador no puede inventarse la nota.
-    if (answers && answers.length > 0) {
-      try {
-        const { data, error } = await supabase.functions.invoke('submit-evaluation', {
-          body: { studentId: student.id, week, answers }
-        });
-        if (!error && data && typeof data.score === 'number') {
-          applyLocal(data.score, data.bestScore ?? data.score, data.attempts ?? 1, !!data.completed);
-          return { ok: true, score: data.score, verificationCode: data.verificationCode ?? null };
-        }
-        console.warn('Edge function no disponible, usando guardado directo:', error?.message || data?.error);
-      } catch (err) {
-        console.warn('Edge function falló, usando guardado directo:', err);
-      }
-    }
-
-    // 2) Respaldo: escritura directa (funciona mientras las políticas de
-    //    escritura de weekly_progress sigan abiertas; ver supabase-verificacion.sql)
-    const existing = progress.find(p => p.week === week);
-    const newData = {
-      student_id: student.id,
-      week_number: week,
-      last_score: score,
-      best_score: existing ? Math.max(existing.bestScore || 0, score) : score,
-      attempts: (existing?.attempts || 0) + 1,
-      completed: score >= 70 || existing?.completed || false,
-      completed_at: score >= 70 ? new Date().toISOString() : existing?.completed_at,
-      updated_at: new Date().toISOString()
-    };
-
+    if (!answers?.length) return { ok: false, score, verificationCode: null };
     try {
       const { data, error } = await supabase
-        .from('weekly_progress')
-        .upsert(newData, { onConflict: 'student_id,week_number' })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Error guardando progreso:', error);
+        .functions.invoke('submit-evaluation', {
+          body: { studentId: student.id, week, answers }
+        });
+      if (error || !data || typeof data.score !== 'number') {
+        console.error('Error guardando progreso:', error || data?.error);
         return { ok: false, score, verificationCode: null };
       }
-
-      applyLocal(score, newData.best_score, newData.attempts, newData.completed);
-
-      // Registrar actividad (best-effort: no invalida el guardado de la nota)
-      await supabase.from('activity_log').insert({
-        student_id: student.id,
-        action_type: 'evaluation_completed',
-        week_number: week,
-        metadata: { score, completed: score >= 70 }
-      });
-
-      return { ok: true, score, verificationCode: data?.verification_code ?? null };
+      applyLocal(data.score, data.bestScore ?? data.score, data.attempts ?? 1, !!data.completed);
+      return { ok: true, score: data.score, verificationCode: data.verificationCode ?? null };
     } catch (err) {
       console.error('Error en updateProgress:', err);
       return { ok: false, score, verificationCode: null };
@@ -324,7 +292,6 @@ export const useAppState = () => {
     setStudent(null);
     setProgress([]);
     setGlossary([]);
-    localStorage.removeItem('student');
   };
 
   return {

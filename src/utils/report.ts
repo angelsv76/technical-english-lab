@@ -54,9 +54,10 @@ export const generatePDFReport = (
   // Bloque de verificación: el código lo genera la base de datos y solo es
   // válido si existe en el sistema. Verificable en /verificar/<código>.
   if (verificationCode) {
+    const verificationUrl = new URL(`/verificar/${verificationCode}`, window.location.origin).toString();
     doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.3);
-    doc.roundedRect(20, 150, 170, 30, 2, 2);
+    doc.roundedRect(20, 150, 170, 44, 2, 2);
 
     doc.setTextColor(0, 0, 0);
     doc.setFont('helvetica', 'bold');
@@ -70,10 +71,11 @@ export const generatePDFReport = (
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(100, 100, 100);
-    doc.text(
-      `Verifique la autenticidad en: https://technical-english-lab.vercel.app/verificar/${verificationCode}`,
-      25, 174
-    );
+    doc.text('Verifique la autenticidad en:', 25, 174);
+    const urlLines = doc.splitTextToSize(verificationUrl, 160);
+    doc.setTextColor(0, 90, 160);
+    doc.text(urlLines, 25, 181);
+    doc.link(25, 177, 160, Math.max(8, urlLines.length * 4), { url: verificationUrl });
   }
 
   // Footer

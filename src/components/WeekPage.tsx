@@ -23,7 +23,7 @@ interface Props {
   onComplete: (
     score: number,
     answers?: { question: string; answer: string }[]
-  ) => Promise<{ ok: boolean; score: number; verificationCode: string | null }> | void;
+  ) => Promise<{ ok: boolean; score: number; verificationCode: string | null }>;
   onWordCorrect: (word: string) => void;
   onWordIncorrect: (word: string) => void;
 }
@@ -141,6 +141,7 @@ export const WeekPage: React.FC<Props> = ({
   };
 
   const handleGeneratePDF = () => {
+    if (saveStatus !== 'saved' || !verificationCode) return;
     generatePDFReport(
       student,
       weekData.week,
@@ -160,18 +161,11 @@ export const WeekPage: React.FC<Props> = ({
         answer: answers[`q_${idx}`] ?? ''
       }));
       const result = await onComplete(finalScore, answered);
-      if (result && typeof result === 'object') {
-        if (!result.ok) {
-          setSaveStatus('error');
-          return;
-        }
-        // La nota oficial es la del servidor
-        if (typeof result.score === 'number') setScore(result.score);
-        setVerificationCode(result.verificationCode);
-        setSaveStatus('saved');
-      } else {
-        setSaveStatus('saved');
-      }
+      if (!result?.ok) { setSaveStatus('error'); return; }
+      // La nota oficial es la del servidor.
+      setScore(result.score);
+      setVerificationCode(result.verificationCode);
+      setSaveStatus('saved');
     } catch {
       setSaveStatus('error');
     }
@@ -452,7 +446,9 @@ export const WeekPage: React.FC<Props> = ({
                       </p>
                     )}
                     {saveStatus === 'saved' && (
-                      <p className="text-sm text-emerald-600 font-bold">✓ Nota guardada correctamente</p>
+                      <p className="text-sm text-emerald-700 font-bold" role="status">
+                        {verificationCode ? 'Nota guardada correctamente. El reporte está disponible.' : 'Nota guardada. El código de verificación aún no está disponible; consulta a tu profesor.'}
+                      </p>
                     )}
                     {saveStatus === 'error' && (
                       <div className="p-4 bg-red-50 border-2 border-red-300 rounded-2xl">
@@ -491,7 +487,8 @@ export const WeekPage: React.FC<Props> = ({
                     </button>
                     <button 
                       onClick={handleGeneratePDF}
-                      className="flex-1 flex items-center justify-center gap-2 bg-[#F57C00] hover:bg-[#E65100] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-orange-200"
+                      disabled={saveStatus !== 'saved' || !verificationCode}
+                      className="flex-1 flex items-center justify-center gap-2 bg-[#F57C00] hover:bg-[#E65100] text-white font-bold py-4 rounded-2xl transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       <Download size={20} />
                       Descargar Reporte
