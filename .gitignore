@@ -1,6 +1,42 @@
+# Dependencias y build
 node_modules/
 dist/
-.env.local
+.vite/
+*.local
+
+# Variables de entorno — NUNCA versionar.
+# .env.local solo necesita las variables VITE_SUPABASE_* del frontend.
+# GEMINI_API_KEY se configura como secreto de Supabase, no en el frontend.
+# Nota: el patron *.local de arriba ya lo cubre, pero se deja explicito para
+# que se vea al abrir el archivo.
 .env
-audio-upload/
-.claude/
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# Audio generado — pesa y se regenera; el definitivo vive en el bucket
+# vocabulary-audio de Supabase
+audio-upload/**/*.mp3
+audio-upload/**/*.wav
+
+# Respaldos de base de datos: pueden contener datos personales.
+backups/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Configuracion local de Claude Code
+.claude/settings.local.json
+
+# Sistema
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editores
+.idea/
+.vscode/*
+!.vscode/extensions.json

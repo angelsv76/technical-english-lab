@@ -49,7 +49,7 @@ export const week21: WeekData = {
     }
   ],
   simulation: {
-    simulationId: "SIM-006"
+    simulationId: "SIM-074"
   },
   practice: [
     {

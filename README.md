@@ -1,5 +1,7 @@
 # Technical English Lab — INTI
 
+Consulta el [plan de corrección](docs/plan-correccion.md) para prioridades, responsables y criterios de aceptación.
+
 Plataforma interactiva de Inglés Técnico para estudiantes de Desarrollo de Software del Instituto Nacional Técnico Industrial (INTI).
 
 ## Características
@@ -33,7 +35,6 @@ Plataforma interactiva de Inglés Técnico para estudiantes de Desarrollo de Sof
    ```
    VITE_SUPABASE_URL=tu_url_de_supabase
    VITE_SUPABASE_ANON_KEY=tu_anon_key
-   GEMINI_API_KEY=tu_api_key_de_gemini
    VITE_ADMIN_USER=usuario_docente
    VITE_ADMIN_HASH=hash_sha256_de_la_contraseña
    ```
@@ -46,6 +47,31 @@ Plataforma interactiva de Inglés Técnico para estudiantes de Desarrollo de Sof
 ## Despliegue
 
 La app está configurada para Vercel. Las variables de entorno deben definirse en el dashboard de Vercel (nunca en el repositorio).
+
+### Funciones de Supabase y seguridad
+
+La IA y la calificación necesitan las funciones `generate-content` y `submit-evaluation`.
+Configura `GEMINI_API_KEY` **solo** como secreto de Supabase y despliega ambas funciones
+antes de publicar esta versión del frontend. La clave de Gemini ya no se incluye en
+el JavaScript público; si se usó con una versión anterior, rótala en Google AI Studio.
+
+```bash
+npx supabase secrets set GEMINI_API_KEY=tu_clave
+npx supabase functions deploy generate-content
+npx supabase functions deploy submit-evaluation
+```
+
+Las funciones comprueban la sesión de Supabase Auth y el NIE antes de acceder a los
+datos del estudiante. Después de verificar el flujo de evaluación, ejecuta la
+**parte 2** de `supabase-verificacion.sql` en el SQL Editor para revocar la escritura
+directa de notas. No vuelvas a aplicar `supabase-fix-rls-escritura.sql` después de
+cerrar esas políticas: ese archivo abre escrituras para cualquier cliente anónimo.
+
+**Pendiente de endurecer:** el acceso docente usa un hash público `VITE_ADMIN_HASH`
+y una bandera en `localStorage`, y varias políticas RLS históricas permiten acceso
+amplio a datos. No son un límite de seguridad. Antes de usar datos sensibles en
+producción, migra el rol docente a Supabase Auth y restringe las políticas RLS por
+usuario. El cambio requiere revisar las políticas de la base de datos desplegada.
 
 ---
 

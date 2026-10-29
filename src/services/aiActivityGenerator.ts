@@ -1,6 +1,4 @@
-import { GoogleGenAI, Type } from "@google/genai";
-
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
+import { generateContent } from './aiClient';
 
 export interface GeneratedActivities {
   simulation: {
@@ -48,34 +46,34 @@ export async function generateActivities(vocabulary: { word: string; meaning: st
 
   try {
     const response = await Promise.race([
-      ai.models.generateContent({
+      generateContent({
         model: "gemini-3-flash-preview",
         contents: prompt,
         config: {
           responseMimeType: "application/json",
           responseSchema: {
-            type: Type.OBJECT,
+            type: 'OBJECT',
             additionalProperties: {
-              type: Type.OBJECT,
+              type: 'OBJECT',
               properties: {
                 simulation: {
-                  type: Type.OBJECT,
+                  type: 'OBJECT',
                   properties: {
-                    visual: { type: Type.STRING },
-                    question: { type: Type.STRING },
-                    options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                    answer: { type: Type.STRING },
-                    explanation: { type: Type.STRING }
+                    visual: { type: 'STRING' },
+                    question: { type: 'STRING' },
+                    options: { type: 'ARRAY', items: { type: 'STRING' } },
+                    answer: { type: 'STRING' },
+                    explanation: { type: 'STRING' }
                   },
                   required: ["visual", "question", "options", "answer", "explanation"]
                 },
                 practice: {
-                  type: Type.OBJECT,
+                  type: 'OBJECT',
                   properties: {
-                    question: { type: Type.STRING },
-                    options: { type: Type.ARRAY, items: { type: Type.STRING } },
-                    answer: { type: Type.STRING },
-                    explanation: { type: Type.STRING }
+                    question: { type: 'STRING' },
+                    options: { type: 'ARRAY', items: { type: 'STRING' } },
+                    answer: { type: 'STRING' },
+                    explanation: { type: 'STRING' }
                   },
                   required: ["question", "options", "answer", "explanation"]
                 }
@@ -121,18 +119,18 @@ export async function generateSinglePractice(word: string, context: string): Pro
   `;
 
   try {
-    const response = await ai.models.generateContent({
+    const response = await generateContent({
       model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
-          type: Type.OBJECT,
+          type: 'OBJECT',
           properties: {
-            question: { type: Type.STRING },
-            options: { type: Type.ARRAY, items: { type: Type.STRING } },
-            answer: { type: Type.STRING },
-            explanation: { type: Type.STRING }
+            question: { type: 'STRING' },
+            options: { type: 'ARRAY', items: { type: 'STRING' } },
+            answer: { type: 'STRING' },
+            explanation: { type: 'STRING' }
           },
           required: ["question", "options", "answer", "explanation"]
         }

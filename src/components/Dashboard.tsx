@@ -4,6 +4,7 @@ import { Student, WeekProgress, VocabularyEntry, WeekData } from '../types';
 import { courseScheduleService } from '../services/courseScheduleService';
 import { useNavigate } from 'react-router-dom';
 import { DailyReview } from './DailyReview';
+import { StudentAvatar } from './StudentAvatar';
 
 interface Props {
   student: Student;
@@ -61,11 +62,8 @@ export const Dashboard: React.FC<Props> = ({
             </button>
 
             <div className="flex items-center gap-3 border-l border-zinc-200 pl-4">
-              <div className="w-10 h-10 rounded-xl overflow-hidden bg-[#F57C00] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                {student.photo_url
-                  ? <img src={student.photo_url} alt={student.name} className="w-full h-full object-cover" />
-                  : student.name?.charAt(0)
-                }
+              <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
+                <StudentAvatar name={student.name} photoUrl={student.photo_url} size={40} className="w-full h-full object-cover" />
               </div>
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-zinc-900">{student.name}</p>
@@ -74,8 +72,8 @@ export const Dashboard: React.FC<Props> = ({
             </div>
             <button 
               onClick={onLogout}
-              className="p-2 text-zinc-400 hover:text-red-500 transition-colors"
-              title="Cerrar sesión"
+              className="p-2 text-zinc-600 hover:text-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 transition-colors"
+              aria-label="Cerrar sesión"
             >
               <LogOut size={20} />
             </button>

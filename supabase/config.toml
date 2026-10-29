@@ -1,9 +1,11 @@
 project_id = "uecbylctkvdmvfqcxlzg"
 
-# Desactivado: la función valida al alumno con su propia lógica (studentId
-# contra la tabla students); no depende de que el token de sesión del
-# navegador sea un JWT válido para el gateway. Sin esto, alumnos con una
-# sesión real de Supabase Auth reciben 401 antes de llegar a nuestro código
-# (detectado 2026-07-22: exámenes de alumnos reales no se guardaban).
+# La función verifica manualmente el token con Supabase Auth y compara
+# el usuario autenticado con el NIE del estudiante antes de usar service role.
+# El gateway JWT permanece desactivado por compatibilidad con las sesiones
+# existentes; la validación dentro de cada función es obligatoria.
 [functions.submit-evaluation]
+verify_jwt = false
+
+[functions.generate-content]
 verify_jwt = false
