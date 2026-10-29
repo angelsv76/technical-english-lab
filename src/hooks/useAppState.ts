@@ -39,13 +39,8 @@ export const useAppState = () => {
     if (!student?.id) return;
 
     const updateLastSeen = async () => {
-      const { data } = await supabase
-        .from('students')
-        .update({ last_seen: new Date().toISOString() })
-        .eq('id', student.id)
-        .select('active')
-        .maybeSingle();
-      if (data?.active === false) {
+      const { data, error } = await supabase.rpc('touch_student', { p_event: 'seen' });
+      if (!error && data === false) {
         await supabase.auth.signOut();
         setStudent(null);
       }

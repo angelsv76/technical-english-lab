@@ -3,27 +3,14 @@ import { useParams, Link } from 'react-router-dom';
 import { ShieldCheck, ShieldX, Loader2, Home } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
-interface VerifiedRecord {
-  studentName: string;
-  nie: string;
-  week: number;
-  lastScore: number;
-  bestScore: number;
-  attempts: number;
-  completed: boolean;
-  updatedAt: string;
-}
-
 /**
  * Verificación pública de reportes: /verificar/<código>
- * El código lo genera la base de datos al guardar la nota. Un PDF fabricado
- * con IA tendrá un código que simplemente no existe aquí. La verdad siempre
- * se lee de la base, nunca del papel.
+ * El código lo genera la base al guardar la nota. La consulta pública
+ * confirma su existencia sin revelar datos del alumno ni calificaciones.
  */
 export const VerifyPage: React.FC = () => {
   const { code } = useParams();
-  const [state, setState] = useState<'loading' | 'valid' | 'invalid'>('loading');
-  const [record, setRecord] = useState<VerifiedRecord | null>(null);
+  const [state, setState] = useState<'loading' | 'valid' | 'invalid' | 'error'>('loading');
 
   useEffect(() => {
     const verify = async () => {
@@ -33,34 +20,9 @@ export const VerifyPage: React.FC = () => {
         return;
       }
 
-      const { data: row, error } = await supabase
-        .from('weekly_progress')
-        .select('student_id, week_number, last_score, best_score, attempts, completed, updated_at')
-        .eq('verification_code', code)
-        .maybeSingle();
-
-      if (error || !row) {
-        setState('invalid');
-        return;
-      }
-
-      const { data: student } = await supabase
-        .from('students')
-        .select('name, nie')
-        .eq('id', row.student_id)
-        .maybeSingle();
-
-      setRecord({
-        studentName: student?.name ?? 'Desconocido',
-        nie: student?.nie ?? '—',
-        week: row.week_number,
-        lastScore: row.last_score ?? 0,
-        bestScore: row.best_score ?? 0,
-        attempts: row.attempts ?? 1,
-        completed: row.completed,
-        updatedAt: row.updated_at
-      });
-      setState('valid');
+      const { data, error } = await supabase.functions.invoke('verify-report', { body: { code } });
+      if (error) { setState('error'); return; }
+      setState(data?.valid === true ? 'valid' : 'invalid');
     };
 
     verify();
@@ -90,47 +52,28 @@ export const VerifyPage: React.FC = () => {
               <h2 className="text-2xl font-bold text-red-600 mb-2">CÓDIGO NO VÁLIDO</h2>
               <p className="text-zinc-500">
                 Este código no corresponde a ningún registro del sistema.
-                El documento que lo contiene <strong>no fue emitido por Technical English Lab</strong>.
+                Revisa el código e intenta de nuevo.
               </p>
             </div>
           )}
 
-          {state === 'valid' && record && (
+          {state === 'error' && (
+            <p role="alert" className="rounded-xl bg-orange-50 p-4 text-center text-orange-800">
+              No se pudo consultar el registro. Intenta de nuevo más tarde.
+            </p>
+          )}
+
+          {state === 'valid' && (
             <div>
               <div className="text-center mb-6">
                 <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <ShieldCheck size={44} className="text-emerald-600" />
                 </div>
-                <h2 className="text-2xl font-bold text-emerald-600">REGISTRO AUTÉNTICO</h2>
-                <p className="text-xs text-zinc-400 mt-1">
-                  Datos leídos directamente de la base de datos oficial
+                <h2 className="text-2xl font-bold text-emerald-600">CÓDIGO REGISTRADO</h2>
+                <p className="text-sm text-zinc-600 mt-3">
+                  El código corresponde a un reporte registrado en Technical English Lab.
                 </p>
               </div>
-
-              <div className="space-y-3 bg-zinc-50 rounded-2xl p-6 border border-zinc-100">
-                <Row label="Estudiante" value={record.studentName} />
-                <Row label="NIE" value={record.nie} />
-                <Row label="Semana" value={`${record.week}`} />
-                <Row label="Última nota" value={`${record.lastScore}%`} />
-                <Row label="Mejor nota" value={`${record.bestScore}%`} />
-                <Row label="Intentos" value={`${record.attempts}`} />
-                <Row
-                  label="Estado"
-                  value={record.completed ? 'APROBADA' : 'NO APROBADA'}
-                  valueClass={record.completed ? 'text-emerald-600' : 'text-red-600'}
-                />
-                <Row
-                  label="Último registro"
-                  value={new Date(record.updatedAt).toLocaleString('es-SV', {
-                    day: 'numeric', month: 'long', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                  })}
-                />
-              </div>
-
-              <p className="text-[11px] text-zinc-400 text-center mt-4">
-                Si la nota impresa en el PDF difiere de la mostrada aquí, la válida es esta.
-              </p>
             </div>
           )}
 
@@ -148,10 +91,3 @@ export const VerifyPage: React.FC = () => {
     </div>
   );
 };
-
-const Row = ({ label, value, valueClass = 'text-zinc-900' }: { label: string; value: string; valueClass?: string }) => (
-  <div className="flex justify-between items-center">
-    <span className="text-xs font-bold text-zinc-400 uppercase tracking-wider">{label}</span>
-    <span className={`font-bold ${valueClass}`}>{value}</span>
-  </div>
-);

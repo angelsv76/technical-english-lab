@@ -6,7 +6,8 @@ Fecha: 29 de octubre de 2026. Base: revisión del código local y compilación; 
 
 - La clave de Gemini sale del paquete web; `generate-content` y `submit-evaluation` comprueban la sesión del alumno. Falta desplegar y probar ambas funciones, configurar el secreto y rotar la clave anterior.
 - El alumno restaura la sesión con Supabase Auth y no guarda notas directamente. Falta cerrar las escrituras directas en la base de datos desplegada.
-- El panel docente muestra alumnos activos/inactivos y permite cambiar su estado; ofrece PDF resumen y CSV por evaluación. El alumno solo puede descargar un reporte verificado después de guardar la nota. Falta proteger la operación docente con autenticación y RLS reales.
+- El panel docente muestra alumnos activos/inactivos y permite cambiar su estado; ofrece PDF resumen y CSV por evaluación. El alumno solo puede descargar un reporte después de guardar la nota. El acceso docente ya usa Supabase Auth y hay migraciones RLS preparadas, pero aún deben probarse y aplicarse en la base desplegada.
+- La verificación pública consulta una función que responde únicamente si existe el código, sin identidad ni calificación. Falta desplegar y probar esta función.
 - Se instaló `blobatar` con su adaptador React como avatar cuando no hay foto. Se corrigieron la navegación del portal con enlaces, el idioma HTML y los campos del acceso estudiantil.
 
 ## Asignación por esfuerzo y dependencias
@@ -27,7 +28,7 @@ Referencias de despliegue facilitadas por el propietario: repositorio `angelsv76
 
 ## Hallazgos que gobiernan el orden
 
-1. **Crítico:** el acceso docente depende de un hash público y de `localStorage` (`src/services/authService.ts`, `src/components/TeacherRoute.tsx`). Las políticas SQL versionadas permiten escrituras amplias (`supabase-fix-rls-escritura.sql`, `supabase-course-config.sql`). La nueva opción de activar/desactivar alumnos no debe considerarse segura hasta completar las fases 1 y 2.
+1. **Crítico:** el código de acceso docente ya cambió a Supabase Auth, pero la migración de `teacher_users` y las políticas RLS aún no están aplicadas ni verificadas en Supabase. Los SQL históricos permiten escrituras amplias (`supabase-fix-rls-escritura.sql`, `supabase-course-config.sql`). La opción de activar/desactivar alumnos no debe considerarse segura hasta completar las fases 1 y 2.
 2. **Alto:** `scripts/sync-evaluation-keys.mjs` borra todas las claves antes de reinsertarlas; `scripts/backup-supabase.mjs` puede anunciar éxito tras un error y `backups/` no está ignorado por Git.
 3. **Alto:** los reportes docentes antes consultaban hasta 10.000 filas y podían estar incompletos. Esta copia pagina progreso y glosario, y deshabilita descargas tras un error; todavía falta verificar datos reales y el límite de paginación de alumnos.
 4. **Alto:** `npm audit --omit=dev` informa 22 avisos (3 críticos, 13 altos); hay que distinguir dependencias usadas en producción de herramientas de build y actualizar con pruebas. No hay pruebas ni CI; `tsconfig.json` excluye `supabase/functions`. El build mantiene un paquete principal de aproximadamente 1,3 MB.

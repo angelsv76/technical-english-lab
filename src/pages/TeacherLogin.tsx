@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Lock, User, ShieldAlert, ChevronLeft, Home } from 'lucide-react';
-import { validateTeacherCredentials } from '../services/authService';
+import { Lock, User, ShieldAlert, Home } from 'lucide-react';
+import { signInTeacher } from '../services/authService';
 
 export const TeacherLogin: React.FC = () => {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -16,10 +16,9 @@ export const TeacherLogin: React.FC = () => {
     setError('');
     
     try {
-      const isValid = await validateTeacherCredentials(username, password);
+      const isValid = await signInTeacher(email, password);
       
       if (isValid) {
-        localStorage.setItem('teacherLoggedIn', 'true');
         navigate('/teacher');
       } else {
         setError('Acceso no autorizado');
@@ -53,28 +52,35 @@ export const TeacherLogin: React.FC = () => {
 
           <div className="space-y-4">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 uppercase ml-1">Usuario</label>
+              <label htmlFor="teacher-email" className="text-xs font-bold text-zinc-500 uppercase ml-1">Correo docente</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input
-                  type="text"
+                  id="teacher-email"
+                  name="email"
+                  type="email"
                   required
-                  placeholder="Administrador"
+                  autoComplete="username"
+                  spellCheck={false}
+                  placeholder="docente@institucion.edu.sv"
                   className="w-full pl-10 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-[#F57C00] outline-none transition-all"
-                  value={username}
-                  onChange={e => setUsername(e.target.value)}
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
                   disabled={isLoading}
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-bold text-zinc-500 uppercase ml-1">Contraseña</label>
+              <label htmlFor="teacher-password" className="text-xs font-bold text-zinc-500 uppercase ml-1">Contraseña</label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input
+                  id="teacher-password"
+                  name="password"
                   type="password"
                   required
+                  autoComplete="current-password"
                   placeholder="••••••••"
                   className="w-full pl-10 pr-4 py-3 bg-zinc-50 border border-zinc-200 rounded-xl focus:ring-2 focus:ring-[#F57C00] outline-none transition-all"
                   value={password}

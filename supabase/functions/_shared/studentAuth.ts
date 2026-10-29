@@ -17,7 +17,7 @@ export async function authenticatedStudent(req: Request) {
   const { data: student } = await service
     .from("students")
     .select("id, nie, active")
-    .eq("nie", user.email.split("@")[0])
+    .eq("auth_user_id", user.id)
     .maybeSingle();
   if (!student?.active || user.email.toLowerCase() !== `${student.nie}@inti.edu.sv`.toLowerCase()) {
     return null;

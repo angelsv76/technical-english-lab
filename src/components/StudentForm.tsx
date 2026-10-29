@@ -47,25 +47,15 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
         return;
       }
 
-      // 3. Actualizar último login
-      const { error: updateError } = await supabase
-        .from('students')
-        .update({ last_login: new Date().toISOString() })
-        .eq('id', student.id);
+      // La base actualiza la fecha y el historial usando la identidad autenticada.
+      const { error: updateError } = await supabase.rpc('touch_student', { p_event: 'login' });
 
       if (updateError) {
         console.warn('No se pudo actualizar last_login:', updateError.message);
         // Continuar — no bloquear el login por esto
       }
 
-      // 4. Registrar actividad
-      await supabase.from('activity_log').insert({
-        student_id: student.id,
-        action_type: 'login',
-        metadata: { nie: student.nie, timestamp: new Date().toISOString() }
-      });
-
-      // 5. Login exitoso
+      // Login exitoso
       onLogin({
         id: student.id,
         nie: student.nie,
