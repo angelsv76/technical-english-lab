@@ -55,6 +55,10 @@ export const TeacherDashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'content' | 'students' | 'reports'>('students');
   const [students, setStudents] = useState<StudentData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
+  const loadInFlightRef = useRef(false);
+  const hasLoadedRef = useRef(false);
   const [selectedStudent, setSelectedStudent] = useState<StudentDetail | null>(null);
   const [loadingDetail, setLoadingDetail] = useState(false);
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('active');
@@ -72,17 +76,29 @@ export const TeacherDashboard: React.FC = () => {
     }
   }, [activeTab]);
 
-  // Auto-refresh cada 30 segundos en la pestaña de estudiantes
+  // Actualizar ambas vistas cuando están visibles, sin acumular consultas al
+  // volver a una pestaña que estuvo en segundo plano.
   useEffect(() => {
-    if (activeTab !== 'students') return;
-    const interval = setInterval(loadStudents, 30000);
-    return () => clearInterval(interval);
+    if (activeTab === 'content') return;
+    const refreshIfVisible = () => {
+      if (document.visibilityState === 'visible') void loadStudents();
+    };
+    const interval = window.setInterval(refreshIfVisible, 30000);
+    document.addEventListener('visibilitychange', refreshIfVisible);
+    window.addEventListener('focus', refreshIfVisible);
+    return () => {
+      window.clearInterval(interval);
+      document.removeEventListener('visibilitychange', refreshIfVisible);
+      window.removeEventListener('focus', refreshIfVisible);
+    };
   }, [activeTab]);
 
   const loadStudents = async () => {
+    if (loadInFlightRef.current) return;
+    loadInFlightRef.current = true;
     try {
-      setLoading(true);
-      setDataError(null);
+      if (hasLoadedRef.current) setRefreshing(true);
+      else setLoading(true);
 
       const studentsData: any[] = [];
       const pageSize = 1000;
@@ -98,6 +114,10 @@ export const TeacherDashboard: React.FC = () => {
       if (studentsData.length === 0) {
         console.warn('No se encontraron estudiantes en Supabase.');
         setStudents([]);
+        setLastSavedAt(null);
+        setLastUpdatedAt(new Date());
+        setDataError(null);
+        hasLoadedRef.current = true;
         return;
       }
 
@@ -117,13 +137,28 @@ export const TeacherDashboard: React.FC = () => {
         return rows;
       };
 
-      const progressData = await loadAllRows('weekly_progress', '*');
-      // Glosario: la señal de que el alumno abrió/estudió una semana.
-      const glossaryData = await loadAllRows('glossary_entries', 'student_id, week_introduced, review_count');
+      const [progressData, glossaryData] = await Promise.all([
+        loadAllRows('weekly_progress', 'student_id, week_number, last_score, best_score, attempts, completed, updated_at'),
+        // Glosario: la señal de que el alumno abrió/estudió una semana.
+        loadAllRows('glossary_entries', 'student_id, week_introduced, review_count')
+      ]);
+
+      const progressByStudent = new Map<string, any[]>();
+      const glossaryByStudent = new Map<string, any[]>();
+      for (const row of progressData) {
+        const rows = progressByStudent.get(row.student_id) || [];
+        rows.push(row);
+        progressByStudent.set(row.student_id, rows);
+      }
+      for (const row of glossaryData) {
+        const rows = glossaryByStudent.get(row.student_id) || [];
+        rows.push(row);
+        glossaryByStudent.set(row.student_id, rows);
+      }
 
       const studentsWithProgress = studentsData.map(student => {
-        const studentProgress = (progressData || []).filter(p => p.student_id === student.id);
-        const studentGlossary = (glossaryData || []).filter(g => g.student_id === student.id);
+        const studentProgress = progressByStudent.get(student.id) || [];
+        const studentGlossary = glossaryByStudent.get(student.id) || [];
         return {
           ...student,
           progress: studentProgress,
@@ -152,11 +187,16 @@ export const TeacherDashboard: React.FC = () => {
       });
 
       setStudents(studentsWithProgress);
+      setLastUpdatedAt(new Date());
+      setDataError(null);
+      hasLoadedRef.current = true;
     } catch (error) {
       console.error('Error inesperado cargando estudiantes:', error);
       setDataError('No se pudieron cargar todos los datos. Las descargas están deshabilitadas hasta actualizar.');
     } finally {
       setLoading(false);
+      setRefreshing(false);
+      loadInFlightRef.current = false;
     }
   };
 
@@ -206,7 +246,7 @@ export const TeacherDashboard: React.FC = () => {
   };
 
   const downloadReport = () => {
-    if (loading || dataError || reportStudents.length === 0) return;
+    if (loading || refreshing || dataError || reportStudents.length === 0) return;
     const doc = new jsPDF() as any;
     doc.text('Reporte de Progreso - Technical English Lab - INTI', 14, 15);
     
@@ -228,7 +268,7 @@ export const TeacherDashboard: React.FC = () => {
   };
 
   const downloadCsv = () => {
-    if (loading || dataError || reportStudents.length === 0) return;
+    if (loading || refreshing || dataError || reportStudents.length === 0) return;
     const rows = [
       ['NIE', 'Nombre', 'Grupo', 'Estado', 'Semana', 'Última nota', 'Mejor nota', 'Intentos', 'Completada', 'Último acceso'],
       ...reportStudents.flatMap(student => {
@@ -421,14 +461,19 @@ export const TeacherDashboard: React.FC = () => {
                   <option value="all">Todos</option>
                 </select>
               </label>
-              <button
-                onClick={loadStudents}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-all disabled:opacity-50 shadow-sm"
-              >
-                <TrendingUp size={16} className={loading ? 'animate-spin' : ''} />
-                {loading ? 'Actualizando...' : 'Actualizar datos'}
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-xs text-zinc-500" aria-live="polite">
+                  {lastUpdatedAt ? `Última actualización: ${lastUpdatedAt.toLocaleTimeString('es-SV')}` : 'Esperando datos'} · cada 30 s
+                </p>
+                <button
+                  onClick={loadStudents}
+                  disabled={loading || refreshing}
+                  className="flex items-center gap-2 px-4 py-2 bg-white border border-zinc-200 rounded-xl text-sm font-bold text-zinc-600 hover:bg-zinc-50 transition-all disabled:opacity-50 shadow-sm"
+                >
+                  <TrendingUp size={16} className={loading || refreshing ? 'animate-spin' : ''} />
+                  {loading || refreshing ? 'Actualizando...' : 'Actualizar datos'}
+                </button>
+              </div>
             </div>
             {loading ? (
               <div className="text-center py-12">
@@ -569,6 +614,13 @@ export const TeacherDashboard: React.FC = () => {
         {activeTab === 'reports' && (
           <div className="max-w-2xl space-y-4">
             {dataError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{dataError}</p>}
+            <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
+              <span>{lastUpdatedAt ? `Última actualización: ${lastUpdatedAt.toLocaleTimeString('es-SV')}` : 'Esperando datos'} · cada 30 s</span>
+              <button type="button" onClick={loadStudents} disabled={loading || refreshing}
+                className="rounded-lg border border-zinc-300 bg-white px-3 py-2 font-bold text-zinc-700 hover:bg-zinc-50 disabled:opacity-50">
+                {loading || refreshing ? 'Actualizando...' : 'Actualizar datos'}
+              </button>
+            </div>
             <div className="bg-white p-8 rounded-3xl border border-zinc-200 shadow-sm flex flex-col items-center text-center">
               <div className="w-20 h-20 bg-blue-50 text-blue-500 rounded-2xl flex items-center justify-center mb-6">
                 <FileText size={40} />
@@ -585,11 +637,11 @@ export const TeacherDashboard: React.FC = () => {
               </label>
               <p className="mb-4 text-sm text-zinc-600" aria-live="polite">{loading ? 'Cargando datos…' : `${reportStudents.length} participantes incluidos`}</p>
               <div className="grid w-full gap-3 sm:grid-cols-2">
-                <button onClick={downloadReport} disabled={loading || !!dataError || reportStudents.length === 0}
+                <button onClick={downloadReport} disabled={loading || refreshing || !!dataError || reportStudents.length === 0}
                   className="flex items-center justify-center gap-2 py-4 bg-zinc-900 text-white font-bold rounded-2xl hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:opacity-50 disabled:cursor-not-allowed">
                   <Download size={20} aria-hidden="true" /> Descargar PDF
                 </button>
-                <button onClick={downloadCsv} disabled={loading || !!dataError || reportStudents.length === 0}
+                <button onClick={downloadCsv} disabled={loading || refreshing || !!dataError || reportStudents.length === 0}
                   className="flex items-center justify-center gap-2 py-4 bg-orange-600 text-white font-bold rounded-2xl hover:bg-orange-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-orange-600 disabled:opacity-50 disabled:cursor-not-allowed">
                   <Download size={20} aria-hidden="true" /> Descargar CSV
                 </button>
