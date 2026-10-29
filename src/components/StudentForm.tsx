@@ -30,7 +30,7 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
       });
 
       if (authError) {
-        setError('NIE o contraseña incorrectos. Si es tu primera vez, usa los primeros 4 dígitos de tu NIE.');
+        setError('NIE o contraseña incorrectos. Verifica tus credenciales con tu docente.');
         return;
       }
 
@@ -104,10 +104,10 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
                   name="nie"
                   type="text"
                   required
-                  inputMode="numeric"
+                  inputMode="text"
                   autoComplete="username"
                   spellCheck={false}
-                  placeholder="Ej: 202600123"
+                  placeholder="Tu NIE"
                   className="w-full pl-10 pr-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-[#F57C00] focus:border-transparent outline-none transition-all"
                   value={formData.nie}
                   onChange={e => setFormData({ ...formData, nie: e.target.value })}
@@ -136,7 +136,7 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
                 />
               </div>
               <p className="text-xs text-zinc-500 mt-1">
-                Primera vez: usa los primeros 4 dígitos de tu NIE
+                Usa la contraseña de tu cuenta del laboratorio.
               </p>
             </div>
           </div>
