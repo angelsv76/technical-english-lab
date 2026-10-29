@@ -86,6 +86,9 @@ Supabase, crear un respaldo restaurable y ensayar en un proyecto de pruebas:
    funciones `generate-content`, `submit-evaluation` y `verify-report` respondan.
 5. Aplicar `supabase/migrations/2026102902_enforce_rls.sql` y probar accesos
    de docente, alumno activo, alumno inactivo y visitante anónimo.
+6. Aplicar `supabase/migrations/2026102903_atomic_evaluation_keys.sql` antes de
+   usar `node scripts/sync-evaluation-keys.mjs`. La sincronización reemplaza
+   todas las claves en una sola transacción; si falla, conserva las anteriores.
 
 Estas migraciones están preparadas en el repositorio, pero **no se han aplicado**
 al proyecto Supabase de producción. El panel docente requiere los pasos anteriores.
