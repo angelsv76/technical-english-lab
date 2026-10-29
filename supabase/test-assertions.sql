@@ -1,5 +1,5 @@
--- Prueba transaccional de las migraciones 03 y 04 en un proyecto desechable.
--- No conserva los datos ficticios. Requiere supabase/test-bootstrap.sql y 01, 03, 04.
+-- Prueba transaccional de las migraciones 03, 04 y 05 en un proyecto desechable.
+-- No conserva los datos ficticios. Requiere supabase/test-bootstrap.sql y 01, 03, 04, 05.
 begin;
 
 do $$
@@ -50,6 +50,32 @@ begin
   if has_function_privilege('anon', 'public.record_evaluation(uuid,integer,integer,integer)', 'execute') or
      has_function_privilege('authenticated', 'public.replace_evaluation_keys(jsonb)', 'execute') then
     raise exception 'Las funciones permiten acceso de un cliente';
+  end if;
+end;
+$$;
+
+-- Reproduce el rol real de la Edge Function. Una llamada como postgres no
+-- detecta que service_role carece de INSERT en las tablas de notas e historial.
+set local role service_role;
+select public.record_evaluation(
+  (select id from public.students where nie = 'TEST-0001'), 1, 100, 10
+);
+reset role;
+
+do $$
+begin
+  if not exists (
+    select 1 from public.weekly_progress p
+    join public.students s on s.id = p.student_id
+    where s.nie = 'TEST-0001' and p.week_number = 1
+      and p.attempts = 3 and p.last_score = 100 and p.best_score = 100
+  ) then
+    raise exception 'service_role no pudo guardar la nota mediante la función';
+  end if;
+  if (select count(*) from public.activity_log a
+      join public.students s on s.id = a.student_id
+      where s.nie = 'TEST-0001') <> 3 then
+    raise exception 'service_role no pudo guardar el historial de evaluación';
   end if;
 end;
 $$;
