@@ -13,6 +13,11 @@ begin
 end;
 $$;
 
+-- Las Edge Functions usan service_role para validar la identidad y consultar
+-- claves/notas. BYPASSRLS no concede privilegios SQL sobre tablas nuevas.
+grant select on public.students, public.weekly_progress, public.evaluation_keys
+  to service_role;
+
 -- Los alumnos solo leen su fila activa. El docente lee y modifica alumnos.
 alter table public.students enable row level security;
 revoke all on public.students from anon, authenticated;
