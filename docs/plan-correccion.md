@@ -9,6 +9,7 @@ Fecha: 29 de octubre de 2026. Base: revisión del código local y compilación; 
 - El panel docente muestra alumnos activos/inactivos y permite cambiar su estado; ofrece PDF resumen y CSV por evaluación. El alumno solo puede descargar un reporte después de guardar la nota. El acceso docente ya usa Supabase Auth y hay migraciones RLS preparadas, pero aún deben probarse y aplicarse en la base desplegada.
 - La verificación pública consulta una función que responde únicamente si existe el código, sin identidad ni calificación. Falta desplegar y probar esta función.
 - El script de respaldo ahora marca los errores con salida no cero y deja las copias incompletas en una carpeta `.partial`. La sincronización de claves usa una función SQL atómica preparada, pendiente de aplicar y probar en Supabase.
+- La evaluación ya invoca una función SQL que guarda nota e historial de forma atómica. La migración y la función Edge deben probarse y desplegarse juntas.
 - Se instaló `blobatar` con su adaptador React como avatar cuando no hay foto. Se corrigieron la navegación del portal con enlaces, el idioma HTML y los campos del acceso estudiantil.
 
 ## Asignación por esfuerzo y dependencias

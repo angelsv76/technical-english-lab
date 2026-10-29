@@ -50,8 +50,9 @@ La app está configurada para Vercel. Las variables de entorno deben definirse e
 
 La IA, la calificación y la verificación pública de códigos necesitan las funciones
 `generate-content`, `submit-evaluation` y `verify-report`.
-Configura `GEMINI_API_KEY` **solo** como secreto de Supabase y despliega ambas funciones
-antes de publicar esta versión del frontend. La clave de Gemini ya no se incluye en
+Configura `GEMINI_API_KEY` **solo** como secreto de Supabase y despliega las funciones
+después de aplicar las migraciones descritas abajo y antes de publicar esta versión
+del frontend. La clave de Gemini ya no se incluye en
 el JavaScript público; si se usó con una versión anterior, rótala en Google AI Studio.
 
 ```bash
@@ -89,6 +90,9 @@ Supabase, crear un respaldo restaurable y ensayar en un proyecto de pruebas:
 6. Aplicar `supabase/migrations/2026102903_atomic_evaluation_keys.sql` antes de
    usar `node scripts/sync-evaluation-keys.mjs`. La sincronización reemplaza
    todas las claves en una sola transacción; si falla, conserva las anteriores.
+7. Aplicar `supabase/migrations/2026102904_atomic_evaluation.sql` antes de desplegar
+   la nueva `submit-evaluation`: nota e historial se guardan juntos y los intentos
+   concurrentes se cuentan en la base.
 
 Estas migraciones están preparadas en el repositorio, pero **no se han aplicado**
 al proyecto Supabase de producción. El panel docente requiere los pasos anteriores.
