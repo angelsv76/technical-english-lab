@@ -1,5 +1,7 @@
 /**
- * Respalda todas las tablas de Supabase a archivos JSON con fecha.
+ * Exporta las tablas públicas de la aplicación a archivos JSON con fecha.
+ * No incluye auth.users, esquema, políticas ni buckets: NO sustituye un
+ * respaldo PostgreSQL restaurable antes de una migración de producción.
  * La evidencia del curso vive en un free tier — sin esto, un fallo o pausa
  * del proyecto la pierde toda.
  *
@@ -23,7 +25,7 @@ if (!url || !key) {
 }
 
 const supabase = createClient(url, key);
-const TABLES = ['students', 'weekly_progress', 'glossary_entries', 'activity_log', 'course_config'];
+const TABLES = ['students', 'weekly_progress', 'glossary_entries', 'activity_log', 'course_config', 'evaluation_keys'];
 const PAGE = 1000;
 
 const stamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -54,5 +56,5 @@ if (process.exitCode) {
   console.error(`Respaldo incompleto en ${partialDir}. No usarlo como copia restaurable.`);
 } else {
   renameSync(partialDir, dir);
-  console.log(`\nRespaldo completo en ${dir} (${totalRows} filas). Copia esta carpeta a un lugar seguro.`);
+  console.log(`\nExportación de tablas de la aplicación en ${dir} (${totalRows} filas). Copia esta carpeta a un lugar seguro.`);
 }

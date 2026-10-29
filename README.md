@@ -78,6 +78,12 @@ asociarla por el correo `<NIE>@inti.edu.sv`.
 Antes de desplegar este frontend, revisar el esquema y las políticas reales de
 Supabase, crear un respaldo restaurable y ensayar en un proyecto de pruebas:
 
+En proyectos sin respaldos automáticos, la
+[guía oficial de Supabase](https://supabase.com/docs/guides/platform/backups)
+recomienda exportar la base con `supabase db dump` y conservar una copia fuera
+del proyecto. `scripts/backup-supabase.mjs` es solo una exportación adicional de
+tablas de la aplicación; no incluye Auth, esquema, políticas ni archivos Storage.
+
 1. Confirmar que se aplicó la parte 1 de `supabase-verificacion.sql`, incluida la
    tabla `evaluation_keys` y la columna `weekly_progress.verification_code`.
 2. Aplicar `supabase/migrations/2026102901_prepare_auth.sql`.
