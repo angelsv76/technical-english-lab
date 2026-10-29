@@ -27,7 +27,7 @@ import { StudentAvatar } from '../components/StudentAvatar';
 import { logoutTeacher } from '../services/authService';
 import { supabase } from '../lib/supabase';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 interface StudentData {
   id: string;
@@ -64,6 +64,7 @@ export const TeacherDashboard: React.FC = () => {
   const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('active');
   const [reportScope, setReportScope] = useState<'active' | 'all'>('active');
   const [dataError, setDataError] = useState<string | null>(null);
+  const [reportError, setReportError] = useState<string | null>(null);
   const [busyStudentId, setBusyStudentId] = useState<string | null>(null);
   // Canario de integridad: fecha del último guardado real en todo el sistema
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
@@ -247,24 +248,30 @@ export const TeacherDashboard: React.FC = () => {
 
   const downloadReport = () => {
     if (loading || refreshing || dataError || reportStudents.length === 0) return;
-    const doc = new jsPDF() as any;
-    doc.text('Reporte de Progreso - Technical English Lab - INTI', 14, 15);
-    
-    const tableData = reportStudents.map(s => {
-      const completed = s.progress.filter((p: any) => p.completed).length;
-      const scores = s.progress.map((p: any) => p.last_score).filter((sc: number | null) => sc !== null);
-      const avg = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
-      const lastLogin = s.last_login ? new Date(s.last_login).toLocaleDateString('es-SV') : 'Nunca';
-      return [s.nie, s.name, s.group_code, s.active ? 'Activo' : 'Inactivo', `${avg}%`, `${completed}/40`, lastLogin];
-    });
-    
-    doc.autoTable({
-      head: [['NIE', 'Nombre', 'Grupo', 'Estado', 'Promedio', 'Semanas', 'Último acceso']],
-      body: tableData,
-      startY: 25,
-    });
-    
-    doc.save(`reporte_ds1b_${reportScope}_${new Date().toISOString().split('T')[0]}.pdf`);
+    setReportError(null);
+    try {
+      const doc = new jsPDF();
+      doc.text('Reporte de Progreso - Technical English Lab - INTI', 14, 15);
+
+      const tableData = reportStudents.map(s => {
+        const completed = s.progress.filter((p: any) => p.completed).length;
+        const scores = s.progress.map((p: any) => p.last_score).filter((sc: number | null) => sc !== null);
+        const avg = scores.length > 0 ? Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length) : 0;
+        const lastLogin = s.last_login ? new Date(s.last_login).toLocaleDateString('es-SV') : 'Nunca';
+        return [s.nie, s.name, s.group_code, s.active ? 'Activo' : 'Inactivo', `${avg}%`, `${completed}/40`, lastLogin];
+      });
+
+      autoTable(doc, {
+        head: [['NIE', 'Nombre', 'Grupo', 'Estado', 'Promedio', 'Semanas', 'Último acceso']],
+        body: tableData,
+        startY: 25,
+      });
+
+      doc.save(`reporte_ds1b_${reportScope}_${new Date().toISOString().split('T')[0]}.pdf`);
+    } catch (error) {
+      console.error('Error generando el PDF docente:', error);
+      setReportError('No se pudo generar el PDF. Intenta de nuevo o descarga el CSV.');
+    }
   };
 
   const downloadCsv = () => {
@@ -614,6 +621,7 @@ export const TeacherDashboard: React.FC = () => {
         {activeTab === 'reports' && (
           <div className="max-w-2xl space-y-4">
             {dataError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{dataError}</p>}
+            {reportError && <p role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-800">{reportError}</p>}
             <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-zinc-500">
               <span>{lastUpdatedAt ? `Última actualización: ${lastUpdatedAt.toLocaleTimeString('es-SV')}` : 'Esperando datos'} · cada 30 s</span>
               <button type="button" onClick={loadStudents} disabled={loading || refreshing}
