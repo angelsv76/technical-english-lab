@@ -31,7 +31,7 @@ Referencias de despliegue facilitadas por el propietario: repositorio `angelsv76
 
 1. **Crítico:** el código de acceso docente ya cambió a Supabase Auth, pero la migración de `teacher_users` y las políticas RLS aún no están aplicadas ni verificadas en Supabase. Los SQL históricos permiten escrituras amplias (`supabase-fix-rls-escritura.sql`, `supabase-course-config.sql`). La opción de activar/desactivar alumnos no debe considerarse segura hasta completar las fases 1 y 2.
 2. **Alto:** la función de reemplazo atómico de claves y el respaldo con fallo explícito están implementados, pero requieren prueba de restauración y ejecución contra una base de pruebas. `backups/` ya está ignorado por Git.
-3. **Alto:** los reportes docentes antes consultaban hasta 10.000 filas y podían estar incompletos. Esta copia pagina progreso y glosario, y deshabilita descargas tras un error; todavía falta verificar datos reales y el límite de paginación de alumnos.
+3. **Alto:** los reportes docentes antes podían estar incompletos. Esta copia pagina alumnos, progreso y glosario, limita el tamaño de cada filtro y deshabilita descargas tras un error. El CSV neutraliza celdas que podrían ejecutarse como fórmulas al abrirse en una hoja de cálculo. Falta contrastar los recuentos y las descargas con datos reales.
 4. **Alto:** `npm audit --omit=dev` informa 22 avisos (3 críticos, 13 altos); hay que distinguir dependencias usadas en producción de herramientas de build y actualizar con pruebas. No hay pruebas ni CI; `tsconfig.json` excluye `supabase/functions`. El build mantiene un paquete principal de aproximadamente 1,3 MB.
 5. **Medio:** faltan tratamiento consistente de errores, foco de diálogos, nombres accesibles y comportamiento móvil en varias vistas.
 

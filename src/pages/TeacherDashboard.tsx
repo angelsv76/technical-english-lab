@@ -84,18 +84,18 @@ export const TeacherDashboard: React.FC = () => {
       setLoading(true);
       setDataError(null);
 
-      const { data: studentsData, error: studentsError } = await supabase
-        .from('students')
-        .select('id, nie, name, group_code, last_login, last_seen, photo_url, created_at, active')
-        .order('name');
-
-      if (studentsError) {
-        console.error('Error al consultar estudiantes:', studentsError.message, studentsError.details);
-        setDataError('No se pudo cargar la lista de alumnos. Intenta actualizar los datos.');
-        return;
+      const studentsData: any[] = [];
+      const pageSize = 1000;
+      for (let offset = 0; ; offset += pageSize) {
+        const { data, error } = await supabase.from('students')
+          .select('id, nie, name, group_code, last_login, last_seen, photo_url, created_at, active')
+          .order('id').range(offset, offset + pageSize - 1);
+        if (error) throw error;
+        studentsData.push(...(data || []));
+        if (!data || data.length < pageSize) break;
       }
 
-      if (!studentsData || studentsData.length === 0) {
+      if (studentsData.length === 0) {
         console.warn('No se encontraron estudiantes en Supabase.');
         setStudents([]);
         return;
@@ -104,14 +104,17 @@ export const TeacherDashboard: React.FC = () => {
       const studentIds = studentsData.map(s => s.id);
       const loadAllRows = async (table: 'weekly_progress' | 'glossary_entries', columns: string) => {
         const rows: any[] = [];
-        const pageSize = 1000;
-        for (let offset = 0; ; offset += pageSize) {
-          const { data, error } = await supabase.from(table).select(columns)
-            .in('student_id', studentIds).range(offset, offset + pageSize - 1);
-          if (error) throw error;
-          rows.push(...(data || []));
-          if (!data || data.length < pageSize) return rows;
+        for (let start = 0; start < studentIds.length; start += 100) {
+          const ids = studentIds.slice(start, start + 100);
+          for (let offset = 0; ; offset += pageSize) {
+            const { data, error } = await supabase.from(table).select(columns)
+              .in('student_id', ids).order('id').range(offset, offset + pageSize - 1);
+            if (error) throw error;
+            rows.push(...(data || []));
+            if (!data || data.length < pageSize) break;
+          }
         }
+        return rows;
       };
 
       const progressData = await loadAllRows('weekly_progress', '*');
@@ -236,7 +239,12 @@ export const TeacherDashboard: React.FC = () => {
           : [[...base, '', '', '', '', '', lastLogin]];
       })
     ];
-    const csv = '\uFEFF' + rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\r\n');
+    const safeCell = (value: unknown) => {
+      const text = String(value);
+      const neutralized = /^[\s\u0000-\u001f]*[=+@-]/.test(text) ? `'${text}` : text;
+      return `"${neutralized.replace(/"/g, '""')}"`;
+    };
+    const csv = '\uFEFF' + rows.map(row => row.map(safeCell).join(',')).join('\r\n');
     const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
     const link = document.createElement('a');
     link.href = url;
@@ -630,10 +638,11 @@ const TeacherPhotoUpload = ({ student, online }: { student: any; online: boolean
 
       const url = `${data.publicUrl}?t=${Date.now()}`;
 
-      await supabase
+      const { error: updateError } = await supabase
         .from('students')
         .update({ photo_url: url })
         .eq('id', student.id);
+      if (updateError) throw updateError;
 
       setPhotoUrl(url);
       student.photo_url = url;
