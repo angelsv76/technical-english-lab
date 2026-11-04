@@ -1,50 +1,35 @@
 /**
- * Authentication service for the Teacher Administration Module.
+ * Autenticación del docente con Supabase Auth.
+ *
+ * El rol vive en `app_metadata.role = 'teacher'`, que solo se puede escribir
+ * con la service key (el usuario no puede editarlo). La autorización real la
+ * hacen las políticas RLS (`public.is_teacher()`); esto solo decide qué
+ * pantalla mostrar.
  */
+import type { User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
-/**
- * Generates a SHA-256 hash of a string.
- * @param message The string to hash.
- * @returns A promise that resolves to the hex representation of the hash.
- */
-async function sha256(message: string): Promise<string> {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  return hashHex;
+export function isTeacherUser(user: User | null | undefined): boolean {
+  return user?.app_metadata?.role === 'teacher';
 }
 
-/**
- * Validates teacher credentials against environment variables.
- * @param username The username entered.
- * @param password The password entered.
- * @returns A promise that resolves to true if credentials are valid, false otherwise.
- */
-export async function validateTeacherCredentials(username: string, password: string): Promise<boolean> {
-  const adminUser = import.meta.env.VITE_ADMIN_USER;
-  const adminHash = import.meta.env.VITE_ADMIN_HASH;
-
-  if (!adminUser || !adminHash) {
-    console.error('Admin credentials not configured in environment variables.');
+/** Inicia sesión; si la cuenta no es docente, cierra la sesión y devuelve false. */
+export async function signInTeacher(email: string, password: string): Promise<boolean> {
+  const { data, error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+  if (error || !data.user) return false;
+  if (!isTeacherUser(data.user)) {
+    await supabase.auth.signOut();
     return false;
   }
-
-  const passwordHash = await sha256(password);
-
-  return username === adminUser && passwordHash === adminHash;
+  return true;
 }
 
-/**
- * Checks if the teacher is currently logged in.
- */
-export function isTeacherLoggedIn(): boolean {
-  return localStorage.getItem('teacherLoggedIn') === 'true';
+/** Comprueba la sesión contra el servidor (getUser, no el token en caché). */
+export async function isTeacherSession(): Promise<boolean> {
+  const { data: { user } } = await supabase.auth.getUser();
+  return isTeacherUser(user);
 }
 
-/**
- * Logs out the teacher.
- */
-export function logoutTeacher(): void {
-  localStorage.removeItem('teacherLoggedIn');
+export async function logoutTeacher(): Promise<void> {
+  await supabase.auth.signOut();
 }

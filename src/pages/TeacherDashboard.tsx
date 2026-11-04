@@ -25,6 +25,7 @@ import { useWeeks } from '../hooks/useWeeks';
 import { TeacherPanel } from '../components/TeacherPanel';
 import { StudentAvatar } from '../components/StudentAvatar';
 import { supabase } from '../lib/supabase';
+import { logoutTeacher } from '../services/authService';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
@@ -196,8 +197,8 @@ export const TeacherDashboard: React.FC = () => {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('teacherLoggedIn');
+  const handleLogout = async () => {
+    await logoutTeacher();
     navigate('/teacher/login');
   };
 

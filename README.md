@@ -35,9 +35,10 @@ Plataforma interactiva de Inglés Técnico para estudiantes de Desarrollo de Sof
    ```
    VITE_SUPABASE_URL=tu_url_de_supabase
    VITE_SUPABASE_ANON_KEY=tu_anon_key
-   VITE_ADMIN_USER=usuario_docente
-   VITE_ADMIN_HASH=hash_sha256_de_la_contraseña
    ```
+
+   El docente es un usuario de Supabase Auth con `app_metadata.role = 'teacher'`
+   (ver `supabase-fase1-docente.sql`). Ya no existen `VITE_ADMIN_USER` ni `VITE_ADMIN_HASH`.
 
 3. Ejecutar en modo desarrollo:
    ```bash
@@ -67,11 +68,13 @@ datos del estudiante. Después de verificar el flujo de evaluación, ejecuta la
 directa de notas. No vuelvas a aplicar `supabase-fix-rls-escritura.sql` después de
 cerrar esas políticas: ese archivo abre escrituras para cualquier cliente anónimo.
 
-**Pendiente de endurecer:** el acceso docente usa un hash público `VITE_ADMIN_HASH`
-y una bandera en `localStorage`, y varias políticas RLS históricas permiten acceso
-amplio a datos. No son un límite de seguridad. Antes de usar datos sensibles en
-producción, migra el rol docente a Supabase Auth y restringe las políticas RLS por
-usuario. El cambio requiere revisar las políticas de la base de datos desplegada.
+**Acceso docente (Fase 1, en código, sin desplegar):** el docente entra con Supabase Auth
+y la autorización la hacen las políticas RLS y un trigger de `supabase-fase1-docente.sql`.
+Antes de desplegar el frontend hay que crear el usuario docente y ejecutar ese SQL.
+
+**Pendiente de endurecer (Fase 2):** varias políticas RLS históricas de alumnos siguen
+siendo amplias (cualquier alumno autenticado puede leer datos de otros). Falta migrar
+`students` a `auth_user_id` y restringir por propietario, y la política del bucket de fotos.
 
 ---
 
