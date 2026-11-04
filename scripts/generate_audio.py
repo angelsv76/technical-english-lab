@@ -5,7 +5,12 @@ El manifest es una lista de {folder, file, text}: produce audio-upload/<folder>/
 Uso (desde technical-english-lab-main):
   ../kokoro-tts/.venv/Scripts/python.exe scripts/generate_audio.py scripts/audio-manifest.json
 
-Es idempotente: salta archivos que ya existen. Voz af_heart (inglés US), mp3 96k mono.
+Es idempotente: salta archivos que ya existen. Voz af_heart (inglés US), mp3 96k mono,
+velocidad 0.95.
+
+Ojo con los audios ya generados: las semanas 1 a 40 se produjeron antes de fijar la
+velocidad, así que salieron a 1.0 y suenan un poco más rápidas que las nuevas. Para
+unificarlas hay que borrar sus mp3 y volver a correr este script.
 """
 import json
 import os
@@ -26,6 +31,7 @@ OUT_DIR = os.path.join(BASE, "audio-upload")
 VOICE = "af_heart"   # inglés US, voz femenina de mayor calidad de kokoro
 LANG = "a"           # 'a' = American English
 BITRATE = "96k"      # mp3 mono: suficiente para voz, liviano para datos móviles
+SPEED = 0.95         # igual que el material semanal del reproductor: a 1.0 suena mecánica
 
 with open(MANIFEST, encoding="utf-8") as f:
     items = json.load(f)
@@ -44,7 +50,7 @@ for item in items:
         skipped += 1
         continue
 
-    chunks = [audio for _, _, audio in pipeline(item["text"], voice=VOICE)]
+    chunks = [audio for _, _, audio in pipeline(item["text"], voice=VOICE, speed=SPEED)]
     audio = np.concatenate(chunks)
 
     wav_tmp = out_mp3[:-4] + ".tmp.wav"

@@ -5,8 +5,8 @@ dist/
 *.local
 
 # Variables de entorno — NUNCA versionar.
-# .env.local tiene VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY y GEMINI_API_KEY.
-# En produccion las pone Vercel; en local viven solo en ese archivo.
+# .env.local solo necesita las variables VITE_SUPABASE_* del frontend.
+# GEMINI_API_KEY se configura como secreto de Supabase, no en el frontend.
 # Nota: el patron *.local de arriba ya lo cubre, pero se deja explicito para
 # que se vea al abrir el archivo.
 .env
@@ -20,6 +20,9 @@ dist/
 # vocabulary-audio de Supabase
 audio-upload/**/*.mp3
 audio-upload/**/*.wav
+
+# Respaldos de base de datos: pueden contener datos personales.
+backups/
 
 # Logs
 *.log

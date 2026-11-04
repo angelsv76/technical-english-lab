@@ -5,7 +5,7 @@
 //
 // Desplegar:  npx supabase functions deploy submit-evaluation
 // (SUPABASE_URL y SUPABASE_SERVICE_ROLE_KEY las inyecta Supabase automáticamente)
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { authenticatedStudent } from "../_shared/studentAuth.ts";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -24,25 +24,15 @@ Deno.serve(async (req) => {
   if (req.method !== "POST") return json({ error: "method not allowed" }, 405);
 
   try {
+    const identity = await authenticatedStudent(req);
+    if (!identity) return json({ error: "sesión de estudiante inválida" }, 401);
     const { studentId, week, answers } = await req.json();
 
-    if (typeof studentId !== "string" || typeof week !== "number" || !Array.isArray(answers)) {
+    if (studentId !== identity.student.id || !Number.isInteger(week) || week < 1 || week > 40 ||
+        !Array.isArray(answers) || answers.length > 100) {
       return json({ error: "payload inválido" }, 400);
     }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
-
-    const { data: student } = await supabase
-      .from("students")
-      .select("id, active")
-      .eq("id", studentId)
-      .maybeSingle();
-    if (!student || student.active === false) {
-      return json({ error: "estudiante no encontrado" }, 404);
-    }
+    const supabase = identity.service;
 
     const { data: keys } = await supabase
       .from("evaluation_keys")

@@ -20,22 +20,9 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
     setError('');
 
     try {
-      // 1. Buscar estudiante en la tabla
-      const { data: student, error: studentError } = await supabase
-        .from('students')
-        .select('*')
-        .eq('nie', formData.nie)
-        .eq('active', true)
-        .single();
-
-      if (studentError || !student) {
-        setError('NIE no registrado en el sistema. Contacta a tu profesor.');
-        setLoading(false);
-        return;
-      }
-
-      // 2. Intentar login con Supabase Auth
-      const email = `${formData.nie}@inti.edu.sv`;
+      // Primero autenticar: no revelar si existe un NIE sin contraseña válida.
+      const nie = formData.nie.trim();
+      const email = `${nie}@inti.edu.sv`;
       
       const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
         email,
@@ -43,8 +30,20 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
       });
 
       if (authError) {
-        setError('Contraseña incorrecta. Si es tu primera vez, usa los primeros 4 dígitos de tu NIE.');
-        setLoading(false);
+        setError('NIE o contraseña incorrectos. Si es tu primera vez, usa los primeros 4 dígitos de tu NIE.');
+        return;
+      }
+
+      const { data: student, error: studentError } = await supabase
+        .from('students')
+        .select('id, nie, name, group_code, photo_url, active')
+        .eq('nie', nie)
+        .eq('active', true)
+        .single();
+
+      if (studentError || !student || authData.user?.email?.toLowerCase() !== email.toLowerCase()) {
+        await supabase.auth.signOut();
+        setError('Cuenta de estudiante no disponible. Contacta a tu profesor.');
         return;
       }
 
@@ -71,7 +70,8 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
         id: student.id,
         nie: student.nie,
         name: student.name,
-        code: student.group_code
+        code: student.group_code,
+        photo_url: student.photo_url
       });
 
     } catch (err) {
@@ -96,7 +96,7 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
         
         <form onSubmit={handleLogin} className="p-8 space-y-6">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
+            <div role="alert" className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm flex items-start gap-2">
               <AlertCircle size={18} className="flex-shrink-0 mt-0.5" />
               <span>{error}</span>
             </div>
@@ -104,14 +104,19 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label htmlFor="student-nie" className="block text-sm font-medium text-zinc-700 mb-1">
                 NIE
               </label>
               <div className="relative">
                 <Hash className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input
+                  id="student-nie"
+                  name="nie"
                   type="text"
                   required
+                  inputMode="numeric"
+                  autoComplete="username"
+                  spellCheck={false}
                   placeholder="Ej: 202600123"
                   className="w-full pl-10 pr-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-[#F57C00] focus:border-transparent outline-none transition-all"
                   value={formData.nie}
@@ -122,14 +127,17 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-zinc-700 mb-1">
+              <label htmlFor="student-password" className="block text-sm font-medium text-zinc-700 mb-1">
                 Contraseña
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                 <input
+                  id="student-password"
+                  name="password"
                   type="password"
                   required
+                  autoComplete="current-password"
                   placeholder="Tu contraseña"
                   className="w-full pl-10 pr-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-[#F57C00] focus:border-transparent outline-none transition-all"
                   value={formData.password}

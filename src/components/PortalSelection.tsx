@@ -1,17 +1,16 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { GraduationCap, Settings, User, ShieldCheck } from 'lucide-react';
 
 export const PortalSelection: React.FC = () => {
-  const navigate = useNavigate();
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 p-4">
+      <h1 className="sr-only">Selecciona tu portal de Inglés Técnico</h1>
       <div className="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Student Portal */}
-        <div 
-          onClick={() => navigate('/student/login')}
-          className="group bg-white p-12 rounded-3xl border border-zinc-200 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer flex flex-col items-center text-center"
+        <Link
+          to="/student/login"
+          className="group bg-white p-12 rounded-3xl border border-zinc-200 shadow-xl hover:shadow-2xl hover:-translate-y-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600 transition-shadow cursor-pointer flex flex-col items-center text-center"
         >
           <div className="w-24 h-24 bg-orange-50 text-[#F57C00] rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
             <GraduationCap size={48} />
@@ -22,12 +21,12 @@ export const PortalSelection: React.FC = () => {
             <User size={20} />
             <span>Entrar al Laboratorio</span>
           </div>
-        </div>
+        </Link>
 
         {/* Teacher Portal */}
-        <div 
-          onClick={() => navigate('/teacher/login')}
-          className="group bg-zinc-900 p-12 rounded-3xl border border-zinc-800 shadow-xl hover:shadow-2xl hover:-translate-y-2 transition-all cursor-pointer flex flex-col items-center text-center text-white"
+        <Link
+          to="/teacher/login"
+          className="group bg-zinc-900 p-12 rounded-3xl border border-zinc-800 shadow-xl hover:shadow-2xl hover:-translate-y-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-orange-600 transition-shadow cursor-pointer flex flex-col items-center text-center text-white"
         >
           <div className="w-24 h-24 bg-white/10 text-[#F57C00] rounded-3xl flex items-center justify-center mb-8 group-hover:scale-110 transition-transform">
             <Settings size={48} />
@@ -38,7 +37,7 @@ export const PortalSelection: React.FC = () => {
             <ShieldCheck size={20} />
             <span>Panel de Administración</span>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );
