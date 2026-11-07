@@ -147,6 +147,28 @@ create table if not exists course_config (
   updated_at  text not null
 );
 
+create table if not exists lessons (
+  week_number integer primary key,
+  title       text not null,
+  objective   text not null default '',
+  keywords    text not null default '[]',
+  status      text not null default 'published' check (status in ('draft', 'published')),
+  blocks      text not null default '[]',
+  updated_at  text not null
+);
+
+create table if not exists lesson_versions (
+  id          integer primary key autoincrement,
+  week_number integer not null,
+  title       text not null,
+  objective   text not null,
+  keywords    text not null,
+  status      text not null,
+  blocks      text not null,
+  saved_at    text not null
+);
+create index if not exists idx_lesson_versions on lesson_versions (week_number, id);
+
 create table if not exists enrollment_codes (
   group_code text primary key,
   code       text not null,

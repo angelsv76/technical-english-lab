@@ -4,7 +4,7 @@ import type { DatabaseSync } from 'node:sqlite';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { weeks } from '../src/data/weeks/index.ts';
+import { clavesEvaluacion } from './lecciones.ts';
 import { gruposConInscripcionAbierta, inscribir, type EnrollDeps } from '../supabase/functions/_shared/enrollment.ts';
 import {
   correoDeNie, generarClave, generarCodigo, validarDiasVigencia, validarFilasImportacion, validarGrupo
@@ -41,7 +41,7 @@ export function enviarEvaluacion(c: Contexto, cuerpo: any): Resp {
       !Array.isArray(answers) || answers.length > 100) {
     return { status: 400, body: { error: 'payload inválido' } };
   }
-  const claves = weeks.find(w => w.week === week)?.evaluation ?? [];
+  const claves = clavesEvaluacion(c.db, week);
   if (claves.length === 0) return { status: 400, body: { error: `sin claves de evaluación para la semana ${week}` } };
 
   let correctas = 0;

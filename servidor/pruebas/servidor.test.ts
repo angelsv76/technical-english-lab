@@ -460,3 +460,152 @@ test('foto propuesta: el alumno la sube, queda pendiente y solo el docente la ap
   assert.match(aprobada.photo_url, new RegExp(`^/fotos/${ana}/avatar\.png`));
   assert.equal((await fetch(`${base}/fotos/${ana}/avatar.png`)).status, 200);
 });
+
+// ---------- lecciones por bloques y medios ----------
+import { validarLeccion, leerLeccion } from '../lecciones.ts';
+import { readdirSync } from 'node:fs';
+
+const leccionBase = (extra: Record<string, unknown> = {}) => ({
+  title: 'Prueba', objective: 'Probar', keywords: ['uno'], status: 'published',
+  blocks: [
+    { type: 'texto', titulo: 'Intro', texto: 'Hola <script>alert(1)</script>' },
+    { type: 'practica', preguntas: [{ question: 'Q1', options: ['a', 'b'], answer: 'a', explanation: 'porque sí' }] },
+    { type: 'evaluacion', preguntas: [{ question: 'E1', options: ['x', 'y'], answer: 'y' }, { question: 'E2', options: ['m', 'n'], answer: 'm' }] }
+  ],
+  ...extra
+});
+
+test('lecciones: las 40 semanas del código se copiaron y todas son válidas', () => {
+  const filas = db.prepare('SELECT week_number FROM lessons ORDER BY week_number').all() as { week_number: number }[];
+  assert.equal(filas.length, 40);
+  const malas: string[] = [];
+  for (const { week_number } of filas) {
+    const l = leerLeccion(db, week_number, true)!;
+    const v = validarLeccion({ ...l }, week_number);
+    if (!v.ok) malas.push(`semana ${week_number}: ${v.error}`);
+  }
+  assert.deepEqual(malas, [], 'las semanas existentes deben poder editarse y guardarse sin errores');
+});
+
+test('lecciones: el alumno no recibe las respuestas de la evaluación ni los borradores', async () => {
+  assert.equal((await http('/api/lecciones')).status, 401, 'sin sesión no');
+  const lista = await http('/api/lecciones', { token: tAna });
+  assert.equal(lista.json.lessons.length, 40);
+
+  const comoAlumno = (await http('/api/lecciones/1', { token: tAna })).json.lesson;
+  const ev = comoAlumno.blocks.find((b: any) => b.type === 'evaluacion');
+  assert.ok(ev.preguntas.length > 0);
+  assert.ok(ev.preguntas.every((p: any) => p.answer === ''), 'evaluación sin respuestas');
+  const pr = comoAlumno.blocks.find((b: any) => b.type === 'practica');
+  assert.ok(pr.preguntas.every((p: any) => p.answer), 'la práctica sí trae respuesta para dar retroalimentación');
+  const comoDocente = (await http('/api/lecciones/1', { token: tDocente })).json.lesson;
+  assert.ok(comoDocente.blocks.find((b: any) => b.type === 'evaluacion').preguntas.every((p: any) => p.answer));
+
+  db.prepare("UPDATE lessons SET status = 'draft' WHERE week_number = 40").run();
+  assert.equal((await http('/api/lecciones/40', { token: tAna })).status, 404);
+  assert.equal((await http('/api/lecciones/40', { token: tDocente })).status, 200);
+  assert.equal((await http('/api/lecciones', { token: tAna })).json.lessons.length, 39);
+  db.prepare("UPDATE lessons SET status = 'published' WHERE week_number = 40").run();
+});
+
+test('lecciones: solo el docente edita y todo lo que llega se valida', async () => {
+  const put = (semana: number, cuerpo: unknown, token = tDocente) => http(`/api/lecciones/${semana}`, { metodo: 'PUT', cuerpo, token });
+  assert.equal((await put(5, leccionBase(), tAna)).status, 401);
+  assert.equal((await put(5, leccionBase(), '')).status, 401);
+  assert.equal((await put(41, leccionBase())).status, 400);
+
+  const malo = async (cambio: (l: any) => void, texto: RegExp) => {
+    const l: any = leccionBase(); cambio(l);
+    const r = await put(5, l);
+    assert.equal(r.status, 400, texto.source);
+    assert.match(r.json.error, texto);
+  };
+  await malo(l => { l.blocks[1].preguntas[0].answer = 'zzz'; }, /una de las opciones/);
+  await malo(l => { l.blocks[1].preguntas[0].options = ['a', 'a']; }, /repetidas/);
+  await malo(l => { l.blocks.push({ type: 'evaluacion', preguntas: l.blocks[2].preguntas }); }, /solo puede tener un bloque de evaluación/);
+  await malo(l => { l.blocks.push({ type: 'script', texto: 'x' }); }, /desconocido/);
+  await malo(l => { l.blocks.push({ type: 'imagen', src: '/medios/../../secreto.png' }); }, /ruta de archivo/);
+  await malo(l => { l.blocks.push({ type: 'imagen', src: 'https://malo.example/x.png' }); }, /ruta de archivo/);
+  await malo(l => { l.blocks.push({ type: 'video', youtube: 'https://malo.example/watch' }); }, /YouTube/);
+  await malo(l => { l.blocks.push({ type: 'video' }); }, /sube un video/);
+  await malo(l => { l.blocks.push({ type: 'simulacion', simulationId: "SIM-1'; DROP" }); }, /SIM-011/);
+  await malo(l => { l.title = ''; }, /título/);
+  await malo(l => { l.status = 'otro'; }, /estado/);
+  await malo(l => { l.blocks[0].texto = 'x'.repeat(20001); }, /demasiado largo/);
+
+  const ok: any = leccionBase();
+  ok.blocks.push({ type: 'video', youtube: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=5' });
+  const r = await put(5, ok);
+  assert.equal(r.status, 200);
+  const guardada = r.json.lesson.blocks;
+  assert.equal(guardada[0].texto, 'Hola <script>alert(1)</script>', 'el texto se guarda tal cual, y la pantalla lo mostrará como texto');
+  assert.equal(guardada.at(-1).youtube, 'dQw4w9WgXcQ');
+  assert.ok(guardada.every((b: any) => typeof b.id === 'string' && b.id.length > 0));
+});
+
+test('lecciones: cada guardado deja una versión y se puede volver atrás', async () => {
+  const put = (cuerpo: unknown) => http('/api/lecciones/6', { metodo: 'PUT', cuerpo, token: tDocente });
+  const original = (await http('/api/lecciones/6', { token: tDocente })).json.lesson;
+  assert.equal((await put(leccionBase({ title: 'Cambio 1' }))).status, 200);
+  assert.equal((await put(leccionBase({ title: 'Cambio 2' }))).status, 200);
+  const v = (await http('/api/lecciones/6/versiones', { token: tDocente })).json.versions;
+  assert.equal(v.length, 2);
+  assert.equal((await http('/api/lecciones/6/versiones', { token: tAna })).status, 401);
+  const masVieja = v[v.length - 1];
+  assert.equal(masVieja.title, original.title);
+  assert.equal((await http('/api/lecciones/6/restaurar', { cuerpo: { versionId: masVieja.id }, token: tAna })).status, 401);
+  assert.equal((await http('/api/lecciones/6/restaurar', { cuerpo: { versionId: 99999 }, token: tDocente })).status, 404);
+  const rest = await http('/api/lecciones/6/restaurar', { cuerpo: { versionId: masVieja.id }, token: tDocente });
+  assert.equal(rest.status, 200);
+  assert.equal(rest.json.lesson.title, original.title);
+  for (let i = 0; i < 25; i++) await put(leccionBase({ title: `Rápido ${i}` }));
+  assert.equal((await http('/api/lecciones/6/versiones', { token: tDocente })).json.versions.length, 20, 'solo se guardan las últimas 20');
+});
+
+test('lecciones: la nota se calcula con la evaluación editada', async () => {
+  const l: any = leccionBase();
+  assert.equal((await http('/api/lecciones/7', { metodo: 'PUT', cuerpo: l, token: tDocente })).status, 200);
+  const ok = await fn('submit-evaluation', { studentId: ana, week: 7, answers: [{ question: 'E1', answer: 'y' }, { question: 'E2', answer: 'm' }] }, tAna);
+  assert.equal(ok.status, 200); assert.equal(ok.json.score, 100);
+  const mitad = await fn('submit-evaluation', { studentId: ana, week: 7, answers: [{ question: 'E1', answer: 'x' }, { question: 'E2', answer: 'm' }] }, tAna);
+  assert.equal(mitad.json.score, 50);
+  assert.equal(mitad.json.bestScore, 100, 'la mejor nota anterior se conserva');
+});
+
+test('medios: solo el docente sube; el tipo se decide por el contenido real', async () => {
+  const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(100, 3)]);
+  const mp4 = Buffer.concat([Buffer.from([0, 0, 0, 0x18]), Buffer.from('ftypisom'), Buffer.alloc(5000, 7)]);
+  const pdf = Buffer.concat([Buffer.from('%PDF-1.7\n'), Buffer.alloc(200, 32)]);
+  const mp3 = Buffer.concat([Buffer.from('ID3'), Buffer.alloc(200, 1)]);
+  const subir = (raw: Buffer, token?: string) => http('/api/medios', { metodo: 'POST', raw, token, tipo: 'application/octet-stream' });
+
+  assert.equal((await subir(png)).status, 401);
+  assert.equal((await subir(png, tAna)).status, 401);
+  assert.equal((await subir(Buffer.from('<html><script>alert(1)</script></html>'), tDocente)).status, 400);
+  assert.equal((await subir(Buffer.from('MZ\x90\x00 programa'), tDocente)).status, 400, 'un ejecutable no pasa');
+  assert.equal((await subir(Buffer.alloc(0), tDocente)).status, 400);
+  assert.equal((await subir(Buffer.concat([png, Buffer.alloc(5 * 1024 * 1024)]), tDocente)).status, 413, 'imagen sobre 5 MB');
+
+  const img = await subir(png, tDocente);
+  assert.equal(img.status, 200); assert.equal(img.json.tipo, 'imagen'); assert.match(img.json.src, /^\/medios\/[0-9a-f-]{36}\.png$/);
+  const vista = await fetch(base + img.json.src);
+  assert.equal(vista.status, 200); assert.equal(vista.headers.get('content-type'), 'image/png');
+
+  const doc = (await subir(pdf, tDocente)).json; assert.equal(doc.tipo, 'pdf');
+  const aud = (await subir(mp3, tDocente)).json; assert.equal(aud.tipo, 'audio');
+  const vid = (await subir(mp4, tDocente)).json; assert.equal(vid.tipo, 'video'); assert.equal(vid.bytes, mp4.length);
+
+  // los videos necesitan poder saltar de posición (Range)
+  const parcial = await fetch(base + vid.src, { headers: { Range: 'bytes=100-199' } });
+  assert.equal(parcial.status, 206);
+  assert.equal(parcial.headers.get('content-range'), `bytes 100-199/${mp4.length}`);
+  assert.equal((await parcial.arrayBuffer()).byteLength, 100);
+  assert.equal((await fetch(base + vid.src, { headers: { Range: 'bytes=999999-' } })).status, 416);
+
+  // los archivos subidos se pueden usar en una lección
+  const l: any = leccionBase(); l.blocks.push({ type: 'imagen', src: img.json.src, alt: 'logo' }, { type: 'pdf', src: doc.src });
+  assert.equal((await http('/api/lecciones/8', { metodo: 'PUT', cuerpo: l, token: tDocente })).status, 200);
+
+  assert.equal((await fetch(base + '/medios/../secreto-fuera.txt')).status, 404);
+  assert.equal(readdirSync(join(carpeta, 'medios')).filter(f => f.endsWith('.part')).length, 0, 'no quedan archivos a medias');
+});

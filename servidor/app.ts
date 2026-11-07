@@ -9,6 +9,12 @@ import {
   enviarEvaluacion, generarContenido, gestionarAlumnos, inscribirAlumno, verificarReporte,
   type Contexto, type Resp
 } from './funciones.ts';
+import { weeks } from '../src/data/weeks/index.ts';
+import {
+  guardarLeccion, leerLeccion, leerVersion, listarLecciones, listarVersiones,
+  sembrarLecciones, validarLeccion
+} from './lecciones.ts';
+import { ErrorMedio, guardarMedio } from './medios.ts';
 import { firmarSesion, leerSesion, verificarPassword } from './seguridad.ts';
 
 export interface Opciones {
@@ -27,7 +33,8 @@ const TIPOS: Record<string, string> = {
   '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg', '.webp': 'image/webp', '.ico': 'image/x-icon', '.mp3': 'audio/mpeg', '.wav': 'audio/wav',
-  '.woff2': 'font/woff2', '.map': 'application/json'
+  '.woff2': 'font/woff2', '.map': 'application/json', '.gif': 'image/gif', '.pdf': 'application/pdf',
+  '.mp4': 'video/mp4', '.webm': 'video/webm'
 };
 
 const LIMITES_FUNCION: Record<string, number> = {
@@ -85,6 +92,8 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
   const ahora = op.ahora ?? (() => new Date());
   const duracion = op.duracionSesionSeg ?? 7 * 24 * 3600;
   const dirFotos = join(op.dirDatos, 'fotos');
+  const dirMedios = join(op.dirDatos, 'medios');
+  sembrarLecciones(db, weeks as never, op.dirAudio, ahora());
   const fallosLogin = new Map<string, number[]>();
 
   const demasiadosFallos = (clave: string, maximo: number) => {
@@ -117,13 +126,26 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
     res.end(JSON.stringify(cuerpo));
   };
 
-  const servirArchivo = (res: http.ServerResponse, archivo: string, cache: string): boolean => {
+  const servirArchivo = (res: http.ServerResponse, archivo: string, cache: string, req?: http.IncomingMessage): boolean => {
     if (!existsSync(archivo) || !statSync(archivo).isFile()) return false;
-    res.writeHead(200, {
-      'Content-Type': TIPOS[extname(archivo).toLowerCase()] ?? 'application/octet-stream',
-      'Content-Length': statSync(archivo).size,
-      'Cache-Control': cache
-    });
+    const tamano = statSync(archivo).size;
+    const tipo = TIPOS[extname(archivo).toLowerCase()] ?? 'application/octet-stream';
+    const pedido = req?.headers.range?.match(/^bytes=(\d*)-(\d*)$/);
+    if (pedido && (pedido[1] || pedido[2])) {
+      const inicio = pedido[1] ? Number(pedido[1]) : Math.max(0, tamano - Number(pedido[2]));
+      const fin = pedido[1] && pedido[2] ? Math.min(Number(pedido[2]), tamano - 1) : tamano - 1;
+      if (inicio >= tamano || inicio > fin) {
+        res.writeHead(416, { 'Content-Range': `bytes */${tamano}` }).end();
+        return true;
+      }
+      res.writeHead(206, {
+        'Content-Type': tipo, 'Content-Length': fin - inicio + 1, 'Content-Range': `bytes ${inicio}-${fin}/${tamano}`,
+        'Accept-Ranges': 'bytes', 'Cache-Control': cache
+      });
+      createReadStream(archivo, { start: inicio, end: fin }).pipe(res);
+      return true;
+    }
+    res.writeHead(200, { 'Content-Type': tipo, 'Content-Length': tamano, 'Accept-Ranges': 'bytes', 'Cache-Control': cache });
     createReadStream(archivo).pipe(res);
     return true;
   };
@@ -226,6 +248,41 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
       return responder(res, 404, { error: 'Sin foto pendiente' });
     }
 
+    // Lecciones por bloques: el alumno lee las publicadas (sin claves de evaluación); el docente las edita.
+    const rutaLeccion = ruta.match(/^\/api\/lecciones(?:\/(\d{1,2}))?(?:\/(versiones|restaurar))?$/);
+    if (rutaLeccion) {
+      if (!usuario) return responder(res, 401, { error: 'Inicia sesión.' });
+      const docente = ident.rol === 'teacher';
+      const semana = rutaLeccion[1] ? Number(rutaLeccion[1]) : null;
+      const sub = rutaLeccion[2];
+      if (semana === null && req.method === 'GET') return responder(res, 200, { lessons: listarLecciones(db, docente) });
+      if (semana !== null && !sub && req.method === 'GET') {
+        const l = leerLeccion(db, semana, docente);
+        return l ? responder(res, 200, { lesson: l }) : responder(res, 404, { error: 'Esa lección no está disponible.' });
+      }
+      if (semana !== null && !docente && (req.method === 'PUT' || sub)) return responder(res, 401, { error: 'Solo el docente puede editar lecciones.' });
+      if (semana !== null && !sub && req.method === 'PUT') {
+        const v = validarLeccion(await leerJson(req, 600_000), semana);
+        if (!v.ok || !v.valor) return responder(res, 400, { error: v.error });
+        guardarLeccion(db, v.valor, ahora());
+        return responder(res, 200, { lesson: leerLeccion(db, semana, true) });
+      }
+      if (semana !== null && sub === 'versiones' && req.method === 'GET') return responder(res, 200, { versions: listarVersiones(db, semana) });
+      if (semana !== null && sub === 'restaurar' && req.method === 'POST') {
+        const { versionId } = await leerJson(req, 1_000);
+        const previa = Number.isInteger(versionId) ? leerVersion(db, semana, versionId) : null;
+        if (!previa) return responder(res, 404, { error: 'No existe esa versión.' });
+        guardarLeccion(db, previa, ahora());
+        return responder(res, 200, { lesson: leerLeccion(db, semana, true) });
+      }
+    }
+
+    if (ruta === '/api/medios' && req.method === 'POST') {
+      if (ident.rol !== 'teacher') return responder(res, 401, { error: 'Solo el docente puede subir archivos.' });
+      try { return responder(res, 200, await guardarMedio(req, dirMedios)); }
+      catch (e) { if (e instanceof ErrorMedio) throw new ErrorHttp(e.status, e.message); throw e; }
+    }
+
     return responder(res, 404, { error: 'No encontrado' });
   }
 
@@ -242,7 +299,12 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
 
       if (ruta.startsWith('/audio/')) {
         const archivo = rutaSegura(op.dirAudio, ruta.slice('/audio/'.length));
-        if (archivo && servirArchivo(res, archivo, 'public, max-age=86400')) return;
+        if (archivo && servirArchivo(res, archivo, 'public, max-age=86400', req)) return;
+        res.writeHead(404).end('No encontrado'); return;
+      }
+      if (ruta.startsWith('/medios/')) {
+        const archivo = rutaSegura(dirMedios, ruta.slice('/medios/'.length));
+        if (archivo && servirArchivo(res, archivo, 'public, max-age=31536000, immutable', req)) return;
         res.writeHead(404).end('No encontrado'); return;
       }
       if (ruta.startsWith('/fotos/')) {
