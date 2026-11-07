@@ -194,14 +194,19 @@ async function iniciarSesionDocente(url: string, clave: string): Promise<string>
     } else rl.question(texto, resolver);
   });
   const correo = (await preguntar('Correo de docente en Supabase: ')).trim();
-  const password = await preguntar('Contraseña (no se ve al escribir): ', true);
+  let cuerpo: { access_token?: string; msg?: string; error_description?: string; user?: { app_metadata?: { role?: string } } } = {};
+  for (let intento = 1; intento <= 3; intento++) {
+    const password = await preguntar('Contraseña (no se ve al escribir): ', true);
+    const r = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+      method: 'POST', headers: { apikey: clave, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: correo, password })
+    }).catch(e => { throw new Error(`No se pudo conectar con Supabase (${(e as Error).message}). ¿El proyecto está activo?`); });
+    cuerpo = await r.json() as typeof cuerpo;
+    if (r.ok && cuerpo.access_token) break;
+    console.error(`Supabase rechazó el acceso (${r.status}): ${cuerpo.error_description ?? cuerpo.msg ?? 'sin detalle'}. Intento ${intento} de 3.`);
+    if (intento === 3) { rl.close(); process.exitCode = 1; throw new Error('No se pudo iniciar sesión.'); }
+  }
   rl.close();
-  const r = await fetch(`${url}/auth/v1/token?grant_type=password`, {
-    method: 'POST', headers: { apikey: clave, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email: correo, password })
-  }).catch(e => { throw new Error(`No se pudo conectar con Supabase (${(e as Error).message}). ¿El proyecto está activo?`); });
-  const cuerpo = await r.json() as { access_token?: string; user?: { app_metadata?: { role?: string } } };
-  if (!r.ok || !cuerpo.access_token) { console.error('Supabase rechazó el correo o la contraseña.'); process.exit(1); }
-  if (cuerpo.user?.app_metadata?.role !== 'teacher') { console.error('Esa cuenta no es de docente.'); process.exit(1); }
+  if (cuerpo.user?.app_metadata?.role !== 'teacher') { throw new Error('Esa cuenta existe pero no es de docente (falta app_metadata.role = teacher).'); }
   return cuerpo.access_token;
 }
