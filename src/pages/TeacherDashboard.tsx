@@ -25,7 +25,8 @@ import { useWeeks } from '../hooks/useWeeks';
 import { TeacherPanel } from '../components/TeacherPanel';
 import { StudentAvatar } from '../components/StudentAvatar';
 import { UserManagement } from '../components/UserManagement';
-import { supabase } from '../lib/supabase';
+import { supabase, MODO_LOCAL } from '../lib/supabase';
+import { EditorLeccion } from '../components/editor/EditorLeccion';
 import { logoutTeacher } from '../services/authService';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -64,7 +65,8 @@ export const TeacherDashboard: React.FC = () => {
   const [busyStudentId, setBusyStudentId] = useState<string | null>(null);
   // Canario de integridad: fecha del último guardado real en todo el sistema
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
-  const { weeks, toggleWeek } = useWeeks('docente');
+  const { weeks, toggleWeek, recargar } = useWeeks('docente');
+  const [editando, setEditando] = useState<number | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -382,11 +384,16 @@ export const TeacherDashboard: React.FC = () => {
 
         {activeTab === 'content' && (
           <div className="bg-white rounded-3xl border border-zinc-200 shadow-sm overflow-hidden">
-            <TeacherPanel
-              weeks={weeks}
-              onToggleWeek={toggleWeek}
-              isFullPage={true}
-            />
+            {MODO_LOCAL && editando !== null ? (
+              <EditorLeccion semana={editando} onSalir={() => { setEditando(null); recargar(); }} />
+            ) : (
+              <TeacherPanel
+                weeks={weeks}
+                onToggleWeek={toggleWeek}
+                isFullPage={true}
+                onEditar={MODO_LOCAL ? setEditando : undefined}
+              />
+            )}
           </div>
         )}
 

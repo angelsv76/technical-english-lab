@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Info, Loader2 } from 'lucide-react';
 import { WeekData } from '../types';
+import { MODO_LOCAL } from '../lib/supabase';
 
 interface Props {
   weeks: WeekData[];
   onToggleWeek: (week: number) => Promise<boolean>;
   isFullPage?: boolean;
+  /** Versión local: abre el editor de lecciones de esa semana. */
+  onEditar?: (week: number) => void;
 }
 
 /**
@@ -15,7 +18,7 @@ interface Props {
  *   editor anterior guardaba solo en el navegador del docente y nunca llegaba
  *   a los alumnos, así que se eliminó.
  */
-export const TeacherPanel: React.FC<Props> = ({ weeks, onToggleWeek, isFullPage }) => {
+export const TeacherPanel: React.FC<Props> = ({ weeks, onToggleWeek, isFullPage, onEditar }) => {
   const [saving, setSaving] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,8 +39,9 @@ export const TeacherPanel: React.FC<Props> = ({ weeks, onToggleWeek, isFullPage 
         <Info size={18} className="text-blue-500 flex-shrink-0 mt-0.5" />
         <p className="text-sm text-blue-800">
           El interruptor controla qué semanas ven los alumnos y se guarda para todo el curso.
-          El <strong>contenido</strong> (vocabulario, preguntas, audios) se edita en el código
-          fuente de la aplicación, no desde este panel.
+          {MODO_LOCAL
+            ? <> Con <strong>Editar</strong> cambias el contenido de la semana (textos, imágenes, videos, vocabulario, preguntas) y decides si está en borrador o publicada.</>
+            : <> El <strong>contenido</strong> (vocabulario, preguntas, audios) se edita en el código fuente de la aplicación, no desde este panel.</>}
         </p>
       </div>
 
@@ -55,7 +59,10 @@ export const TeacherPanel: React.FC<Props> = ({ weeks, onToggleWeek, isFullPage 
                 {week.week}
               </span>
               <div>
-                <h3 className="font-bold text-zinc-900">{week.title}</h3>
+                <h3 className="font-bold text-zinc-900">
+                  {week.title}
+                  {week.borrador && <span className="ml-2 text-[10px] font-bold uppercase tracking-wider bg-zinc-200 text-zinc-600 px-2 py-0.5 rounded-md align-middle">Borrador</span>}
+                </h3>
                 <p className="text-xs text-zinc-500">
                   {week.vocabulary.length} palabras | {week.evaluation.length} preguntas
                 </p>
@@ -63,6 +70,12 @@ export const TeacherPanel: React.FC<Props> = ({ weeks, onToggleWeek, isFullPage 
             </div>
 
             <div className="flex items-center gap-2">
+              {onEditar && (
+                <button onClick={() => onEditar(week.week)}
+                  className="mr-2 px-3 py-1.5 rounded-lg bg-zinc-900 hover:bg-black text-white text-xs font-bold">
+                  Editar
+                </button>
+              )}
               {saving === week.week && <Loader2 size={14} className="animate-spin text-zinc-400" />}
               <span className={`text-[10px] font-bold uppercase tracking-wider ${week.active ? 'text-emerald-500' : 'text-zinc-400'}`}>
                 {week.active ? 'Activa' : 'Inactiva'}

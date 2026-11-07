@@ -14,6 +14,7 @@ import { MODO_LOCAL } from '../lib/supabase';
  * así que hay que volver a cargarlas cuando alguien inicia sesión. `null` = nadie todavía.
  */
 export const useWeeks = (usuario: string | null = 'sesion') => {
+  const [version, setVersion] = useState(0);
   const [weeks, setWeeks] = useState<WeekData[]>(
     MODO_LOCAL ? [] : defaultWeeks.map(w => ({ ...w, active: w.active ?? true }))
   );
@@ -36,7 +37,7 @@ export const useWeeks = (usuario: string | null = 'sesion') => {
       setCargando(false);
     })();
     return () => { cancelled = true; };
-  }, [usuario]);
+  }, [usuario, version]);
 
   /** Devuelve true si el cambio quedó guardado. */
   const toggleWeek = async (weekNumber: number): Promise<boolean> => {
@@ -53,5 +54,8 @@ export const useWeeks = (usuario: string | null = 'sesion') => {
     return ok;
   };
 
-  return { weeks, toggleWeek, cargando };
+  /** Vuelve a pedir las lecciones (después de editar una). */
+  const recargar = () => setVersion(v => v + 1);
+
+  return { weeks, toggleWeek, cargando, recargar };
 };

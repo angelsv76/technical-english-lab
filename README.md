@@ -55,6 +55,8 @@ Todo corre en tu equipo: un servidor Node (`servidor/`) con base SQLite (`datos/
 4. Traer los datos de la nube: `npm run admin -- importar-nube` (genera contraseñas nuevas en un CSV).
 5. Tutor IA opcional: `GEMINI_API_KEY` en `.env.local`.
 
+Contenido: en el panel docente, **Gestión de Contenido → Editar** abre el editor de la semana. Cada lección se arma con bloques (texto, imagen, video, audio, PDF, vocabulario, práctica, evaluación, simulación), con vista previa, borrador/publicada e historial de las últimas 20 versiones. Los archivos subidos quedan en `datos/medios/`.
+
 Pruebas: `npm run test:servidor`. Respaldo: copia la carpeta `datos/` (base, fotos y `secreto.key`). Para volver a la nube sigue usando `iniciar-nube.bat` y `npm run build`.
 
 ## Despliegue

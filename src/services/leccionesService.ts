@@ -34,7 +34,8 @@ export function leccionAWeek(l: Leccion): WeekData {
     evaluation: evaluacion,
     active: true,
     blocks: l.blocks,
-    servidorCalifica: evaluacion.length > 0 && evaluacion.every(q => !q.answer)
+    servidorCalifica: evaluacion.length > 0 && evaluacion.every(q => !q.answer),
+    borrador: l.status === 'draft'
   };
 }
 

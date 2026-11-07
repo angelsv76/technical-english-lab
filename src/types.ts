@@ -75,6 +75,8 @@ export interface WeekData {
   blocks?: BloqueLeccion[];
   /** true cuando las respuestas de la evaluación no llegan al navegador y las califica el servidor. */
   servidorCalifica?: boolean;
+  /** true si la lección está en borrador (los alumnos no la ven). */
+  borrador?: boolean;
 }
 
 export interface PreguntaLeccion { question: string; options: string[]; answer: string; explanation?: string }
