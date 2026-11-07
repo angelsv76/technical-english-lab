@@ -45,6 +45,18 @@ Plataforma interactiva de Inglés Técnico para estudiantes de Desarrollo de Sof
    npm run dev
    ```
 
+## Versión local con SQLite (sin Docker ni Supabase)
+
+Todo corre en tu equipo: un servidor Node (`servidor/`) con base SQLite (`datos/laboratorio.db`). Requiere Node 22.5 o superior.
+
+1. Doble clic en `iniciar.bat` (instala, construye y abre http://localhost:3000). Los alumnos de la red entran por la IP que imprime la ventana.
+2. Primera vez, cuenta de docente: `npm run admin -- docente tu-correo@ejemplo.com tu-contraseña-larga`
+3. Alumno de pruebas (NIE 20269999): `npm run admin -- alumno-prueba` (`--borrar` lo elimina).
+4. Traer los datos de la nube: `npm run admin -- importar-nube` (genera contraseñas nuevas en un CSV).
+5. Tutor IA opcional: `GEMINI_API_KEY` en `.env.local`.
+
+Pruebas: `npm run test:servidor`. Respaldo: copia la carpeta `datos/` (base, fotos y `secreto.key`). Para volver a la nube sigue usando `iniciar-nube.bat` y `npm run build`.
+
 ## Despliegue
 
 La app está configurada para Vercel. Las variables de entorno deben definirse en el dashboard de Vercel (nunca en el repositorio).

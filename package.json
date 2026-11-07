@@ -8,7 +8,12 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "build:local": "vite build --mode sqlite",
+    "servidor": "tsx servidor/index.ts",
+    "admin": "tsx servidor/cli.ts",
+    "local": "npm run build:local && npm run servidor",
+    "test:servidor": "tsx --test servidor/pruebas/servidor.test.ts"
   },
   "dependencies": {
     "@blobatar/react": "^2.7.0",

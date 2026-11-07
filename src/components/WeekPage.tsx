@@ -29,6 +29,7 @@ interface Props {
 }
 
 import { generatePDFReport } from '../utils/report';
+import { urlDeAudio } from '../utils/audioUrls';
 
 export const WeekPage: React.FC<Props> = ({
   weekData,
@@ -271,7 +272,7 @@ export const WeekPage: React.FC<Props> = ({
                           <VocabularyAudio 
                             word={item.word}
                             phonetic={item.phonetic}
-                            audioUrl={item.audioUrl}
+                            audioUrl={urlDeAudio(item.audioUrl)}
                           />
                         </div>
                       </div>

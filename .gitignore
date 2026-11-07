@@ -44,3 +44,7 @@ desktop.ini
 # Contraseñas iniciales de alumnos generadas por scripts/import-students.mjs
 credenciales-*.csv
 alumnos*.csv
+
+# Versión local (SQLite)
+datos/
+dist-local/

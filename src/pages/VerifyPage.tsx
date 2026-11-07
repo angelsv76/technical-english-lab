@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShieldCheck, ShieldX, Loader2, Home } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, MODO_LOCAL } from '../lib/supabase';
 
 interface VerifiedRecord {
   studentName: string;
@@ -30,6 +30,20 @@ export const VerifyPage: React.FC = () => {
       const uuidRe = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       if (!code || !uuidRe.test(code)) {
         setState('invalid');
+        return;
+      }
+
+      if (MODO_LOCAL) {
+        try {
+          const r = await fetch(`/api/verificar/${code}`);
+          const d = await r.json();
+          if (!d.found) { setState('invalid'); return; }
+          setRecord({
+            studentName: d.studentName, nie: d.nie, week: d.week, lastScore: d.lastScore,
+            bestScore: d.bestScore, attempts: d.attempts, completed: d.completed, updatedAt: d.updatedAt
+          });
+          setState('valid');
+        } catch { setState('invalid'); }
         return;
       }
 
