@@ -29,7 +29,7 @@ export default function App() {
     logout 
   } = useAppState();
 
-  const { weeks } = useWeeks();
+  const { weeks, cargando: cargandoLecciones } = useWeeks(student?.id ?? null);
   const [selectedWeek, setSelectedWeek] = useState<number | null>(null);
   const navigate = useNavigate();
 
@@ -87,7 +87,7 @@ export default function App() {
 
           <Route path="/student/week/:weekId" element={
             student ? (
-              <WeekPageWrapper 
+              cargandoLecciones ? <p className="p-8 text-zinc-500">Cargando la lección...</p> : <WeekPageWrapper 
                 weeks={weeks}
                 student={student}
                 progress={progress}

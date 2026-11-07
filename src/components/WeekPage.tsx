@@ -13,6 +13,7 @@ import { ReinforcementCard } from './ReinforcementCard';
 import { generateReinforcementActivity, ReinforcementActivity } from '../services/reinforcementService';
 import { VocabularyAudio } from './VocabularyAudio';
 import { ExampleSentence } from './ExampleSentence';
+import { BloqueMedia, BloquePractica } from './BloquesLeccion';
 
 interface Props {
   weekData: WeekData;
@@ -23,7 +24,7 @@ interface Props {
   onComplete: (
     score: number,
     answers?: { question: string; answer: string }[]
-  ) => Promise<{ ok: boolean; score: number; verificationCode: string | null }>;
+  ) => Promise<{ ok: boolean; score: number; verificationCode: string | null; resultados?: { question: string; correct: boolean }[] }>;
   onWordCorrect: (word: string) => void;
   onWordIncorrect: (word: string) => void;
 }
@@ -52,6 +53,9 @@ export const WeekPage: React.FC<Props> = ({
   const [isGeneratingReinforcement, setIsGeneratingReinforcement] = useState(false);
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [verificationCode, setVerificationCode] = useState<string | null>(null);
+  // Versión local: las respuestas correctas no llegan al navegador y el servidor califica.
+  const servidorCalifica = !!weekData.servidorCalifica;
+  const [calificando, setCalificando] = useState(false);
 
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>(weekData.evaluation);
   const simulation = getSimulationById(weekData.simulation.simulationId);
@@ -62,7 +66,7 @@ export const WeekPage: React.FC<Props> = ({
       // v2: schema includes `explanation` — old cache entries lack it, so use a new key
       const cacheKey = `ai_activities_week_${weekData.week}_v2`;
       const cached = localStorage.getItem(cacheKey);
-      
+
       if (cached) {
         setAiActivities(JSON.parse(cached));
         return;
@@ -94,18 +98,21 @@ export const WeekPage: React.FC<Props> = ({
     setAnswers({});
   };
 
+  const palabraDe = (question: Question, answer: string, correcta?: string) =>
+    weekData.vocabulary.find(v =>
+      question.question.toLowerCase().includes(v.word.toLowerCase()) ||
+      v.meaning === answer ||
+      (correcta !== undefined && v.meaning === correcta)
+    );
+
   const handleAnswer = (questionIndex: number, answer: string) => {
     const questionId = `q_${questionIndex}`;
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
-    
+
     // Check if correct to update glossary mastery
     const question = shuffledQuestions[questionIndex];
-    if (question) {
-      const vocabWord = weekData.vocabulary.find(v => 
-        question.question.toLowerCase().includes(v.word.toLowerCase()) || 
-        v.meaning === answer ||
-        v.meaning === question.answer
-      );
+    if (question && !servidorCalifica) {
+      const vocabWord = palabraDe(question, answer, question.answer);
 
       if (answer === question.answer) {
         if (vocabWord) {
@@ -162,19 +169,39 @@ export const WeekPage: React.FC<Props> = ({
         answer: answers[`q_${idx}`] ?? ''
       }));
       const result = await onComplete(finalScore, answered);
-      if (!result?.ok) { setSaveStatus('error'); return; }
+      if (!result?.ok) { setSaveStatus('error'); setCalificando(false); return; }
       // La nota oficial es la del servidor.
       setScore(result.score);
       setVerificationCode(result.verificationCode);
       setSaveStatus('saved');
+      setCalificando(false);
+      if (servidorCalifica && result.resultados) {
+        // El glosario se actualiza con lo que el servidor dijo que acertó o falló.
+        shuffledQuestions.forEach((q, idx) => {
+          const r = result.resultados!.find(x => x.question.trim().normalize('NFC') === q.question.trim().normalize('NFC'));
+          if (!r) return;
+          const palabra = palabraDe(q, answers[`q_${idx}`] ?? '');
+          if (!palabra) return;
+          if (r.correct) onWordCorrect(palabra.word);
+          else { onWordIncorrect(palabra.word); handleReinforcement(palabra.word); }
+        });
+      }
     } catch {
       setSaveStatus('error');
+      setCalificando(false);
     }
   };
 
   // Fix for the last question score calculation
   useEffect(() => {
     if (evalStep === 'quiz' && Object.keys(answers).length === shuffledQuestions.length) {
+      if (servidorCalifica) {
+        setScore(0);
+        setCalificando(true);
+        setEvalStep('result');
+        saveScore(0);
+        return;
+      }
       let correctCount = 0;
       shuffledQuestions.forEach((q, idx) => {
         if (answers[`q_${idx}`] === q.answer) {
@@ -187,6 +214,62 @@ export const WeekPage: React.FC<Props> = ({
       saveScore(finalScore);
     }
   }, [answers, evalStep, shuffledQuestions]);
+
+  const renderVocabulario = (items: WeekData['vocabulary'], titulo?: string) => (
+      <section className="bg-white p-8 rounded-2xl border border-zinc-200 shadow-sm">
+                <h2 className="text-xl font-bold text-zinc-900 mb-6">{titulo || 'Vocabulario de la semana'}</h2>
+
+                <div className="space-y-8">
+                  {items.map(item => (
+                    <div key={item.word} className="p-6 rounded-2xl border border-zinc-100 bg-zinc-50/50">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className="text-2xl font-bold text-[#F57C00] font-mono">{item.word}</span>
+                            <span className="text-[10px] uppercase tracking-widest bg-zinc-200 px-2 py-1 rounded-lg text-zinc-600 font-bold">{item.context}</span>
+                          </div>
+                          <VocabularyAudio
+                            word={item.word}
+                            phonetic={item.phonetic}
+                            audioUrl={urlDeAudio(item.audioUrl)}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-lg font-medium text-zinc-800 mb-2">{item.meaning}</p>
+                      <ExampleSentence example={item.example} word={item.word} week={weekData.week} audioUrl={urlDeAudio(item.audioEjemplo)} />
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-8 p-4 bg-orange-50 rounded-xl border border-orange-100 flex gap-3 items-center">
+                  <AlertCircle className="text-[#F57C00]" size={20} />
+                  <p className="text-sm text-orange-800">
+                    Estas palabras se han agregado automáticamente a tu <strong>Glosario Personal</strong>.
+                  </p>
+                </div>
+              </section>
+
+  );
+
+  /** Bloques de la lección en el orden del docente. Sin bloques (versión nube): vocabulario completo, como siempre. */
+  const renderEstudio = () => {
+    if (!weekData.blocks) return renderVocabulario(weekData.vocabulary);
+    const primero = weekData.blocks[0];
+    const resto = weekData.blocks.slice(primero?.type === 'texto' ? 1 : 0);
+    return (
+      <>
+        {resto.map(b => {
+          if (b.type === 'vocabulario') {
+            return <div key={b.id} className="mb-8">{renderVocabulario(b.items.map(v => ({
+              word: v.word, meaning: v.meaning, example: v.example, context: v.context ?? '',
+              phonetic: v.phonetic, audioUrl: v.audio, audioEjemplo: v.audioEjemplo
+            })), b.titulo)}</div>;
+          }
+          return <BloqueMedia key={b.id} bloque={b} />;
+        })}
+      </>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 pb-20">
@@ -206,26 +289,26 @@ export const WeekPage: React.FC<Props> = ({
       <div className="max-w-4xl mx-auto px-4 py-8">
         {/* Tabs */}
         <div className="flex bg-white p-1 rounded-xl border border-zinc-200 mb-8 shadow-sm">
-          <TabButton 
-            active={activeTab === 'study'} 
+          <TabButton
+            active={activeTab === 'study'}
             onClick={() => setActiveTab('study')}
             icon={<Book size={18} />}
             label="Estudio"
           />
-          <TabButton 
-            active={activeTab === 'simulation'} 
+          <TabButton
+            active={activeTab === 'simulation'}
             onClick={() => setActiveTab('simulation')}
             icon={<PlayCircle size={18} />}
             label="Simulación"
           />
-          <TabButton 
-            active={activeTab === 'practice'} 
+          <TabButton
+            active={activeTab === 'practice'}
             onClick={() => setActiveTab('practice')}
             icon={<CheckCircle2 size={18} />}
             label="Práctica"
           />
-          <TabButton 
-            active={activeTab === 'evaluation'} 
+          <TabButton
+            active={activeTab === 'evaluation'}
             onClick={() => setActiveTab('evaluation')}
             icon={<ClipboardList size={18} />}
             label="Evaluación"
@@ -239,11 +322,13 @@ export const WeekPage: React.FC<Props> = ({
               <section className="bg-white p-8 rounded-2xl border border-zinc-200 shadow-sm mb-8">
                 <h2 className="text-xl font-bold text-zinc-900 mb-4">Objetivo</h2>
                 <p className="text-zinc-600 leading-relaxed">{weekData.objective}</p>
-                
-                <div className="mt-8">
-                  <h2 className="text-xl font-bold text-zinc-900 mb-4">Introducción</h2>
-                  <p className="text-zinc-600 leading-relaxed">{weekData.introText}</p>
-                </div>
+
+                {weekData.introText && (
+                  <div className="mt-8">
+                    <h2 className="text-xl font-bold text-zinc-900 mb-4">Introducción</h2>
+                    <p className="text-zinc-600 leading-relaxed whitespace-pre-line">{weekData.introText}</p>
+                  </div>
+                )}
 
                 <div className="mt-8">
                   <h2 className="text-xl font-bold text-zinc-900 mb-4">Keywords</h2>
@@ -257,38 +342,7 @@ export const WeekPage: React.FC<Props> = ({
                 </div>
               </section>
 
-              <section className="bg-white p-8 rounded-2xl border border-zinc-200 shadow-sm">
-                <h2 className="text-xl font-bold text-zinc-900 mb-6">Vocabulario de la semana</h2>
-
-                <div className="space-y-8">
-                  {weekData.vocabulary.map(item => (
-                    <div key={item.word} className="p-6 rounded-2xl border border-zinc-100 bg-zinc-50/50">
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <span className="text-2xl font-bold text-[#F57C00] font-mono">{item.word}</span>
-                            <span className="text-[10px] uppercase tracking-widest bg-zinc-200 px-2 py-1 rounded-lg text-zinc-600 font-bold">{item.context}</span>
-                          </div>
-                          <VocabularyAudio 
-                            word={item.word}
-                            phonetic={item.phonetic}
-                            audioUrl={urlDeAudio(item.audioUrl)}
-                          />
-                        </div>
-                      </div>
-                      <p className="text-lg font-medium text-zinc-800 mb-2">{item.meaning}</p>
-                      <ExampleSentence example={item.example} word={item.word} week={weekData.week} />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-8 p-4 bg-orange-50 rounded-xl border border-orange-100 flex gap-3 items-center">
-                  <AlertCircle className="text-[#F57C00]" size={20} />
-                  <p className="text-sm text-orange-800">
-                    Estas palabras se han agregado automáticamente a tu <strong>Glosario Personal</strong>.
-                  </p>
-                </div>
-              </section>
+              {renderEstudio()}
             </div>
           )}
 
@@ -300,13 +354,13 @@ export const WeekPage: React.FC<Props> = ({
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {weekData.vocabulary.map(item => (
-                  <SimulationCard 
-                    key={item.word} 
+                  <SimulationCard
+                    key={item.word}
                     word={item.word}
                     meaning={item.meaning}
                     example={item.example}
                     context={item.context}
-                    initialSimulation={aiActivities[item.word]?.simulation} 
+                    initialSimulation={aiActivities[item.word]?.simulation}
                   />
                 ))}
               </div>
@@ -328,13 +382,14 @@ export const WeekPage: React.FC<Props> = ({
                 )}
               </div>
               <div className="space-y-8">
+                {weekData.blocks?.filter(b => b.type === 'practica').map(b => b.type === 'practica' && <BloquePractica key={b.id} bloque={b} />)}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   {weekData.vocabulary.map(item => (
-                    <PracticeCard 
-                      key={item.word} 
+                    <PracticeCard
+                      key={item.word}
                       word={item.word}
                       context={item.context}
-                      initialPractice={aiActivities[item.word]?.practice} 
+                      initialPractice={aiActivities[item.word]?.practice}
                     />
                   ))}
                 </div>
@@ -347,9 +402,9 @@ export const WeekPage: React.FC<Props> = ({
                     </div>
                     <div className="space-y-6">
                       {reinforcementQueue.map((activity, idx) => (
-                        <ReinforcementCard 
-                          key={`${activity.word}-${idx}`} 
-                          activity={activity} 
+                        <ReinforcementCard
+                          key={`${activity.word}-${idx}`}
+                          activity={activity}
                           onCorrect={() => onWordCorrect(activity.word)}
                           onIncorrect={() => onWordIncorrect(activity.word)}
                         />
@@ -370,10 +425,10 @@ export const WeekPage: React.FC<Props> = ({
                   </div>
                   <h2 className="text-3xl font-bold text-zinc-900 mb-4">Evaluación Semanal</h2>
                   <p className="text-zinc-500 mb-8 max-w-md mx-auto">
-                    Responde las {shuffledQuestions.length} preguntas para medir tu progreso. 
+                    Responde las {shuffledQuestions.length} preguntas para medir tu progreso.
                     Necesitas al menos 70 puntos para aprobar.
                   </p>
-                  
+
                   {progress && (
                     <div className="mb-8 p-4 bg-zinc-50 rounded-2xl inline-flex gap-8 text-sm">
                       <div>
@@ -387,7 +442,7 @@ export const WeekPage: React.FC<Props> = ({
                     </div>
                   )}
 
-                  <button 
+                  <button
                     onClick={handleStartEval}
                     className="w-full max-w-xs bg-[#F57C00] hover:bg-[#E65100] text-white font-bold py-4 rounded-2xl transition-all shadow-lg shadow-orange-200"
                   >
@@ -403,7 +458,7 @@ export const WeekPage: React.FC<Props> = ({
                       Pregunta {currentQuestion + 1} de {shuffledQuestions.length}
                     </span>
                     <div className="w-32 h-2 bg-zinc-100 rounded-full overflow-hidden">
-                      <div 
+                      <div
                         className="bg-[#F57C00] h-full transition-all duration-300"
                         style={{ width: `${((currentQuestion + 1) / shuffledQuestions.length) * 100}%` }}
                       />
@@ -428,12 +483,19 @@ export const WeekPage: React.FC<Props> = ({
                 </div>
               )}
 
-              {evalStep === 'result' && (
+              {evalStep === 'result' && calificando && (
+                <div className="bg-white p-12 rounded-3xl border border-zinc-200 shadow-xl text-center" role="status">
+                  <Loader2 size={40} className="animate-spin text-[#F57C00] mx-auto mb-4" />
+                  <p className="text-zinc-500 font-medium">Calificando tu evaluación...</p>
+                </div>
+              )}
+
+              {evalStep === 'result' && !calificando && (
                 <div className="bg-white p-12 rounded-3xl border border-zinc-200 shadow-xl text-center">
                   <div className={`w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 ${score >= 70 ? 'bg-emerald-100 text-emerald-600' : 'bg-red-100 text-red-600'}`}>
                     {score >= 70 ? <CheckCircle2 size={56} /> : <AlertCircle size={56} />}
                   </div>
-                  
+
                   <h2 className="text-4xl font-black text-zinc-900 mb-2">{score}%</h2>
                   <p className={`text-xl font-bold mb-4 ${score >= 70 ? 'text-emerald-600' : 'text-red-600'}`}>
                     {score >= 70 ? '¡APROBADO!' : 'NO APROBADO'}
@@ -479,14 +541,14 @@ export const WeekPage: React.FC<Props> = ({
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <button 
+                    <button
                       onClick={handleStartEval}
                       className="flex-1 flex items-center justify-center gap-2 bg-zinc-900 hover:bg-black text-white font-bold py-4 rounded-2xl transition-all"
                     >
                       <RotateCcw size={20} />
                       Repetir Evaluación
                     </button>
-                    <button 
+                    <button
                       onClick={handleGeneratePDF}
                       disabled={saveStatus !== 'saved' || !verificationCode}
                       className="flex-1 flex items-center justify-center gap-2 bg-[#F57C00] hover:bg-[#E65100] text-white font-bold py-4 rounded-2xl transition-colors shadow-lg shadow-orange-200 disabled:opacity-50 disabled:cursor-not-allowed"

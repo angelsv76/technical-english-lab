@@ -268,7 +268,9 @@ let codigoVerificacion = '';
 test('evaluación: se califica en el servidor y conserva la mejor nota y el código', async () => {
   const completa = await fn('submit-evaluation', { studentId: ana, week: 1, answers: respuestasSemana(1) }, tAna);
   assert.equal(completa.status, 200);
-  assert.deepEqual({ ...completa.json, verificationCode: 'x' }, { score: 100, bestScore: 100, attempts: 1, completed: true, verificationCode: 'x' });
+  const { resultados, ...sinResultados } = completa.json;
+  assert.equal(resultados.length, weeks[0].evaluation.length);
+  assert.deepEqual({ ...sinResultados, verificationCode: 'x' }, { score: 100, bestScore: 100, attempts: 1, completed: true, verificationCode: 'x' });
   codigoVerificacion = completa.json.verificationCode;
   assert.match(codigoVerificacion, /^[0-9a-f-]{36}$/);
 
@@ -608,4 +610,21 @@ test('medios: solo el docente sube; el tipo se decide por el contenido real', as
 
   assert.equal((await fetch(base + '/medios/../secreto-fuera.txt')).status, 404);
   assert.equal(readdirSync(join(carpeta, 'medios')).filter(f => f.endsWith('.part')).length, 0, 'no quedan archivos a medias');
+});
+
+test('lecciones: ?completo=1 trae todo en una petición y la evaluación informa qué preguntas acertó', async () => {
+  const completo = await http('/api/lecciones?completo=1', { token: tAna });
+  assert.equal(completo.json.lessons.length, 40);
+  assert.ok(completo.json.lessons.every((l: any) => Array.isArray(l.blocks)));
+  const ev = completo.json.lessons[0].blocks.find((b: any) => b.type === 'evaluacion');
+  assert.ok(ev.preguntas.every((p: any) => p.answer === ''), 'también en la versión completa se ocultan las respuestas');
+  assert.equal((await http('/api/lecciones?completo=1')).status, 401);
+
+  const claves = weeks.find(w => w.week === 1)!.evaluation;
+  const answers = claves.map((q, i) => ({ question: q.question, answer: i === 0 ? 'respuesta equivocada' : q.answer }));
+  const r = await fn('submit-evaluation', { studentId: ana, week: 1, answers }, tAna);
+  assert.equal(r.status, 200);
+  assert.equal(r.json.resultados.length, claves.length);
+  assert.equal(r.json.resultados[0].correct, false);
+  assert.ok(r.json.resultados.slice(1).every((x: any) => x.correct));
 });

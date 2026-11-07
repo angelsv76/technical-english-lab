@@ -274,7 +274,7 @@ export function sembrarLecciones(db: DatabaseSync, semanas: SemanaCodigo[], dirA
     if (s.introText?.trim()) bloques.push({ id: randomUUID(), type: 'texto', titulo: 'Introducción', texto: s.introText.trim() });
     if (s.vocabulary?.length) {
       bloques.push({
-        id: randomUUID(), type: 'vocabulario', titulo: 'Vocabulario',
+        id: randomUUID(), type: 'vocabulario', titulo: 'Vocabulario de la semana',
         items: s.vocabulary.map(v => {
           const ejemplo = `${carpeta}/${slug(v.word)}_example.mp3`;
           const item: ItemVocabulario = { word: v.word, meaning: v.meaning, example: v.example };

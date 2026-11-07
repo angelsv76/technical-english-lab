@@ -255,7 +255,14 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
       const docente = ident.rol === 'teacher';
       const semana = rutaLeccion[1] ? Number(rutaLeccion[1]) : null;
       const sub = rutaLeccion[2];
-      if (semana === null && req.method === 'GET') return responder(res, 200, { lessons: listarLecciones(db, docente) });
+      if (semana === null && req.method === 'GET') {
+        // ?completo=1 trae las lecciones enteras en una sola petición (la app las usa al abrir).
+        if (new URL(req.url ?? '/', 'http://localhost').searchParams.get('completo') === '1') {
+          const todas = listarLecciones(db, docente).map(l => leerLeccion(db, l.week, docente));
+          return responder(res, 200, { lessons: todas });
+        }
+        return responder(res, 200, { lessons: listarLecciones(db, docente) });
+      }
       if (semana !== null && !sub && req.method === 'GET') {
         const l = leerLeccion(db, semana, docente);
         return l ? responder(res, 200, { lesson: l }) : responder(res, 404, { error: 'Esa lección no está disponible.' });

@@ -45,10 +45,13 @@ export function enviarEvaluacion(c: Contexto, cuerpo: any): Resp {
   if (claves.length === 0) return { status: 400, body: { error: `sin claves de evaluación para la semana ${week}` } };
 
   let correctas = 0;
+  const resultados: { question: string; correct: boolean }[] = [];
   for (const clave of claves) {
     const pregunta = normalizar(clave.question);
     const enviada = answers.find((a: { question?: string }) => normalizar(a?.question) === pregunta);
-    if (enviada && normalizar(enviada.answer) === normalizar(clave.answer)) correctas++;
+    const acierto = !!enviada && normalizar(enviada.answer) === normalizar(clave.answer);
+    if (acierto) correctas++;
+    resultados.push({ question: clave.question, correct: acierto });
   }
   const score = Math.round((correctas / claves.length) * 100);
   const aprobada = score >= 70;
@@ -86,7 +89,7 @@ export function enviarEvaluacion(c: Contexto, cuerpo: any): Resp {
 
   return {
     status: 200,
-    body: { score, bestScore: guardado.best, attempts: guardado.intentos, completed: guardado.completa, verificationCode: guardado.codigo }
+    body: { score, bestScore: guardado.best, attempts: guardado.intentos, completed: guardado.completa, verificationCode: guardado.codigo, resultados }
   };
 }
 

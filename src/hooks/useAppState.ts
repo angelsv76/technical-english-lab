@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, MODO_LOCAL } from '../lib/supabase';
 import type { Student, WeeklyProgress, GlossaryEntry } from '../lib/supabase';
-import { weeks } from '../data/weeks/index';
+import { semanasActuales } from '../services/leccionesService';
 import { nextReviewDate } from '../utils/srs';
 
 export const useAppState = () => {
@@ -122,7 +122,7 @@ export const useAppState = () => {
     week: number,
     score: number,
     answers?: { question: string; answer: string }[]
-  ): Promise<{ ok: boolean; score: number; verificationCode: string | null }> => {
+  ): Promise<{ ok: boolean; score: number; verificationCode: string | null; resultados?: { question: string; correct: boolean }[] }> => {
     if (!student?.id) return { ok: false, score, verificationCode: null };
 
     const applyLocal = (finalScore: number, bestScore: number, attempts: number, completed: boolean) => {
@@ -144,7 +144,7 @@ export const useAppState = () => {
         return { ok: false, score, verificationCode: null };
       }
       applyLocal(data.score, data.bestScore ?? data.score, data.attempts ?? 1, !!data.completed);
-      return { ok: true, score: data.score, verificationCode: data.verificationCode ?? null };
+      return { ok: true, score: data.score, verificationCode: data.verificationCode ?? null, resultados: data.resultados };
     } catch (err) {
       console.error('Error en updateProgress:', err);
       return { ok: false, score, verificationCode: null };
@@ -154,7 +154,7 @@ export const useAppState = () => {
   const addToGlossary = async (weekNumber: number) => {
     if (!student?.id) return;
 
-    const weekData = weeks.find(w => w.week === weekNumber);
+    const weekData = semanasActuales().find(w => w.week === weekNumber);
     if (!weekData) return;
 
     const newEntries = weekData.vocabulary.map(v => ({

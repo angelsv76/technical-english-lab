@@ -7,6 +7,7 @@ interface Props {
   example: string;
   word: string;   // palabra objetivo de la semana — se resalta en la oración
   week?: number;  // si se indica, intenta el mp3 pregrabado (kokoro) de Supabase
+  audioUrl?: string; // audio guardado en la lección; tiene prioridad sobre la convención por semana
 }
 
 /**
@@ -15,7 +16,7 @@ interface Props {
  * - Cada palabra es clicable y se pronuncia individualmente (práctica palabra por palabra).
  * - Botones para escuchar la oración completa a velocidad normal o lenta.
  */
-export const ExampleSentence: React.FC<Props> = ({ example, word, week }) => {
+export const ExampleSentence: React.FC<Props> = ({ example, word, week, audioUrl }) => {
   const [playing, setPlaying] = useState<'sentence' | 'slow' | string | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   // true = el mp3 de Supabase no existe o falló → usar la voz del navegador
@@ -56,7 +57,7 @@ export const ExampleSentence: React.FC<Props> = ({ example, word, week }) => {
     }
     modeRef.current = mode;
 
-    const url = week ? sentenceAudioUrl(week, word) : null;
+    const url = audioUrl ?? (week ? sentenceAudioUrl(week, word) : null);
 
     // Preferir el mp3 pregrabado (kokoro); si no existe, voz del navegador
     if (url && !fileFailedRef.current) {

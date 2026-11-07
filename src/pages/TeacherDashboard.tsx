@@ -64,7 +64,7 @@ export const TeacherDashboard: React.FC = () => {
   const [busyStudentId, setBusyStudentId] = useState<string | null>(null);
   // Canario de integridad: fecha del último guardado real en todo el sistema
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
-  const { weeks, toggleWeek } = useWeeks();
+  const { weeks, toggleWeek } = useWeeks('docente');
   const navigate = useNavigate();
 
   useEffect(() => {
