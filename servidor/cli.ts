@@ -78,11 +78,14 @@ async function importarNube() {
   const clave = process.env.VITE_SUPABASE_ANON_KEY;
   if (!url || !clave) { console.error('Faltan VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY en .env.local.'); process.exit(1); }
 
+  // Con las políticas de fase1 la clave pública ya no lee alumnos ni notas: se entra como docente.
+  const token = await iniciarSesionDocente(url, clave);
+
   async function traer(tabla: string, orden: string): Promise<Record<string, unknown>[]> {
     const filas: Record<string, unknown>[] = [];
     for (let desde = 0; ; desde += 1000) {
       const r = await fetch(`${url}/rest/v1/${tabla}?select=*&order=${orden}&limit=1000&offset=${desde}`, {
-        headers: { apikey: clave!, Authorization: `Bearer ${clave}` }
+        headers: { apikey: clave!, Authorization: `Bearer ${token}` }
       }).catch(e => { throw new Error(`No se pudo conectar con Supabase (${(e as Error).message}). ¿El proyecto está activo?`); });
       if (!r.ok) throw new Error(`Supabase respondió ${r.status} al leer ${tabla}: ${(await r.text()).slice(0, 200)}`);
       const lote = await r.json() as Record<string, unknown>[];
@@ -175,4 +178,30 @@ async function importarNube() {
     console.log(`\n${credenciales.length - 1} cuentas creadas con contraseña nueva. Entrégalas y luego borra el archivo:\n  ${archivo}`);
   }
   if (!existsSync(join(RAIZ, '.env.local'))) console.log('(No hay .env.local)');
+}
+
+/** Pide correo y contraseña del docente en la terminal (la contraseña no se muestra ni se guarda). */
+async function iniciarSesionDocente(url: string, clave: string): Promise<string> {
+  const { createInterface } = await import('node:readline');
+  const rl = createInterface({ input: process.stdin, output: process.stdout });
+  const preguntar = (texto: string, oculto = false) => new Promise<string>(resolver => {
+    if (oculto) {
+      const salida = rl as unknown as { _writeToOutput: (t: string) => void };
+      const original = salida._writeToOutput.bind(rl);
+      process.stdout.write(texto);
+      salida._writeToOutput = () => {};
+      rl.question('', respuesta => { salida._writeToOutput = original; process.stdout.write('\n'); resolver(respuesta); });
+    } else rl.question(texto, resolver);
+  });
+  const correo = (await preguntar('Correo de docente en Supabase: ')).trim();
+  const password = await preguntar('Contraseña (no se ve al escribir): ', true);
+  rl.close();
+  const r = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+    method: 'POST', headers: { apikey: clave, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: correo, password })
+  }).catch(e => { throw new Error(`No se pudo conectar con Supabase (${(e as Error).message}). ¿El proyecto está activo?`); });
+  const cuerpo = await r.json() as { access_token?: string; user?: { app_metadata?: { role?: string } } };
+  if (!r.ok || !cuerpo.access_token) { console.error('Supabase rechazó el correo o la contraseña.'); process.exit(1); }
+  if (cuerpo.user?.app_metadata?.role !== 'teacher') { console.error('Esa cuenta no es de docente.'); process.exit(1); }
+  return cuerpo.access_token;
 }
