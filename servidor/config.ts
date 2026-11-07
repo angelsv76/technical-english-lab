@@ -16,3 +16,5 @@ export const PUERTO = Number(process.env.PORT) || 3000;
 export const HOST = process.env.HOST || '0.0.0.0';
 export const GEMINI_KEY = process.env.GEMINI_API_KEY || undefined;
 export const GEMINI_MODELO = process.env.GEMINI_MODEL || undefined;
+/** SEMBRAR_LECCIONES=0 arranca sin las 40 semanas de inglés (para otra materia; luego se importa un curso). */
+export const SEMBRAR = process.env.SEMBRAR_LECCIONES !== '0';

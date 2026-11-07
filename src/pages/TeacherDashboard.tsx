@@ -27,6 +27,7 @@ import { StudentAvatar } from '../components/StudentAvatar';
 import { UserManagement } from '../components/UserManagement';
 import { supabase, MODO_LOCAL } from '../lib/supabase';
 import { EditorLeccion } from '../components/editor/EditorLeccion';
+import { IntercambioLecciones } from '../components/editor/IntercambioLecciones';
 import { logoutTeacher } from '../services/authService';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -387,12 +388,15 @@ export const TeacherDashboard: React.FC = () => {
             {MODO_LOCAL && editando !== null ? (
               <EditorLeccion semana={editando} onSalir={() => { setEditando(null); recargar(); }} />
             ) : (
-              <TeacherPanel
-                weeks={weeks}
-                onToggleWeek={toggleWeek}
-                isFullPage={true}
-                onEditar={MODO_LOCAL ? setEditando : undefined}
-              />
+              <>
+                {MODO_LOCAL && <IntercambioLecciones onImportado={recargar} />}
+                <TeacherPanel
+                  weeks={weeks}
+                  onToggleWeek={toggleWeek}
+                  isFullPage={true}
+                  onEditar={MODO_LOCAL ? setEditando : undefined}
+                />
+              </>
             )}
           </div>
         )}

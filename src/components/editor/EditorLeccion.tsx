@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
-  AlertCircle, ArrowDown, ArrowLeft, ArrowUp, BookOpen, ChevronDown, ChevronRight, ClipboardCheck, Copy, Eye, FileText,
+  AlertCircle, ArrowDown, ArrowLeft, ArrowUp, BookOpen, ChevronDown, ChevronRight, ClipboardCheck, Copy, Download, Eye, FileText,
   FlaskConical, History, Image as Imagen, ListChecks, Loader2, Music, PenLine, Plus, Save, Trash2, Video
 } from 'lucide-react';
 import type { Leccion } from '../../types';
 import {
-  alumnosConNota, guardarLeccion, listarVersiones, obtenerLeccion, restaurarVersion, type VersionLeccion
+  alumnosConNota, exportarCurso, guardarLeccion, listarVersiones, obtenerLeccion, restaurarVersion, type VersionLeccion
 } from '../../services/leccionesAdmin';
 import { EditorBloque, type BloqueEditable } from './EditoresBloque';
 import { VistaPrevia } from './VistaPrevia';
@@ -137,6 +137,14 @@ export const EditorLeccion: React.FC<Props> = ({ semana, onSalir }) => {
     finally { setGuardando(false); }
   };
 
+  const exportar = async () => {
+    setError(''); setAviso('');
+    try {
+      const r = await exportarCurso([semana]);
+      setAviso(`Exportada la semana ${semana} (${r.archivos} archivos): ${r.nombre}.`);
+    } catch (e) { setError((e as Error).message); }
+  };
+
   const abrirVersiones = async () => {
     setError('');
     try { setVersiones(await listarVersiones(semana)); } catch (e) { setError((e as Error).message); }
@@ -182,6 +190,8 @@ export const EditorLeccion: React.FC<Props> = ({ semana, onSalir }) => {
         <button onClick={() => setPrevia(p => !p)} className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg border text-sm font-bold ${previa ? 'bg-zinc-900 text-white border-zinc-900' : 'border-zinc-300 text-zinc-700'}`}>
           <Eye size={14} /> Vista previa
         </button>
+        <button onClick={exportar} disabled={hayCambios} title={hayCambios ? 'Guarda los cambios antes de exportar' : 'Descargar esta lección en un .zip'}
+          className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-zinc-300 text-sm font-bold text-zinc-700 disabled:opacity-50"><Download size={14} /> Exportar</button>
         <button onClick={abrirVersiones} className="inline-flex items-center gap-1 px-3 py-2 rounded-lg border border-zinc-300 text-sm font-bold text-zinc-700"><History size={14} /> Versiones</button>
         <button onClick={() => guardar()} disabled={guardando || !hayCambios}
           className="inline-flex items-center gap-1 px-4 py-2 rounded-lg bg-[#F57C00] hover:bg-[#E65100] text-white text-sm font-bold disabled:opacity-50">

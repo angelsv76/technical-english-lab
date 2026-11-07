@@ -5,7 +5,7 @@ import { join } from 'node:path';
 import { crearServidor } from './app.ts';
 import { cargarSecreto } from './seguridad.ts';
 import {
-  DIR_AUDIO, DIR_DATOS, DIR_DIST, GEMINI_KEY, GEMINI_MODELO, HOST, PUERTO, RUTA_BASE, RUTA_SECRETO
+  DIR_AUDIO, DIR_DATOS, DIR_DIST, GEMINI_KEY, GEMINI_MODELO, HOST, PUERTO, RUTA_BASE, RUTA_SECRETO, SEMBRAR
 } from './config.ts';
 
 const { servidor, db } = crearServidor({
@@ -15,7 +15,8 @@ const { servidor, db } = crearServidor({
   dirAudio: DIR_AUDIO,
   secreto: cargarSecreto(RUTA_SECRETO),
   geminiKey: GEMINI_KEY,
-  geminiModelo: GEMINI_MODELO
+  geminiModelo: GEMINI_MODELO,
+  sembrar: SEMBRAR
 });
 
 servidor.on('error', (error: NodeJS.ErrnoException) => {
@@ -42,6 +43,8 @@ servidor.listen(PUERTO, HOST, () => {
   }
   console.log(`  Base de datos:   ${RUTA_BASE}`);
   console.log(`  Alumnos: ${alumnos} · Docentes: ${docentes} · Tutor IA: ${GEMINI_KEY ? 'configurado' : 'sin clave (opcional)'}`);
+  const lecciones = (db.prepare('SELECT COUNT(*) n FROM lessons').get() as { n: number }).n;
+  console.log(`  Lecciones: ${lecciones}${lecciones === 0 ? ' (importa un curso desde Gestión de Contenido)' : ''}`);
   if (docentes === 0) console.log('\n  ⚠ No hay cuenta de docente. Crea una:  npm run admin -- docente tu-correo@ejemplo.com tu-contraseña');
   if (!existsSync(join(DIR_DIST, 'index.html'))) console.log('\n  ⚠ La app no está construida. Ejecuta:  npm run build:local');
   console.log('\n  Para detenerlo, cierra esta ventana (Ctrl+C).\n');

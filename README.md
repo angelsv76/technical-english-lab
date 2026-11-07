@@ -57,6 +57,10 @@ Todo corre en tu equipo: un servidor Node (`servidor/`) con base SQLite (`datos/
 
 Contenido: en el panel docente, **Gestión de Contenido → Editar** abre el editor de la semana. Cada lección se arma con bloques (texto, imagen, video, audio, PDF, vocabulario, práctica, evaluación, simulación), con vista previa, borrador/publicada e historial de las últimas 20 versiones. Los archivos subidos quedan en `datos/medios/`.
 
+Respaldo y plantillas: en **Gestión de Contenido**, *Exportar curso completo* descarga un `.zip` con las lecciones y sus archivos (en el editor, *Exportar* baja una sola semana). *Importar curso o lección* lo lee, muestra qué trae, deja elegir la semana de destino y entra como borrador; lo que reemplaza queda en el historial de versiones.
+
+Otra materia: copia la carpeta del proyecto sin `datos/`, arranca con la variable `SEMBRAR_LECCIONES=0` (así no se cargan las semanas de inglés) y crea o importa las lecciones desde el panel. Los textos fijos de la interfaz (nombre del curso, portal) siguen siendo los de Inglés Técnico.
+
 Pruebas: `npm run test:servidor`. Respaldo: copia la carpeta `datos/` (base, fotos y `secreto.key`). Para volver a la nube sigue usando `iniciar-nube.bat` y `npm run build`.
 
 ## Despliegue

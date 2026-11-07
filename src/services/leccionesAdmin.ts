@@ -62,3 +62,59 @@ export async function subirMedio(archivo: File, alProgresar?: (porcentaje: numbe
     xhr.send(archivo);
   });
 }
+
+// ---------- exportar e importar cursos ----------
+
+export interface ResumenExportacion { lecciones: number; archivos: number; faltantes: number; nombre: string }
+
+/** Descarga un .zip con las lecciones pedidas y sus archivos. */
+export async function exportarCurso(semanas: number[] | 'todas'): Promise<ResumenExportacion> {
+  const parametro = semanas === 'todas' ? 'todas' : semanas.join(',');
+  let r: Response;
+  try { r = await fetch(`/api/exportar?semanas=${parametro}`, { headers: await cabeceras() }); }
+  catch { throw new Error('No se pudo conectar con el servidor.'); }
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error ?? `El servidor respondió ${r.status}.`);
+  const nombre = r.headers.get('content-disposition')?.match(/filename="([^"]+)"/)?.[1] ?? 'curso.zip';
+  const url = URL.createObjectURL(await r.blob());
+  const enlace = document.createElement('a');
+  enlace.href = url; enlace.download = nombre;
+  document.body.appendChild(enlace); enlace.click(); enlace.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+  return {
+    nombre, lecciones: Number(r.headers.get('x-lecciones') ?? 0),
+    archivos: Number(r.headers.get('x-archivos') ?? 0), faltantes: Number(r.headers.get('x-faltantes') ?? 0)
+  };
+}
+
+export interface VistaPreviaImportacion {
+  id: string; bytes: number; creado: string; archivos: number; faltantes: number;
+  lecciones: { week: number; title: string; status: string; bloques: number; preguntasEvaluacion: number; archivos: number }[];
+  semanas: { week: number; title: string | null; notas: number }[];
+}
+export interface ResultadoImportacion {
+  importadas: { week: number; title: string; status: string }[]; archivos: number; advertencias: string[];
+}
+
+/** Paso 1: sube el .zip. El servidor lo revisa y devuelve qué trae, sin cambiar nada todavía. */
+export async function subirImportacion(archivo: File, alProgresar?: (porcentaje: number) => void): Promise<VistaPreviaImportacion> {
+  const headers = await cabeceras();
+  return new Promise((resolver, rechazar) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', '/api/importar');
+    xhr.setRequestHeader('Authorization', headers.Authorization);
+    xhr.setRequestHeader('Content-Type', 'application/zip');
+    xhr.upload.onprogress = e => { if (e.lengthComputable) alProgresar?.(Math.round((e.loaded / e.total) * 100)); };
+    xhr.onerror = () => rechazar(new Error('No se pudo conectar con el servidor.'));
+    xhr.onload = () => {
+      let cuerpo: any = {};
+      try { cuerpo = JSON.parse(xhr.responseText); } catch { /* sin JSON */ }
+      if (xhr.status >= 200 && xhr.status < 300 && cuerpo.id) resolver(cuerpo);
+      else rechazar(new Error(cuerpo.error ?? `No se pudo leer el archivo (${xhr.status}).`));
+    };
+    xhr.send(archivo);
+  });
+}
+
+/** Paso 2: aplica la importación con los destinos elegidos. */
+export const aplicarImportacion = (id: string, destinos: { origen: number; destino: number }[], estado: 'draft' | 'published' | 'conservar') =>
+  pedir<ResultadoImportacion>('/api/importar/aplicar', { cuerpo: { id, destinos, estado } });

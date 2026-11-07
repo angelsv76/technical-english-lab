@@ -1,10 +1,10 @@
 // Pruebas del servidor local con base SQLite en memoria.   npm run test:servidor
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { mkdtempSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
+import { mkdtempSync, mkdirSync, writeFileSync, rmSync, existsSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { randomBytes, randomUUID } from 'node:crypto';
 import type { AddressInfo } from 'node:net';
 import { crearServidor } from '../app.ts';
 import { hashPassword } from '../seguridad.ts';
@@ -627,4 +627,177 @@ test('lecciones: ?completo=1 trae todo en una petición y la evaluación informa
   assert.equal(r.json.resultados.length, claves.length);
   assert.equal(r.json.resultados[0].correct, false);
   assert.ok(r.json.resultados.slice(1).every((x: any) => x.correct));
+});
+
+// ---------- exportar e importar cursos ----------
+import { Writable } from 'node:stream';
+import { readFileSync } from 'node:fs';
+import { escribirZip, listarZip, extraerBuffer, type ItemZip } from '../zip.ts';
+
+async function construirZip(items: ItemZip[]): Promise<Buffer> {
+  const partes: Buffer[] = [];
+  await escribirZip(new Writable({ write(p, _e, cb) { partes.push(Buffer.from(p)); cb(); } }), items, new Date('2026-11-10T10:00:00Z'));
+  return Buffer.concat(partes);
+}
+const manifiestoDe = (lecciones: unknown[], extra: Record<string, unknown> = {}) =>
+  Buffer.from(JSON.stringify({ formato: 'technical-english-lab/curso', version: 1, creado: '2026-11-10', lecciones, archivos: [], faltantes: [], ...extra }));
+const bajar = async (ruta: string, token?: string) => {
+  const r = await fetch(base + ruta, { headers: token ? { Authorization: `Bearer ${token}` } : {} });
+  return { status: r.status, tipo: r.headers.get('content-type'), datos: Buffer.from(await r.arrayBuffer()), cabeceras: r.headers };
+};
+const subirZip = (zip: Buffer, token?: string) => http('/api/importar', { metodo: 'POST', raw: zip, token, tipo: 'application/zip' });
+const aplicar = (cuerpo: unknown, token = tDocente) => http('/api/importar/aplicar', { cuerpo, token });
+const pngPrueba = () => Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.from('imagen-de-prueba-'.repeat(20))]);
+
+test('zip: lo que se escribe se lee igual, con CRC, y se rechazan nombres peligrosos', async () => {
+  const grande = Buffer.from('a'.repeat(50000));
+  const zip = await construirZip([{ nombre: 'curso.json', datos: grande }, { nombre: 'archivos/0001.png', datos: Buffer.from([1, 2, 3]) }]);
+  const ruta = join(carpeta, 'prueba.zip'); writeFileSync(ruta, zip);
+  const e = listarZip(ruta);
+  assert.deepEqual(e.map(x => x.nombre), ['curso.json', 'archivos/0001.png']);
+  assert.equal(e[0].metodo, 8, 'el texto se comprime');
+  assert.ok(extraerBuffer(ruta, e[0], 100000).equals(grande));
+  assert.throws(() => extraerBuffer(ruta, e[0], 1000), /demasiado grande/);
+
+  for (const malo of ['../fuera.txt', '/absoluto.txt', 'a/../../b.txt', 'a\\b.txt']) {
+    const z = await construirZip([{ nombre: malo, datos: Buffer.from('x') }]);
+    writeFileSync(ruta, z);
+    assert.throws(() => listarZip(ruta), /no permitido/, malo);
+  }
+  writeFileSync(ruta, Buffer.from('esto no es un zip, solo texto largo para pasar el mínimo de bytes'));
+  assert.throws(() => listarZip(ruta), /ZIP/);
+});
+
+test('exportar: solo el docente, parámetros válidos y el ZIP trae la lección con sus archivos', async () => {
+  assert.equal((await bajar('/api/exportar')).status, 401);
+  assert.equal((await bajar('/api/exportar', tAna)).status, 401);
+  assert.equal((await bajar('/api/exportar?semanas=0', tDocente)).status, 400);
+  assert.equal((await bajar('/api/exportar?semanas=1,x', tDocente)).status, 400);
+
+  const img = (await http('/api/medios', { metodo: 'POST', raw: pngPrueba(), token: tDocente, tipo: 'application/octet-stream' })).json;
+  const l: any = leccionBase(); l.blocks.push({ type: 'imagen', src: img.src, alt: 'prueba' }, { type: 'audio', src: '/audio/week01/x.mp3' });
+  assert.equal((await http('/api/lecciones/9', { metodo: 'PUT', cuerpo: l, token: tDocente })).status, 200);
+
+  const r = await bajar('/api/exportar?semanas=9', tDocente);
+  assert.equal(r.status, 200); assert.equal(r.tipo, 'application/zip');
+  assert.match(r.cabeceras.get('content-disposition') ?? '', /leccion-semana-09-\d{4}-\d{2}-\d{2}\.zip/);
+  const ruta = join(carpeta, 'export9.zip'); writeFileSync(ruta, r.datos);
+  const e = listarZip(ruta);
+  assert.deepEqual(e.map(x => x.nombre).sort(), ['archivos/0001.png', 'archivos/0002.mp3', 'curso.json']);
+  const m = JSON.parse(extraerBuffer(ruta, e.find(x => x.nombre === 'curso.json')!, 1e6).toString());
+  assert.equal(m.lecciones.length, 1); assert.equal(m.lecciones[0].week, 9);
+  assert.ok(extraerBuffer(ruta, e.find(x => x.nombre === 'archivos/0001.png')!, 1e6).equals(pngPrueba()));
+
+  const todas = await bajar('/api/exportar?semanas=todas', tDocente);
+  writeFileSync(ruta, todas.datos);
+  const mt = JSON.parse(extraerBuffer(ruta, listarZip(ruta).find(x => x.nombre === 'curso.json')!, 5e6).toString());
+  assert.equal(mt.lecciones.length, 40);
+});
+
+test('importar: se ve qué trae, se elige el destino y entra como borrador con sus archivos', async () => {
+  const exp = await bajar('/api/exportar?semanas=9', tDocente);
+  assert.equal((await subirZip(exp.datos)).status, 401);
+  assert.equal((await subirZip(exp.datos, tAna)).status, 401);
+
+  const previa = await subirZip(exp.datos, tDocente);
+  assert.equal(previa.status, 200, previa.texto);
+  assert.equal(previa.json.lecciones.length, 1);
+  assert.equal(previa.json.lecciones[0].week, 9);
+  assert.equal(previa.json.lecciones[0].preguntasEvaluacion, 2);
+  assert.equal(previa.json.archivos, 2);
+  assert.equal(previa.json.semanas.length, 40);
+  assert.ok(previa.json.semanas.find((s: any) => s.week === 1).notas >= 1, 'avisa qué semanas ya tienen notas');
+
+  const antes = (db.prepare('SELECT COUNT(*) n FROM lesson_versions WHERE week_number = 12').get() as any).n;
+  assert.equal((await aplicar({ id: previa.json.id, destinos: [{ origen: 9, destino: 99 }], estado: 'draft' })).status, 400);
+  assert.equal((await aplicar({ id: previa.json.id, destinos: [{ origen: 5, destino: 12 }], estado: 'draft' })).status, 400, 'esa semana no está en el archivo');
+  assert.equal((await aplicar({ id: previa.json.id, destinos: [{ origen: 9, destino: 12 }], estado: 'raro' })).status, 400);
+  assert.equal((await aplicar({ id: previa.json.id, destinos: [{ origen: 9, destino: 12 }], estado: 'draft' }, tAna)).status, 401);
+
+  const ok = await aplicar({ id: previa.json.id, destinos: [{ origen: 9, destino: 12 }], estado: 'draft' });
+  assert.equal(ok.status, 200, ok.texto);
+  assert.equal(ok.json.importadas[0].week, 12); assert.equal(ok.json.importadas[0].status, 'draft');
+
+  const doce = (await http('/api/lecciones/12', { token: tDocente })).json.lesson;
+  assert.equal(doce.status, 'draft');
+  const nueva = doce.blocks.find((b: any) => b.type === 'imagen');
+  assert.match(nueva.src, /^\/medios\/[0-9a-f-]{36}\.png$/);
+  const original = (await http('/api/lecciones/9', { token: tDocente })).json.lesson.blocks.find((b: any) => b.type === 'imagen');
+  assert.notEqual(nueva.src, original.src, 'cada importación guarda sus propios archivos');
+  assert.ok(Buffer.from(await (await fetch(base + nueva.src)).arrayBuffer()).equals(pngPrueba()));
+  assert.equal((await http('/api/lecciones/12', { token: tAna })).status, 404, 'el borrador no lo ve el alumno');
+  assert.equal((db.prepare('SELECT COUNT(*) n FROM lesson_versions WHERE week_number = 12').get() as any).n, antes + 1, 'lo reemplazado queda en el historial');
+
+  assert.equal((await aplicar({ id: previa.json.id, destinos: [{ origen: 9, destino: 12 }], estado: 'draft' })).status, 404, 'la importación se usa una sola vez');
+});
+
+test('importar: archivos dañados, hostiles o inválidos se rechazan sin dejar rastro', async () => {
+  const lecc = (extra: Record<string, unknown> = {}) => ({ week: 20, title: 'X', objective: '', keywords: [], status: 'published', blocks: [{ type: 'texto', texto: 'hola' }], ...extra });
+  const medios = () => readdirSync(join(carpeta, 'medios'));
+  const antes = medios().length;
+
+  assert.equal((await subirZip(Buffer.from('no soy un zip pero tengo bastantes bytes para engañar'), tDocente)).status, 400);
+  assert.equal((await subirZip(await construirZip([{ nombre: '../curso.json', datos: manifiestoDe([lecc()]) }]), tDocente)).status, 400);
+  assert.equal((await subirZip(await construirZip([{ nombre: 'otro.txt', datos: Buffer.from('x') }]), tDocente)).status, 400, 'sin curso.json');
+  assert.equal((await subirZip(await construirZip([{ nombre: 'curso.json', datos: Buffer.from('{no es json') }]), tDocente)).status, 400);
+  assert.equal((await subirZip(await construirZip([{ nombre: 'curso.json', datos: manifiestoDe([lecc()], { formato: 'otra-cosa' }) }]), tDocente)).status, 400);
+  assert.equal((await subirZip(await construirZip([{ nombre: 'curso.json', datos: manifiestoDe([lecc(), lecc()]) }]), tDocente)).status, 400, 'semana repetida');
+  assert.equal((await subirZip(await construirZip([{ nombre: 'curso.json', datos: manifiestoDe([]) }]), tDocente)).status, 400);
+  const invalida = await subirZip(await construirZip([{ nombre: 'curso.json', datos: manifiestoDe([lecc({ blocks: [{ type: 'evaluacion', preguntas: [{ question: 'q', options: ['a', 'b'], answer: 'z' }] }] })]) }]), tDocente);
+  assert.equal(invalida.status, 400); assert.match(invalida.json.error, /Semana 20/);
+  const bomba = await subirZip(await construirZip([{ nombre: 'curso.json', datos: Buffer.alloc(20 * 1024 * 1024) }]), tDocente);
+  assert.equal(bomba.status, 400, 'un texto que se infla a 20 MB no pasa');
+
+  // un archivo con el CRC alterado se detecta al aplicar y no deja nada en /medios
+  const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), randomBytes(400)]); // no comprimible: se guarda tal cual
+  const man = manifiestoDe([lecc({ blocks: [{ type: 'imagen', src: '/medios/aaaa.png', alt: 'x' }] })], { archivos: [{ entrada: 'archivos/0001.png', src: '/medios/aaaa.png' }] });
+  const bueno = await construirZip([{ nombre: 'curso.json', datos: man }, { nombre: 'archivos/0001.png', datos: png }]);
+  const posicion = bueno.indexOf(png); assert.ok(posicion > 0, 'el archivo va sin comprimir');
+  const roto = Buffer.from(bueno); roto[posicion + 40] ^= 0xff;
+  const pr = await subirZip(roto, tDocente); assert.equal(pr.status, 200, 'la vista previa solo lee el manifiesto');
+  const mal = await aplicar({ id: pr.json.id, destinos: [{ origen: 20, destino: 20 }], estado: 'draft' });
+  assert.equal(mal.status, 400); assert.match(mal.json.error, /dañado|CRC/);
+  assert.equal(medios().length, antes, 'no quedan archivos a medias');
+
+  // un archivo que no es de un formato permitido tampoco entra
+  const exe = Buffer.from('MZ\x90\x00 programa que no debería entrar nunca');
+  const man2 = manifiestoDe([lecc({ blocks: [{ type: 'imagen', src: '/medios/bbbb.png', alt: 'x' }] })], { archivos: [{ entrada: 'archivos/0001.png', src: '/medios/bbbb.png' }] });
+  const z2 = await construirZip([{ nombre: 'curso.json', datos: man2 }, { nombre: 'archivos/0001.png', datos: exe }]);
+  const p2 = await subirZip(z2, tDocente);
+  const m2 = await aplicar({ id: p2.json.id, destinos: [{ origen: 20, destino: 20 }], estado: 'draft' });
+  assert.equal(m2.status, 400); assert.match(m2.json.error, /formato permitido/);
+  assert.equal(medios().length, antes);
+
+  // referencia a un archivo que no viene en el ZIP: error claro para imagen, se quita en el audio del vocabulario
+  const man3 = manifiestoDe([lecc({ blocks: [{ type: 'imagen', src: '/medios/cccc.png', alt: 'x' }] })]);
+  const p3 = await subirZip(await construirZip([{ nombre: 'curso.json', datos: man3 }]), tDocente);
+  assert.equal((await aplicar({ id: p3.json.id, destinos: [{ origen: 20, destino: 20 }], estado: 'draft' })).status, 400);
+  const man4 = manifiestoDe([lecc({ blocks: [{ type: 'vocabulario', items: [{ word: 'a', meaning: 'b', example: 'c', audio: '/medios/dddd.mp3' }] }] })]);
+  const p4 = await subirZip(await construirZip([{ nombre: 'curso.json', datos: man4 }]), tDocente);
+  const a4 = await aplicar({ id: p4.json.id, destinos: [{ origen: 20, destino: 20 }], estado: 'conservar' });
+  assert.equal(a4.status, 200); assert.equal(a4.json.advertencias.length, 1);
+  assert.equal((await http('/api/lecciones/20', { token: tDocente })).json.lesson.blocks[0].items[0].audio, undefined);
+
+  // dos lecciones al mismo destino
+  const man5 = manifiestoDe([lecc({ week: 21 }), lecc({ week: 22 })]);
+  const p5 = await subirZip(await construirZip([{ nombre: 'curso.json', datos: man5 }]), tDocente);
+  assert.equal((await aplicar({ id: p5.json.id, destinos: [{ origen: 21, destino: 30 }, { origen: 22, destino: 30 }], estado: 'draft' })).status, 400);
+  assert.equal((await aplicar({ id: 'no-es-uuid', destinos: [], estado: 'draft' })).status, 400);
+});
+
+test('importar: una importación vieja se limpia y se puede arrancar sin las semanas de inglés', async () => {
+  const dirImp = join(carpeta, 'importaciones');
+  const vieja = join(dirImp, `${randomUUID()}.zip`);
+  writeFileSync(vieja, 'viejo');
+  const antiguo = new Date(Date.now() - 3 * 3600 * 1000);
+  const { utimesSync } = await import('node:fs'); utimesSync(vieja, antiguo, antiguo);
+  const exp = await bajar('/api/exportar?semanas=9', tDocente);
+  await subirZip(exp.datos, tDocente);
+  assert.equal(existsSync(vieja), false, 'se borró lo que llevaba más de 2 horas');
+
+  const { servidor: s2, db: db2 } = crearServidor({
+    rutaBase: ':memory:', dirDatos: join(carpeta, 'otra'), dirDist, dirAudio, secreto: 'x'.repeat(64), sembrar: false
+  });
+  assert.equal((db2.prepare('SELECT COUNT(*) n FROM lessons').get() as any).n, 0, 'sin semilla: sin lecciones');
+  s2.close(); db2.close();
 });

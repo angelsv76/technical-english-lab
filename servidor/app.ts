@@ -15,6 +15,9 @@ import {
   sembrarLecciones, validarLeccion
 } from './lecciones.ts';
 import { ErrorMedio, guardarMedio } from './medios.ts';
+import { rutaSegura } from './rutas.ts';
+import { aplicarImportacion, ErrorIntercambio, escribirExportacion, prepararExportacion, recibirImportacion } from './intercambio.ts';
+import { ErrorZip } from './zip.ts';
 import { firmarSesion, leerSesion, verificarPassword } from './seguridad.ts';
 
 export interface Opciones {
@@ -25,6 +28,8 @@ export interface Opciones {
   secreto: string;       // clave de firma de sesiones
   geminiKey?: string;
   geminiModelo?: string;
+  /** false = no copiar las semanas de inglés del código (para usar el sitio con otra materia). */
+  sembrar?: boolean;
   ahora?: () => Date;
   duracionSesionSeg?: number;
 }
@@ -79,21 +84,14 @@ async function leerJson(req: http.IncomingMessage, limite: number): Promise<any>
   try { return JSON.parse(texto); } catch { throw new ErrorHttp(400, 'JSON inválido'); }
 }
 
-/** Une una ruta de la URL a una carpeta raíz sin permitir salirse de ella. */
-function rutaSegura(raiz: string, rutaUrl: string): string | null {
-  let decodificada: string;
-  try { decodificada = decodeURIComponent(rutaUrl); } catch { return null; }
-  const destino = resolve(join(raiz, normalize(decodificada)));
-  return destino === resolve(raiz) || destino.startsWith(resolve(raiz) + sep) ? destino : null;
-}
-
 export function crearServidor(op: Opciones): { servidor: http.Server; db: DatabaseSync } {
   const db = abrirBase(op.rutaBase);
   const ahora = op.ahora ?? (() => new Date());
   const duracion = op.duracionSesionSeg ?? 7 * 24 * 3600;
   const dirFotos = join(op.dirDatos, 'fotos');
   const dirMedios = join(op.dirDatos, 'medios');
-  sembrarLecciones(db, weeks as never, op.dirAudio, ahora());
+  if (op.sembrar !== false) sembrarLecciones(db, weeks as never, op.dirAudio, ahora());
+  const ctxIntercambio = { db, dirDatos: op.dirDatos, dirAudio: op.dirAudio, ahora };
   const fallosLogin = new Map<string, number[]>();
 
   const demasiadosFallos = (clave: string, maximo: number) => {
@@ -288,6 +286,47 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
       if (ident.rol !== 'teacher') return responder(res, 401, { error: 'Solo el docente puede subir archivos.' });
       try { return responder(res, 200, await guardarMedio(req, dirMedios)); }
       catch (e) { if (e instanceof ErrorMedio) throw new ErrorHttp(e.status, e.message); throw e; }
+    }
+
+    // Exportar e importar cursos (.zip). Solo el docente.
+    if (ruta === '/api/exportar' && req.method === 'GET') {
+      if (ident.rol !== 'teacher') return responder(res, 401, { error: 'Solo el docente puede exportar.' });
+      const pedido = new URL(req.url ?? '/', 'http://localhost').searchParams.get('semanas') ?? 'todas';
+      const semanas = pedido === 'todas'
+        ? Array.from({ length: 40 }, (_, i) => i + 1)
+        : pedido.split(',').map(Number);
+      if (semanas.length === 0 || semanas.length > 40 || semanas.some(n => !Number.isInteger(n) || n < 1 || n > 40)) {
+        return responder(res, 400, { error: 'Semanas no válidas.' });
+      }
+      try {
+        const exportacion = prepararExportacion(ctxIntercambio, semanas);
+        res.writeHead(200, {
+          'Content-Type': 'application/zip', 'Cache-Control': 'no-store',
+          'Content-Disposition': `attachment; filename="${exportacion.nombre}"`,
+          'X-Lecciones': String(exportacion.lecciones), 'X-Archivos': String(exportacion.archivos), 'X-Faltantes': String(exportacion.faltantes.length)
+        });
+        await escribirExportacion(res, exportacion, ahora());
+        res.end();
+        return;
+      } catch (e) {
+        if (res.headersSent) { res.destroy(); return; }
+        if (e instanceof ErrorIntercambio) throw new ErrorHttp(e.status, e.message);
+        if (e instanceof ErrorZip) throw new ErrorHttp(413, e.message);
+        throw e;
+      }
+    }
+
+    if ((ruta === '/api/importar' || ruta === '/api/importar/aplicar') && req.method === 'POST') {
+      if (ident.rol !== 'teacher') return responder(res, 401, { error: 'Solo el docente puede importar.' });
+      try {
+        if (ruta === '/api/importar') return responder(res, 200, await recibirImportacion(ctxIntercambio, req));
+        const { id, destinos, estado } = await leerJson(req, 20_000);
+        return responder(res, 200, await aplicarImportacion(ctxIntercambio, id, destinos, estado));
+      } catch (e) {
+        if (e instanceof ErrorIntercambio) throw new ErrorHttp(e.status, e.message);
+        if (e instanceof ErrorZip) throw new ErrorHttp(400, e.message);
+        throw e;
+      }
     }
 
     return responder(res, 404, { error: 'No encontrado' });
