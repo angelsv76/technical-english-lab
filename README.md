@@ -81,3 +81,18 @@ siendo amplias (cualquier alumno autenticado puede leer datos de otros). Falta m
 **Desarrollado por:** Ángel Sánchez  
 **Institución:** Instituto Nacional Técnico Industrial (INTI)  
 **Uso:** Educativo — Especialidad Desarrollo de Software
+
+## Inscripción y gestión de usuarios
+
+- **Inscripción** (`/inscripcion`, pública): el alumno escribe NIE, nombre, grupo, una
+  contraseña propia y el **código de inscripción** de su grupo. La cuenta queda
+  *pendiente* (no entra ni guarda notas) hasta que el docente la aprueba.
+- **Gestión de usuarios** (panel docente → *Gestión de Usuarios*): códigos por grupo con
+  vencimiento, aprobar/rechazar pendientes, activar/desactivar, restablecer contraseña,
+  borrar (solo sin progreso) e importar alumnos desde CSV (`nie,nombre,grupo`).
+- **Servidor**: `supabase/functions/enroll-student` (pública, con límite de intentos) y
+  `supabase/functions/manage-students` (exige rol docente). La lógica de reglas está en
+  `supabase/functions/_shared/` y se prueba con `npx tsx scripts/test-enrollment.ts`.
+- **Despliegue, en este orden**: 1) `supabase-fase1-docente.sql`, 2) `supabase-inscripcion.sql`,
+  3) `npx supabase functions deploy enroll-student` y `manage-students`, 4) frontend.
+- Cuentas de prueba: `scripts/test-student.mjs` (alumno) y `scripts/create-teacher.mjs` (docente).

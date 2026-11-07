@@ -9,3 +9,12 @@ verify_jwt = false
 
 [functions.generate-content]
 verify_jwt = false
+
+# enroll-student es pública a propósito: el alumno que se inscribe aún no tiene
+# sesión. Se protege con el código de grupo, su vencimiento y el límite de intentos.
+[functions.enroll-student]
+verify_jwt = false
+
+# manage-students verifica dentro que el token sea de un usuario con rol docente.
+[functions.manage-students]
+verify_jwt = false

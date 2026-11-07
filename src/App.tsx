@@ -7,6 +7,7 @@ import { WeekPage } from './components/WeekPage';
 import { GlossaryPage } from './components/GlossaryPage';
 import { TeacherLogin } from './pages/TeacherLogin';
 import { VerifyPage } from './pages/VerifyPage';
+import { EnrollPage } from './pages/EnrollPage';
 import { TeacherDashboard } from './pages/TeacherDashboard';
 import { TeacherRoute } from './components/TeacherRoute';
 import { PortalSelection } from './components/PortalSelection';
@@ -59,6 +60,9 @@ export default function App() {
 
           {/* Verificación pública de reportes (sin login) */}
           <Route path="/verificar/:code" element={<VerifyPage />} />
+
+          {/* Inscripción de alumnos nuevos (sin login; requiere código del docente) */}
+          <Route path="/inscripcion" element={student ? <Navigate to="/student" replace /> : <EnrollPage />} />
 
           {/* Student Routes */}
           <Route path="/student/login" element={

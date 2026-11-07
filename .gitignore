@@ -40,3 +40,7 @@ desktop.ini
 .idea/
 .vscode/*
 !.vscode/extensions.json
+
+# Contraseñas iniciales de alumnos generadas por scripts/import-students.mjs
+credenciales-*.csv
+alumnos*.csv

@@ -24,6 +24,7 @@ import {
 import { useWeeks } from '../hooks/useWeeks';
 import { TeacherPanel } from '../components/TeacherPanel';
 import { StudentAvatar } from '../components/StudentAvatar';
+import { UserManagement } from '../components/UserManagement';
 import { supabase } from '../lib/supabase';
 import { logoutTeacher } from '../services/authService';
 import { jsPDF } from 'jspdf';
@@ -52,7 +53,7 @@ interface StudentDetail {
 }
 
 export const TeacherDashboard: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'content' | 'students' | 'reports'>('students');
+  const [activeTab, setActiveTab] = useState<'content' | 'students' | 'users' | 'reports'>('students');
   const [students, setStudents] = useState<StudentData[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedStudent, setSelectedStudent] = useState<StudentDetail | null>(null);
@@ -326,6 +327,12 @@ export const TeacherDashboard: React.FC = () => {
             icon={<Users size={20} />}
             label="Progreso de Estudiantes"
           />
+          <NavButton
+            active={activeTab === 'users'}
+            onClick={() => setActiveTab('users')}
+            icon={<ShieldCheck size={20} />}
+            label="Gestión de Usuarios"
+          />
           <NavButton 
             active={activeTab === 'reports'} 
             onClick={() => setActiveTab('reports')}
@@ -359,6 +366,7 @@ export const TeacherDashboard: React.FC = () => {
             <h2 className="text-3xl font-bold text-zinc-900">
               {activeTab === 'content' && 'Gestión de Contenido'}
               {activeTab === 'students' && 'Progreso de Estudiantes'}
+              {activeTab === 'users' && 'Gestión de Usuarios'}
               {activeTab === 'reports' && 'Reportes y Descargas'}
             </h2>
             <p className="text-zinc-500">Panel de administración - DS1B - INTI</p>
@@ -557,6 +565,8 @@ export const TeacherDashboard: React.FC = () => {
             )}
           </div>
         )}
+
+        {activeTab === 'users' && <UserManagement />}
 
         {activeTab === 'reports' && (
           <div className="max-w-2xl space-y-4">

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { User, Hash, GraduationCap, Loader2, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
@@ -34,16 +35,28 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
         return;
       }
 
+      // select('*'): sigue funcionando aunque aún no exista la columna enrollment_status.
       const { data: student, error: studentError } = await supabase
         .from('students')
-        .select('id, nie, name, group_code, photo_url, active')
+        .select('*')
         .eq('nie', nie)
-        .eq('active', true)
-        .single();
+        .maybeSingle();
 
       if (studentError || !student || authData.user?.email?.toLowerCase() !== email.toLowerCase()) {
         await supabase.auth.signOut();
         setError('Cuenta de estudiante no disponible. Contacta a tu profesor.');
+        return;
+      }
+
+      if (!student.active) {
+        await supabase.auth.signOut();
+        setError(
+          student.enrollment_status === 'pending'
+            ? 'Tu inscripción está pendiente: tu docente todavía no la aprueba. Vuelve a intentarlo cuando te avise.'
+            : student.enrollment_status === 'rejected'
+              ? 'Tu inscripción no fue aprobada. Habla con tu docente.'
+              : 'Tu cuenta está desactivada. Habla con tu docente.'
+        );
         return;
       }
 
@@ -167,6 +180,11 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
           </button>
         </form>
         
+        <div className="px-8 pb-6 text-center text-sm text-zinc-500">
+          ¿Primera vez en el curso?{' '}
+          <Link to="/inscripcion" className="font-bold text-[#F57C00] hover:underline">Inscríbete aquí</Link>
+        </div>
+
         <div className="p-4 bg-zinc-50 border-t border-zinc-100 text-center">
           <p className="text-xs text-zinc-500 font-mono uppercase">
             Software Development Program - INTI
