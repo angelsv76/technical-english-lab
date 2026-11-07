@@ -30,7 +30,7 @@ import { EditorLeccion } from '../components/editor/EditorLeccion';
 import { IntercambioLecciones } from '../components/editor/IntercambioLecciones';
 import { logoutTeacher } from '../services/authService';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 
 interface StudentData {
   id: string;
@@ -219,7 +219,7 @@ export const TeacherDashboard: React.FC = () => {
       return [s.nie, s.name, s.group_code, s.active ? 'Activo' : 'Inactivo', `${avg}%`, `${completed}/40`, lastLogin];
     });
     
-    doc.autoTable({
+    autoTable(doc, {
       head: [['NIE', 'Nombre', 'Grupo', 'Estado', 'Promedio', 'Semanas', 'Último acceso']],
       body: tableData,
       startY: 25,
