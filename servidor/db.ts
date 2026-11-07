@@ -9,6 +9,9 @@ export function abrirBase(ruta: string): DatabaseSync {
   const db = new DatabaseSync(ruta);
   db.exec('PRAGMA journal_mode = WAL; PRAGMA foreign_keys = ON; PRAGMA busy_timeout = 5000;');
   db.exec(DDL);
+  // Bases creadas antes de existir una columna: se agrega sin tocar los datos.
+  const columnas = (db.prepare('PRAGMA table_info(students)').all() as { name: string }[]).map(c => c.name);
+  if (!columnas.includes('photo_pending')) db.exec('ALTER TABLE students ADD COLUMN photo_pending text');
   return db;
 }
 

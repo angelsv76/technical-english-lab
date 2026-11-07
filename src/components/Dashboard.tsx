@@ -5,6 +5,8 @@ import { courseScheduleService } from '../services/courseScheduleService';
 import { useNavigate } from 'react-router-dom';
 import { DailyReview } from './DailyReview';
 import { StudentAvatar } from './StudentAvatar';
+import { FotoPropia } from './FotoPropia';
+import { MODO_LOCAL } from '../lib/supabase';
 
 interface Props {
   student: Student;
@@ -62,9 +64,13 @@ export const Dashboard: React.FC<Props> = ({
             </button>
 
             <div className="flex items-center gap-3 border-l border-zinc-200 pl-4">
-              <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
-                <StudentAvatar name={student.name} photoUrl={student.photo_url} size={40} className="w-full h-full object-cover" />
-              </div>
+              {MODO_LOCAL ? (
+                <FotoPropia nombre={student.name} photoUrl={student.photo_url} enRevision={!!student.photo_pending} />
+              ) : (
+                <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0">
+                  <StudentAvatar name={student.name} photoUrl={student.photo_url} size={40} className="w-full h-full object-cover" />
+                </div>
+              )}
               <div className="text-right hidden sm:block">
                 <p className="text-sm font-bold text-zinc-900">{student.name}</p>
                 <p className="text-xs text-zinc-500">NIE: {student.nie} | Grupo: {student.code}</p>

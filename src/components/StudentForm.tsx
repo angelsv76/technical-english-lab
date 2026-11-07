@@ -84,7 +84,8 @@ export const StudentForm: React.FC<Props> = ({ onLogin }) => {
         nie: student.nie,
         name: student.name,
         code: student.group_code,
-        photo_url: student.photo_url
+        photo_url: student.photo_url,
+        photo_pending: student.photo_pending
       });
 
     } catch (err) {

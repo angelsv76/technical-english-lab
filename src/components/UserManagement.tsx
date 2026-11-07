@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AlertCircle, Check, Copy, Download, KeyRound, Loader2, RefreshCw, Trash2, Upload, UserCheck, UserX
 } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase, MODO_LOCAL } from '../lib/supabase';
 import { gestionar } from '../services/enrollmentService';
 
 interface Alumno {
@@ -14,6 +14,7 @@ interface Alumno {
   enrollment_status: 'pending' | 'approved' | 'rejected';
   enrolled_at: string | null;
   last_login: string | null;
+  photo_pending?: string | null;
 }
 
 interface CodigoGrupo {
@@ -64,6 +65,26 @@ const leerCsv = (texto: string) =>
       return { nie, nombre, grupo };
     });
 
+/** Muestra la foto pendiente: necesita la sesión del docente, así que se baja con fetch. */
+const FotoPendiente: React.FC<{ id: string; nombre: string }> = ({ id, nombre }) => {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let vivo = true;
+    let objeto = '';
+    (async () => {
+      const sesion = (await supabase.auth.getSession()).data.session;
+      const r = await fetch(`/api/fotos-pendientes/${id}`, { headers: { Authorization: `Bearer ${sesion?.access_token ?? ''}` } });
+      if (!r.ok || !vivo) return;
+      objeto = URL.createObjectURL(await r.blob());
+      setUrl(objeto);
+    })().catch(() => { /* sin vista previa: el docente aún puede decidir */ });
+    return () => { vivo = false; if (objeto) URL.revokeObjectURL(objeto); };
+  }, [id]);
+  return url
+    ? <img src={url} alt={`Foto propuesta por ${nombre}`} className="w-20 h-20 rounded-xl object-cover border border-zinc-200" />
+    : <div className="w-20 h-20 rounded-xl bg-zinc-100 flex items-center justify-center"><Loader2 size={18} className="animate-spin text-zinc-400" /></div>;
+};
+
 const boton = 'px-3 py-1.5 rounded-lg text-xs font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
 
 export const UserManagement: React.FC = () => {
@@ -90,7 +111,9 @@ export const UserManagement: React.FC = () => {
     setError('');
     try {
       const { data, error: e } = await supabase.from('students')
-        .select('id, nie, name, group_code, active, enrollment_status, enrolled_at, last_login')
+        .select((MODO_LOCAL
+          ? 'id, nie, name, group_code, active, enrollment_status, enrolled_at, last_login, photo_pending'
+          : 'id, nie, name, group_code, active, enrollment_status, enrolled_at, last_login') as '*')
         .order('name').range(0, 999);
       if (e) {
         throw new Error(e.code === '42703'
@@ -118,6 +141,7 @@ export const UserManagement: React.FC = () => {
     [alumnos, codigos]
   );
   const pendientes = alumnos.filter(a => estadoDe(a) === 'pendiente');
+  const fotosPendientes = alumnos.filter(a => !!a.photo_pending);
 
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
@@ -143,6 +167,11 @@ export const UserManagement: React.FC = () => {
       setAlumnos(prev => prev.map(x => x.id === a.id ? { ...x, ...data } : x));
     });
   };
+
+  const resolverFoto = (a: Alumno, aprobarla: boolean) => ejecutar(`foto-${a.id}`, async () => {
+    await gestionar(aprobarla ? 'approve_photo' : 'reject_photo', { studentId: a.id });
+    setAlumnos(prev => prev.map(x => x.id === a.id ? { ...x, photo_pending: null } : x));
+  });
 
   const aprobar = (a: Alumno) => cambiarEstado(a, { active: true, enrollment_status: 'approved' });
   const rechazar = (a: Alumno) =>
@@ -314,6 +343,36 @@ export const UserManagement: React.FC = () => {
           </ul>
         )}
       </section>
+
+      {/* Fotos por aprobar (solo versión local) */}
+      {MODO_LOCAL && (
+        <section className="bg-white rounded-3xl border border-zinc-200 shadow-sm p-6" aria-labelledby="t-fotos">
+          <h3 id="t-fotos" className="text-lg font-bold text-zinc-900 mb-1">
+            Fotos por aprobar {fotosPendientes.length > 0 && (
+              <span className="ml-2 text-xs bg-amber-100 text-amber-800 px-2 py-1 rounded-lg align-middle">{fotosPendientes.length}</span>
+            )}
+          </h3>
+          {fotosPendientes.length === 0 ? (
+            <p className="text-sm text-zinc-500">No hay fotos por revisar.</p>
+          ) : (
+            <ul className="mt-3 grid gap-3">
+              {fotosPendientes.map(a => (
+                <li key={a.id} className="flex flex-wrap items-center gap-4 p-4 rounded-2xl border border-amber-200 bg-amber-50/50">
+                  <FotoPendiente id={a.id} nombre={a.name} />
+                  <div className="flex-1 min-w-[12rem]">
+                    <p className="font-bold text-zinc-900">{a.name}</p>
+                    <p className="text-xs text-zinc-500">NIE {a.nie} · Grupo {a.group_code}</p>
+                  </div>
+                  <button className={`${boton} bg-emerald-600 text-white hover:bg-emerald-700 flex items-center gap-1`}
+                    disabled={ocupado === `foto-${a.id}`} onClick={() => resolverFoto(a, true)}><Check size={14} /> Aprobar</button>
+                  <button className={`${boton} bg-white border border-red-200 text-red-700 hover:bg-red-50 flex items-center gap-1`}
+                    disabled={ocupado === `foto-${a.id}`} onClick={() => resolverFoto(a, false)}><Trash2 size={14} /> Rechazar</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
 
       {/* Directorio */}
       <section className="bg-white rounded-3xl border border-zinc-200 shadow-sm p-6" aria-labelledby="t-alumnos">

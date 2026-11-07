@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabase';
+import { supabase, MODO_LOCAL } from '../lib/supabase';
 import type { Student, WeeklyProgress, GlossaryEntry } from '../lib/supabase';
 import { weeks } from '../data/weeks/index';
 import { nextReviewDate } from '../utils/srs';
@@ -18,8 +18,8 @@ export const useAppState = () => {
       if (!active || !user?.email?.endsWith('@inti.edu.sv')) return;
       const nie = user.email.slice(0, -'@inti.edu.sv'.length);
       const { data } = await supabase.from('students')
-        .select('id, nie, name, group_code, photo_url, active').eq('nie', nie).eq('active', true).maybeSingle();
-      if (active && data) setStudent({ id: data.id, nie: data.nie, name: data.name, code: data.group_code, photo_url: data.photo_url });
+        .select((MODO_LOCAL ? 'id, nie, name, group_code, photo_url, photo_pending, active' : 'id, nie, name, group_code, photo_url, active') as '*').eq('nie', nie).eq('active', true).maybeSingle();
+      if (active && data) setStudent({ id: data.id, nie: data.nie, name: data.name, code: data.group_code, photo_url: data.photo_url, photo_pending: (data as { photo_pending?: string | null }).photo_pending });
     }).catch(error => console.error('Error restaurando sesión:', error))
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };

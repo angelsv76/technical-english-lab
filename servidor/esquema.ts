@@ -17,7 +17,7 @@ export const TABLAS: Record<string, Tabla> = {
     columnas: {
       id: 'text', nie: 'text', name: 'text', email: 'text', group_code: 'text',
       active: 'bool', enrollment_status: 'text', enrolled_at: 'text',
-      last_login: 'text', last_seen: 'text', photo_url: 'text', created_at: 'text'
+      last_login: 'text', last_seen: 'text', photo_url: 'text', photo_pending: 'text', created_at: 'text'
     }
   },
   weekly_progress: {
@@ -91,6 +91,7 @@ create table if not exists students (
   last_login        text,
   last_seen         text,
   photo_url         text,
+  photo_pending     text,
   created_at        text not null
 );
 

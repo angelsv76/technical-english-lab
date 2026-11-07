@@ -2,6 +2,8 @@
 // puras de supabase/functions/_shared (las mismas que ya tienen pruebas).
 import type { DatabaseSync } from 'node:sqlite';
 import { randomUUID } from 'node:crypto';
+import { existsSync, mkdirSync, readdirSync, renameSync, rmSync } from 'node:fs';
+import { join } from 'node:path';
 import { weeks } from '../src/data/weeks/index.ts';
 import { gruposConInscripcionAbierta, inscribir, type EnrollDeps } from '../supabase/functions/_shared/enrollment.ts';
 import {
@@ -15,6 +17,8 @@ export interface Contexto {
   db: DatabaseSync;
   ident: Identidad;
   ahora: () => Date;
+  /** Carpeta de datos (fotos aprobadas y pendientes). */
+  dirDatos?: string;
   geminiKey?: string;
   /** Si se define, sustituye el modelo que pide el cliente (los nombres cambian con el tiempo). */
   geminiModelo?: string;
@@ -206,6 +210,27 @@ export function gestionarAlumnos(c: Contexto, cuerpo: any): Resp {
       }
       return { status: 200, body: { password, created: !existe } };
     }
+    case 'approve_photo':
+    case 'reject_photo': {
+      if (!UUID.test(cuerpo.studentId ?? '') || !c.dirDatos) return { status: 400, body: { error: 'Alumno no válido.' } };
+      const id = String(cuerpo.studentId).toLowerCase();
+      const fila = db.prepare('SELECT photo_pending FROM students WHERE id = ?').get(id) as { photo_pending: string | null } | undefined;
+      if (!fila?.photo_pending) return { status: 404, body: { error: 'Este alumno no tiene una foto por revisar.' } };
+      const origen = join(c.dirDatos, 'fotos-pendientes', id, `propuesta.${fila.photo_pending}`);
+      if (cuerpo.action === 'approve_photo') {
+        if (!existsSync(origen)) return { status: 404, body: { error: 'No se encontró el archivo de la foto.' } };
+        const destino = join(c.dirDatos, 'fotos', id);
+        mkdirSync(destino, { recursive: true });
+        for (const previo of readdirSync(destino)) if (previo.startsWith('avatar.')) rmSync(join(destino, previo));
+        renameSync(origen, join(destino, `avatar.${fila.photo_pending}`));
+        db.prepare('UPDATE students SET photo_url = ?, photo_pending = NULL WHERE id = ?')
+          .run(`/fotos/${id}/avatar.${fila.photo_pending}?t=${ahora.getTime()}`, id);
+      } else {
+        rmSync(origen, { force: true });
+        db.prepare('UPDATE students SET photo_pending = NULL WHERE id = ?').run(id);
+      }
+      return { status: 200, body: { ok: true } };
+    }
     case 'delete_student': {
       if (!UUID.test(cuerpo.studentId ?? '')) return { status: 400, body: { error: 'Alumno no válido.' } };
       const alumno = db.prepare('SELECT nie FROM students WHERE id = ?').get(cuerpo.studentId) as { nie: string } | undefined;
@@ -216,6 +241,10 @@ export function gestionarAlumnos(c: Contexto, cuerpo: any): Resp {
         return { status: 409, body: { error: 'Este alumno tiene progreso registrado y no se puede borrar. Desactívalo en lugar de borrarlo.' } };
       }
       db.prepare('DELETE FROM auth_users WHERE email = ?').run(correoDeNie(alumno.nie));
+      if (c.dirDatos) {
+        rmSync(join(c.dirDatos, 'fotos-pendientes', String(cuerpo.studentId).toLowerCase()), { recursive: true, force: true });
+        rmSync(join(c.dirDatos, 'fotos', String(cuerpo.studentId).toLowerCase()), { recursive: true, force: true });
+      }
       return { status: 200, body: { ok: true } };
     }
     case 'import_students': {

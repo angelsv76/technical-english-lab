@@ -421,3 +421,42 @@ test('fotos: solo el docente sube imágenes reales y se sirven desde /fotos', as
   assert.equal(foto.status, 200); assert.equal(foto.headers.get('content-type'), 'image/png');
   assert.equal((await fetch(`${base}/fotos/${ana}/avatar.png`, { method: 'DELETE' })).status, 405);
 });
+
+test('foto propuesta: el alumno la sube, queda pendiente y solo el docente la aprueba o rechaza', async () => {
+  const png = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(40, 2)]);
+  const subir = (token?: string, raw: Buffer = png) => http('/api/foto-propuesta', { metodo: 'PUT', raw, token, tipo: 'image/png' });
+  assert.equal((await subir()).status, 401, 'sin sesión no');
+  assert.equal((await subir(tDocente)).status, 401, 'el docente usa el otro camino');
+  assert.equal((await subir(tAna, Buffer.from('<script>x</script>'))).status, 400, 'un html disfrazado no pasa');
+  assert.equal((await subir(tAna, Buffer.concat([png, Buffer.alloc(3 * 1024 * 1024)]))).status, 413);
+  assert.equal((await subir(tAna)).status, 200);
+
+  const fila = db.prepare('SELECT photo_pending, photo_url FROM students WHERE id = ?').get(ana) as any;
+  assert.equal(fila.photo_pending, 'png');
+  assert.notEqual(fila.photo_url?.includes('/fotos/'), true, 'todavía no es pública');
+
+  // el alumno no puede ver ni escribir el estado por el motor genérico
+  const mia = await http('/api/db', { metodo: 'POST', token: tAna, cuerpo: { table: 'students', op: 'update', values: { photo_url: '/fotos/x', photo_pending: null }, filters: [{ col: 'id', op: 'eq', val: ana }] } });
+  assert.equal(db.prepare('SELECT photo_pending FROM students WHERE id = ?').get(ana)!.photo_pending, 'png', mia.status + ' no cambia nada');
+
+  // ver la pendiente: solo docente
+  assert.equal((await fetch(`${base}/api/fotos-pendientes/${ana}`, { headers: { Authorization: `Bearer ${tAna}` } })).status, 401);
+  const vista = await fetch(`${base}/api/fotos-pendientes/${ana}`, { headers: { Authorization: `Bearer ${tDocente}` } });
+  assert.equal(vista.status, 200); assert.equal(vista.headers.get('content-type'), 'image/png');
+
+  // un alumno no aprueba
+  assert.equal((await http('/api/functions/manage-students', { metodo: 'POST', token: tAna, cuerpo: { action: 'approve_photo', studentId: ana } })).status, 401);
+
+  // rechazar limpia
+  assert.equal((await http('/api/functions/manage-students', { metodo: 'POST', token: tDocente, cuerpo: { action: 'reject_photo', studentId: ana } })).status, 200);
+  assert.equal(db.prepare('SELECT photo_pending FROM students WHERE id = ?').get(ana)!.photo_pending, null);
+  assert.equal((await fetch(`${base}/api/fotos-pendientes/${ana}`, { headers: { Authorization: `Bearer ${tDocente}` } })).status, 404);
+
+  // subir de nuevo y aprobar: pasa a /fotos
+  assert.equal((await subir(tAna)).status, 200);
+  assert.equal((await http('/api/functions/manage-students', { metodo: 'POST', token: tDocente, cuerpo: { action: 'approve_photo', studentId: ana } })).status, 200);
+  const aprobada = db.prepare('SELECT photo_pending, photo_url FROM students WHERE id = ?').get(ana) as any;
+  assert.equal(aprobada.photo_pending, null);
+  assert.match(aprobada.photo_url, new RegExp(`^/fotos/${ana}/avatar\.png`));
+  assert.equal((await fetch(`${base}/fotos/${ana}/avatar.png`)).status, 200);
+});

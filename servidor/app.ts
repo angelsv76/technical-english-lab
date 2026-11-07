@@ -35,6 +35,14 @@ const LIMITES_FUNCION: Record<string, number> = {
 };
 
 const MAX_FOTO = 3 * 1024 * 1024;
+
+/** Extensión según los primeros bytes (no se confía en el nombre ni en el Content-Type). */
+function tipoImagen(d: Buffer): 'png' | 'jpg' | 'webp' | null {
+  if (d.subarray(0, 4).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47]))) return 'png';
+  if (d.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff]))) return 'jpg';
+  if (d.subarray(0, 4).toString('latin1') === 'RIFF' && d.subarray(8, 12).toString('latin1') === 'WEBP') return 'webp';
+  return null;
+}
 const TOPE_DESCARTE = 16 * 1024 * 1024; // lo máximo que se lee de una petición demasiado grande antes de cortarla
 const VENTANA_LOGIN_MS = 15 * 60 * 1000;
 const MAX_FALLOS_CUENTA = 8;   // por correo: frena adivinar la contraseña de un alumno
@@ -165,7 +173,7 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
       const nombre = funcion[1];
       if (!(nombre in LIMITES_FUNCION)) return responder(res, 404, { error: 'función no encontrada' });
       const cuerpo = await leerJson(req, LIMITES_FUNCION[nombre]);
-      const ctx: Contexto = { db, ident, ahora, geminiKey: op.geminiKey, geminiModelo: op.geminiModelo };
+      const ctx: Contexto = { db, ident, ahora, dirDatos: op.dirDatos, geminiKey: op.geminiKey, geminiModelo: op.geminiModelo };
       const r: Resp =
         nombre === 'submit-evaluation' ? enviarEvaluacion(ctx, cuerpo)
         : nombre === 'generate-content' ? await generarContenido(ctx, cuerpo)
@@ -184,10 +192,7 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
     if (foto && req.method === 'PUT') {
       if (ident.rol !== 'teacher') return responder(res, 401, { error: 'Solo el docente puede subir fotos.' });
       const datos = await leerCuerpo(req, MAX_FOTO);
-      const esPng = datos.subarray(0, 4).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47]));
-      const esJpg = datos.subarray(0, 3).equals(Buffer.from([0xff, 0xd8, 0xff]));
-      const esWebp = datos.subarray(0, 4).toString('latin1') === 'RIFF' && datos.subarray(8, 12).toString('latin1') === 'WEBP';
-      if (!esPng && !esJpg && !esWebp) return responder(res, 400, { error: 'El archivo no es una imagen válida.' });
+      if (!tipoImagen(datos)) return responder(res, 400, { error: 'El archivo no es una imagen válida.' });
 
       const carpeta = join(dirFotos, foto[1].toLowerCase());
       mkdirSync(carpeta, { recursive: true });
@@ -195,6 +200,30 @@ export function crearServidor(op: Opciones): { servidor: http.Server; db: Databa
       const ext = foto[2].toLowerCase();
       writeFileSync(join(carpeta, `avatar.${ext}`), datos);
       return responder(res, 200, { path: `${foto[1]}/avatar.${ext}` });
+    }
+
+    // El alumno propone su foto; no se ve hasta que el docente la apruebe.
+    if (ruta === '/api/foto-propuesta' && req.method === 'PUT') {
+      if (ident.rol !== 'student' || !ident.studentId || !ident.active) return responder(res, 401, { error: 'Inicia sesión como alumno.' });
+      const datos = await leerCuerpo(req, MAX_FOTO);
+      const ext = tipoImagen(datos);
+      if (!ext) return responder(res, 400, { error: 'El archivo no es una imagen válida (PNG, JPG o WebP).' });
+      const carpeta = join(op.dirDatos, 'fotos-pendientes', ident.studentId);
+      rmSync(carpeta, { recursive: true, force: true });
+      mkdirSync(carpeta, { recursive: true });
+      writeFileSync(join(carpeta, `propuesta.${ext}`), datos);
+      db.prepare('UPDATE students SET photo_pending = ? WHERE id = ?').run(ext, ident.studentId);
+      return responder(res, 200, { ok: true });
+    }
+
+    const pendiente = ruta.match(/^\/api\/fotos-pendientes\/([0-9a-f-]{36})$/i);
+    if (pendiente && req.method === 'GET') {
+      if (ident.rol !== 'teacher') return responder(res, 401, { error: 'Solo el docente puede ver fotos pendientes.' });
+      const id = pendiente[1].toLowerCase();
+      const fila = db.prepare('SELECT photo_pending FROM students WHERE id = ?').get(id) as { photo_pending: string | null } | undefined;
+      const archivo = fila?.photo_pending ? join(op.dirDatos, 'fotos-pendientes', id, `propuesta.${fila.photo_pending}`) : null;
+      if (archivo && servirArchivo(res, archivo, 'no-store')) return;
+      return responder(res, 404, { error: 'Sin foto pendiente' });
     }
 
     return responder(res, 404, { error: 'No encontrado' });

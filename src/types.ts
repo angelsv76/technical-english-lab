@@ -4,6 +4,7 @@ export interface Student {
   name: string;
   code: string;
   photo_url?: string | null;
+  photo_pending?: string | null;
 }
 
 export interface VocabularyEntry {
