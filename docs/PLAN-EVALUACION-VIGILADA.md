@@ -56,6 +56,21 @@ Qué se descarga:
 
 En un laboratorio del INTI lo instala una sola vez la persona encargada y los alumnos no descargan nada. Si el examen es desde casa, cada alumno lo instala y se desinstala cuando quiera.
 
+### Cómo lo vive el alumno con Safe Exam Browser
+
+Una página web no puede instalar un programa en la computadora, ni siquiera redirigiendo. El alumno lo descarga e instala una vez, y después el sitio lo abre.
+
+1. **Instalación, una sola vez.** El alumno descarga el programa desde safeexambrowser.org (gratis, para Windows o macOS; también existe para iPad) y lo instala. En Windows suele pedir permisos de administrador. Conviene hacerlo antes del día del examen.
+2. **Entrada al examen.** El docente descarga desde el panel un archivo de configuración `.seb` por evaluación y lo comparte con los alumnos (por Classroom, por ejemplo). El alumno le da doble clic y se abre Safe Exam Browser, ya apuntando al examen. Otra forma es un botón «Abrir con Safe Exam Browser» en la pantalla previa del sitio, que usa un enlace especial (`sebs://`) y le pide al sistema que abra el programa.
+3. **Si entra con un navegador común.** El servidor comprueba una señal que solo envía Safe Exam Browser. Si no llega, no muestra el examen. Muestra una página que explica los tres pasos: descargar el programa (con el enlace según el sistema operativo), abrir el archivo `.seb` o pulsar el botón, y volver a entrar. No lo redirige solo al programa, porque si no lo tiene instalado quedaría sin saber qué pasó.
+4. **Durante el examen.** El programa ocupa toda la pantalla y no deja cambiar de ventana. Al terminar, el sitio manda al alumno a una dirección de salida y el programa se cierra solo, sin pedir contraseña.
+5. **Prueba previa.** Recomiendo una evaluación de práctica sin nota, unos días antes, para que cada alumno confirme que lo instaló y que funciona.
+
+Lo que sí hay que revisar antes de decidir:
+
+- **Dónde está el sitio.** Hoy el sitio corre en tu computadora y se ve en la red del INTI. Si los alumnos rinden desde su casa, el servidor tiene que ser accesible desde internet (un túnel o un servidor en línea), y eso hay que resolverlo con o sin Safe Exam Browser.
+- **Quién no puede usarlo.** Linux y Chromebook quedan fuera. Por eso el modo en el navegador sigue siendo la base y este programa es opcional.
+
 ### Recomendación, con computadoras propias
 
 Como cada alumno usa su equipo, no se puede exigir un programa instalado a todos: habrá Windows, Mac, Linux y Chromebook, y Safe Exam Browser no existe para los dos últimos. Por eso la **vía 1 es la base de todas las evaluaciones** y la vía 2 queda como **opcional**: se ofrece a quien pueda instalarlo, y el docente decide si la exige en un examen concreto.
