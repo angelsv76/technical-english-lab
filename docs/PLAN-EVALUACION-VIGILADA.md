@@ -107,6 +107,32 @@ Qué cambia con computadoras propias:
 6. Al terminar, el servidor califica como hoy y guarda por separado la nota y las incidencias.
 7. El docente ve en el panel una línea de tiempo por alumno, con las incidencias y la nota con y sin descuento. Puede perdonar una incidencia o anular el intento.
 
+## Avisos al alumno antes de comenzar
+
+Antes de mostrar una sola pregunta, la pantalla previa revisa el equipo. Si algo no cumple, el alumno recibe un aviso que dice qué pasa y qué hacer, y no puede comenzar. Esta revisión no penaliza nada: todavía no empezó la prueba.
+
+| Situación | Aviso que ve el alumno | Qué puede hacer |
+|---|---|---|
+| Navegador que no es Chrome ni Edge, en una evaluación normal | «Esta evaluación solo se puede rendir con Google Chrome o Microsoft Edge. Estás usando [navegador].» | Copiar el enlace y abrirlo en uno de los dos |
+| Chrome o Edge demasiado viejo | «Actualiza tu navegador para poder rendir esta evaluación.» | Actualizar y volver a entrar |
+| Examen de periodo desde un navegador común | «Este examen se rinde únicamente con Safe Exam Browser.» con los tres pasos: descargar, abrir el archivo `.seb`, volver a entrar | Seguir los pasos |
+| Equipo sin Safe Exam Browser posible (Linux, Chromebook) | «Tu equipo no es compatible. Habla con tu docente para acordar cómo rendir.» | Contactar al docente |
+| Celular o tableta | «Esta evaluación debe rendirse desde una computadora.» | Cambiar de equipo |
+| Más de una pantalla | «Desconecta la otra pantalla y pulsa Volver a revisar.» | Desconectarla y revisar de nuevo |
+| Pantalla completa no disponible | «Tu navegador no permite pantalla completa. Prueba con otro navegador.» | Cambiar de navegador |
+| Conexión inestable | «Tu conexión es inestable. Acércate al router o cambia de red antes de comenzar.» | Mejorar la conexión |
+| Reloj de la computadora desfasado | «La hora de tu computadora no está bien. Actívala en automático.» | Corregir la hora |
+| Evaluación cerrada o fuera de fecha | «Esta evaluación estará disponible del [fecha] al [fecha].» | Esperar |
+
+Cómo se detecta el navegador: por la información que el propio navegador declara sobre su marca. Brave y Opera, aunque están hechos sobre Chrome, no se identifican como Chrome ni Edge, y quedarían fuera. Si quieres permitirlos, se agregan a la lista, aunque Brave oculta algunos datos y habría que revisar su comportamiento.
+
+Detalles que hay que cuidar:
+
+- **La revisión se repite en el servidor.** No basta con la del navegador, porque un alumno con conocimientos puede engañarla. El servidor valida al crear la sesión de examen.
+- **Queda un registro.** Cada intento rechazado se anota como aviso para el docente («Fulano intentó entrar con Firefox el 20/11 a las 8:02»), sin descuento. Así sabes quién necesita ayuda antes de que empiece el examen.
+- **El mensaje es claro y amable.** Dice qué falló, qué hacer y a quién escribir, sin lenguaje técnico.
+- **La revisión se puede hacer antes.** Desde el panel, el alumno puede abrir una página de «Probar mi equipo» días antes y ver si todo está bien, sin entrar a ninguna evaluación.
+
 ## Qué se registra como evidencia
 
 Todo lo que el alumno haga fuera de contestar queda guardado. Esta es la lista, con qué tan confiable es cada detección y la gravedad que propongo:
