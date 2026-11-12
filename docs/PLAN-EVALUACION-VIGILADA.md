@@ -13,6 +13,8 @@ Que cuando un alumno empiece una evaluación, el navegador pase a pantalla compl
 3. **Avisos:** solo advierten, sin descuento.
 4. **Faltas leves:** la primera advierte; desde la segunda descuentan.
 5. **Faltas críticas:** descuentan 3 puntos cada vez.
+6. **Evaluaciones normales** (semanales): modo vigilado en el navegador, solo con **Chrome o Edge**.
+7. **Exámenes de periodo:** **Safe Exam Browser obligatorio**. Chrome y Edge no pueden abrirlos.
 
 ## Lo primero: qué es posible y qué no
 
@@ -71,15 +73,24 @@ Lo que sí hay que revisar antes de decidir:
 - **Dónde está el sitio.** Hoy el sitio corre en tu computadora y se ve en la red del INTI. Si los alumnos rinden desde su casa, el servidor tiene que ser accesible desde internet (un túnel o un servidor en línea), y eso hay que resolverlo con o sin Safe Exam Browser.
 - **Quién no puede usarlo.** Linux y Chromebook quedan fuera. Por eso el modo en el navegador sigue siendo la base y este programa es opcional.
 
-### Recomendación, con computadoras propias
+### Cómo se reparten los dos modos
 
-Como cada alumno usa su equipo, no se puede exigir un programa instalado a todos: habrá Windows, Mac, Linux y Chromebook, y Safe Exam Browser no existe para los dos últimos. Por eso la **vía 1 es la base de todas las evaluaciones** y la vía 2 queda como **opcional**: se ofrece a quien pueda instalarlo, y el docente decide si la exige en un examen concreto.
+| Tipo de evaluación | Modo | Con qué entra el alumno |
+|---|---|---|
+| Normal (semanal) | Vigilado en el navegador | Chrome o Edge. La pantalla previa lo comprueba y no deja comenzar con otro |
+| Examen de periodo | Reforzado | Solo Safe Exam Browser. El servidor no muestra las preguntas a ningún otro navegador |
 
 Qué cambia con computadoras propias:
 
-- No se controla qué más tienen instalado: grabadores de pantalla, máquinas virtuales, programas de escritorio remoto. Para el modo vigilado en el navegador, eso queda fuera de lo detectable. La evidencia que se guarda sirve como indicio, no como prueba.
-- La pantalla previa hace una **revisión de compatibilidad** antes de dejar comenzar: navegador (Chrome o Edge), pantalla completa disponible, una sola pantalla y una conexión estable.
+- No se controla qué más tienen instalado: grabadores de pantalla, máquinas virtuales, programas de escritorio remoto. En el modo normal eso queda fuera de lo detectable, y la evidencia que se guarda sirve como indicio, no como prueba.
+- La pantalla previa hace una **revisión de compatibilidad** antes de dejar comenzar: navegador, pantalla completa disponible, una sola pantalla y una conexión estable.
 - Si el examen es en casa, nadie vigila en persona. Por eso conviene un tiempo límite corto, una ventana de fechas y un panel **en vivo** donde veas quién está conectado y quién acumula incidencias.
+
+**Alumnos sin equipo compatible.** Safe Exam Browser no existe para Linux ni para Chromebook. Quien tenga uno de esos equipos no podría rendir un examen de periodo. Hay que acordar una salida antes del primer examen, por ejemplo:
+
+- que rinda en una computadora del INTI con el programa instalado;
+- que el docente le habilite el modo vigilado en el navegador para ese alumno, con vigilancia presencial o por videollamada;
+- que se le preste una computadora compatible el día del examen.
 
 ## Secuencia de un examen vigilado
 
@@ -215,10 +226,10 @@ La fase 2 sola ya cambia la experiencia, pero sin la fase 1 el tiempo y los inte
 
 ## Decisiones que faltan
 
-1. **Puntos de las faltas leves y graves:** ¿te sirven 1 y 2? Quedaron propuestos por mí.
-2. **Tope total de descuento por evaluación:** ¿30 puntos?
-3. **¿Exiges Chrome o Edge** en el modo vigilado? Sin eso no se pueden detectar varias pantallas. En Firefox, Safari y Chromebook con otros navegadores, la evaluación se haría sin esa revisión, o se les pediría usar uno de esos dos.
-4. **Safe Exam Browser:** ¿lo dejamos opcional, como propongo, o lo exiges en los exámenes de periodo a quien tenga Windows o Mac?
+1. **Dónde rinden:** ¿dentro del INTI, conectados a la red de la institución, o desde su casa? Si es desde casa, el servidor tiene que ser accesible por internet.
+2. **Alumnos sin equipo compatible con Safe Exam Browser** (Linux, Chromebook): ¿cuál de las salidas anteriores prefieres?
+3. **Puntos de las faltas leves y graves:** ¿te sirven 1 y 2? Quedaron propuestos por mí.
+4. **Tope total de descuento por evaluación:** ¿30 puntos?
 5. **¿Se permite hacerlo en celular?** Recomiendo que no.
 6. **¿Cómo atenderías a un alumno con adaptación** (tiempo extra, lector de pantalla), sin que el resto lo note?
 7. **Aviso previo a alumnos y familias:** ¿quién lo redacta y cuándo se entrega? Debe decir qué se registra y qué se penaliza.
