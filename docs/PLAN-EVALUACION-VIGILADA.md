@@ -1,10 +1,18 @@
 # Plan: evaluaciones vigiladas
 
-Fecha: 12 de noviembre de 2026. Actualizado el mismo día con el registro de evidencias, el cierre del navegador y las varias pantallas. Estado: propuesta para revisar. No se ha construido nada.
+Fecha: 12 de noviembre de 2026. Actualizado el mismo día con las decisiones de Ángel sobre dónde se examina, el cierre del navegador y el cuadro de penalizaciones. Estado: propuesta para revisar. No se ha construido nada.
 
 ## Qué pides
 
 Que cuando un alumno empiece una evaluación, el navegador pase a pantalla completa y el sitio registre y penalice lo que sugiere trampa: salir de la pantalla completa, cambiar de pestaña, abrir otra aplicación, capturar la pantalla. Todo debe valer solo mientras dure la prueba, y quieres saber qué haría falta descargar en la computadora del alumno.
+
+## Decisiones ya tomadas
+
+1. **Dónde se examina:** los alumnos usan sus propias computadoras.
+2. **Cierre del navegador:** el alumno puede reanudar, con penalización.
+3. **Avisos:** solo advierten, sin descuento.
+4. **Faltas leves:** la primera advierte; desde la segunda descuentan.
+5. **Faltas críticas:** descuentan 3 puntos cada vez.
 
 ## Lo primero: qué es posible y qué no
 
@@ -48,9 +56,15 @@ Qué se descarga:
 
 En un laboratorio del INTI lo instala una sola vez la persona encargada y los alumnos no descargan nada. Si el examen es desde casa, cada alumno lo instala y se desinstala cuando quiera.
 
-### Recomendación
+### Recomendación, con computadoras propias
 
-Empezar con la vía 1 en todas las evaluaciones, y sumar la vía 2 para exámenes de periodo hechos en el laboratorio. Con la vía 2 sola, un alumno sin la computadora adecuada quedaría fuera.
+Como cada alumno usa su equipo, no se puede exigir un programa instalado a todos: habrá Windows, Mac, Linux y Chromebook, y Safe Exam Browser no existe para los dos últimos. Por eso la **vía 1 es la base de todas las evaluaciones** y la vía 2 queda como **opcional**: se ofrece a quien pueda instalarlo, y el docente decide si la exige en un examen concreto.
+
+Qué cambia con computadoras propias:
+
+- No se controla qué más tienen instalado: grabadores de pantalla, máquinas virtuales, programas de escritorio remoto. Para el modo vigilado en el navegador, eso queda fuera de lo detectable. La evidencia que se guarda sirve como indicio, no como prueba.
+- La pantalla previa hace una **revisión de compatibilidad** antes de dejar comenzar: navegador (Chrome o Edge), pantalla completa disponible, una sola pantalla y una conexión estable.
+- Si el examen es en casa, nadie vigila en persona. Por eso conviene un tiempo límite corto, una ventana de fechas y un panel **en vivo** donde veas quién está conectado y quién acumula incidencias.
 
 ## Secuencia de un examen vigilado
 
@@ -77,17 +91,17 @@ Todo lo que el alumno haga fuera de contestar queda guardado. Esta es la lista, 
 | Pierde el foco o cambia de ventana o programa | Eventos de foco | Alta | Grave |
 | Cambia de pestaña | Visibilidad de la página | Alta | Grave |
 | Cierra o recarga la página | Aviso al cerrar; si no llega, falta la señal de vida | Media | Crítica |
-| Se corta la señal (cierre forzado, apagado, caída de red) | El servidor ve que faltan señales | Alta como hecho; no distingue la causa | Según la duración |
+| Se corta la señal por más de 30 segundos (cierre forzado, apagado, caída de red) | El servidor ve que faltan señales | Alta como hecho; no distingue la causa | Crítica |
 | Más de una pantalla | Estado de las pantallas del navegador | Alta en Chrome y Edge; nula en otros | Crítica |
-| Abre el mismo examen en otra pestaña o equipo | El servidor ve dos conexiones | Alta | Grave |
+| Abre el mismo examen en otra pestaña o equipo | El servidor ve dos conexiones | Alta | Crítica |
 | Copiar, cortar, pegar, clic derecho, arrastrar | Eventos del navegador (se bloquean) | Alta | Leve |
 | Imprimir o guardar (Ctrl+P, Ctrl+S) | Eventos y teclas | Media | Leve |
 | Tecla Imprimir pantalla o atajos de recorte | Teclas, que no siempre llegan | Baja | Grave |
 | F12, Ctrl+Shift+I, Ctrl+U, herramientas abiertas | Teclas y diferencia de tamaño de ventana | Baja a media | Grave |
 | Cambia el tamaño de la ventana o la resolución | Evento de tamaño | Alta | Leve |
-| El reloj de la computadora no coincide con el del servidor | Comparación de horas | Media | Aviso al docente |
-| Inactividad de varios minutos | Sin ratón ni teclado | Alta | Aviso al docente |
-| Vuelve a entrar tras un cierre | El servidor | Alta | Se anota el tiempo que estuvo fuera |
+| El reloj de la computadora no coincide con el del servidor | Comparación de horas | Media | Aviso |
+| Inactividad de 3 minutos o más | Sin ratón ni teclado | Alta | Aviso |
+| Vuelve a entrar tras un cierre | El servidor | Alta | Aviso (se anota el tiempo fuera) |
 
 Cómo queda como evidencia:
 
@@ -101,12 +115,17 @@ Una limitación que conviene tener presente: un alumno con conocimientos podría
 
 ## Cerrar el navegador
 
-Se atrapa de dos maneras a la vez. Al cerrar o recargar, la página intenta avisar al servidor en el último instante, y funciona con la X, Ctrl+W, Alt+F4 y F5. Si el cierre es brusco (administrador de tareas, apagado, corte de luz), no hay aviso, pero el servidor registra que dejaron de llegar las señales de vida, y eso queda como interrupción con su duración.
+Se atrapa de dos maneras a la vez. Al cerrar o recargar, la página intenta avisar al servidor en el último instante, y funciona con la X, Ctrl+W, Alt+F4 y F5. Si el cierre es brusco (administrador de tareas, apagado, corte de luz), no hay aviso, pero el servidor registra que dejaron de llegar las señales de vida.
 
-El servidor no puede saber si fue un cierre a propósito o una falla de internet. Por eso propongo dos políticas y eliges una por evaluación:
+**Política elegida: reanudar con penalización.**
 
-- **Cierre final (para exámenes de nota alta):** el intento termina con lo contestado hasta ese momento, se aplica la penalización crítica y solo el docente puede reabrirlo.
-- **Reanudar con penalización (para evaluaciones semanales):** el alumno puede volver a entrar, el tiempo sigue corriendo y se aplica la penalización según cuánto estuvo fuera.
+- El alumno puede volver a entrar y continúa en la misma pregunta, con lo ya contestado guardado.
+- El tiempo no se detiene mientras estuvo fuera.
+- Cada cierre o interrupción de más de 30 segundos cuenta como **una incidencia crítica** (3 puntos).
+- Al volver, el sistema registra cuánto tiempo estuvo fuera.
+- Si cierra tres veces o más en una misma evaluación, el intento queda marcado para revisión del docente.
+
+El servidor no distingue un cierre a propósito de una falla de internet. Por eso el docente puede perdonar la incidencia con motivo cuando el alumno demuestre que fue un corte de red.
 
 ## Varias pantallas
 
@@ -117,20 +136,36 @@ Se revisa en dos momentos:
 
 Para que esto funcione el alumno debe usar Chrome o Edge: la pantalla previa lo verifica y no deja comenzar con otro navegador. Una pantalla en modo duplicado (espejo) no se puede detectar desde la página. Con Safe Exam Browser sí se puede cerrar esa puerta, porque se configura para no aceptar más de una pantalla.
 
-## Reglas de penalización
+## Cuadro de penalizaciones
 
-Se aplican solas, según la gravedad, y el docente puede revertirlas con motivo. Propuesta inicial, todo configurable por evaluación:
+Las penalizaciones se aplican solas y el docente puede revertirlas con motivo. Los puntos se restan de la nota de la evaluación, que va de 0 a 100.
 
-| Gravedad | Qué pasa por cada incidencia |
+| Gravedad | Qué pasa | Descuento |
+|---|---|---|
+| **Aviso** | Solo se registra y se advierte | 0 |
+| **Leve** | La primera de la evaluación solo advierte. Desde la segunda, descuenta | 1 punto por incidencia, desde la segunda |
+| **Grave** | Advertencia en pantalla y descuento desde la primera | 2 puntos por incidencia |
+| **Crítica** | Advertencia en pantalla y descuento | 3 puntos por incidencia |
+
+Qué eventos caen en cada gravedad:
+
+| Gravedad | Eventos |
 |---|---|
-| Aviso | Solo se registra y se avisa al docente |
-| Leve | Se registra y se avisa al alumno. Sin descuento hasta la tercera; desde la cuarta, 1 punto |
-| Grave | Aviso en pantalla y 5 puntos de descuento |
-| Crítica | 20 puntos de descuento y, si la política es cierre final, el intento termina |
+| Aviso | Inactividad de 3 minutos o más; reloj desfasado; reingreso tras un cierre |
+| Leve | Copiar, cortar, pegar, clic derecho o arrastrar (el intento se bloquea); imprimir o guardar; cambiar el tamaño de la ventana o la resolución |
+| Grave | Salir de pantalla completa; perder el foco o cambiar de ventana o programa; cambiar de pestaña; tecla Imprimir pantalla; F12 y atajos de herramientas del navegador |
+| Crítica | Cerrar o recargar la página, o corte de señal de más de 30 segundos; más de una pantalla durante la prueba; abrir el mismo examen en otra pestaña o equipo |
 
-Hay un tope de descuento total por evaluación, que tú fijas. El panel muestra siempre la nota original, el descuento y la nota final, para que se vea cómo se llegó a ella.
+Reglas para que no se cobre de más:
 
-La penalización automática puede equivocarse: una notificación del sistema, una llamada o una falla de la red generan incidencias que no son trampa. Por eso el docente ve las incidencias antes de cerrar las notas y puede perdonar las que no correspondan.
+- **Una misma acción no se cobra dos veces.** Salir de pantalla completa suele producir también un cambio de foco y de visibilidad. Los eventos que ocurren dentro de una ventana de 10 segundos y vienen de una misma acción se cuentan como una sola incidencia, la de mayor gravedad, y todos quedan en el registro.
+- **La nota nunca baja de 0.**
+- **Hay un tope de descuento total por evaluación.** Propongo 30 puntos; tú lo confirmas.
+- **El alumno ve este cuadro** en la pantalla previa, antes de comenzar, tal como está aquí.
+- **El panel docente** muestra la nota original, el descuento por gravedad y la nota final, para que se vea cómo se llegó a ella.
+- Perdonar una incidencia devuelve sus puntos y queda registrado con quién, cuándo y por qué.
+
+Los números de las faltas leves (1 punto) y graves (2 puntos) son una propuesta mía, porque indicaste solo los de las críticas. Mantienen el orden: leve menos que grave, y grave menos que crítica.
 
 ## Qué se construye
 
@@ -159,16 +194,17 @@ La fase 2 sola ya cambia la experiencia, pero sin la fase 1 el tiempo y los inte
 - **Falsos positivos.** Notificaciones del sistema, un clic fuera de la ventana, una llamada, la batería baja. De ahí la revisión del docente antes de descontar.
 - **Alumnos con adaptaciones.** Hay que poder dar tiempo extra y desactivar el modo vigilado para un alumno concreto, sin que el resto lo note.
 - **Privacidad.** El plan no graba pantalla, cámara ni micrófono. Solo registra eventos con hora. Hay que avisar a alumnos y a sus familias qué se registra, antes del examen. Son menores de edad.
+- **Computadoras de los alumnos.** Sin control del equipo, la vigilancia es de indicios. Se compensa con tiempo límite, ventana de fechas, preguntas en orden aleatorio para cada alumno y el panel en vivo.
 - **Celulares.** En celular el modo de pantalla completa de las páginas web no funciona de forma consistente, sobre todo en iPhone. La evaluación vigilada debería exigir computadora.
 - **Nada reemplaza a la persona en el aula.** Con el docente en el aula, mirando las pantallas, y con preguntas en orden aleatorio para cada alumno, se evita más trampa que con cualquier programa. Lo de este plan complementa esa vigilancia, no la sustituye.
 
-## Decisiones que necesito
+## Decisiones que faltan
 
-1. **¿Dónde se harán los exámenes?** Laboratorio del INTI con computadoras fijas, casa de cada alumno, o ambos. Cambia mucho la vía 2.
-2. **¿Quién instalaría Safe Exam Browser** en el laboratorio, y sobre qué sistema operativo?
-3. **Cierre del navegador:** ¿cierre final del intento o reanudar con penalización? Puede ser distinto en exámenes de periodo y en evaluaciones semanales.
-4. **Cuadro de penalizaciones:** ¿te sirven 0, 1, 5 y 20 puntos para aviso, leve, grave y crítica? ¿Qué tope total de descuento?
-5. **¿Exiges Chrome o Edge** en el modo vigilado, para poder detectar varias pantallas?
-6. **¿Se permite hacerlo en celular?** Recomiendo que no.
-7. **¿Cómo atenderías a un alumno con adaptación** (tiempo extra, lector de pantalla), sin que el resto lo note?
-8. **Aviso previo a alumnos y familias:** ¿quién lo redacta y cuándo se entrega? Debe decir qué se registra.
+1. **Puntos de las faltas leves y graves:** ¿te sirven 1 y 2? Quedaron propuestos por mí.
+2. **Tope total de descuento por evaluación:** ¿30 puntos?
+3. **¿Exiges Chrome o Edge** en el modo vigilado? Sin eso no se pueden detectar varias pantallas. En Firefox, Safari y Chromebook con otros navegadores, la evaluación se haría sin esa revisión, o se les pediría usar uno de esos dos.
+4. **Safe Exam Browser:** ¿lo dejamos opcional, como propongo, o lo exiges en los exámenes de periodo a quien tenga Windows o Mac?
+5. **¿Se permite hacerlo en celular?** Recomiendo que no.
+6. **¿Cómo atenderías a un alumno con adaptación** (tiempo extra, lector de pantalla), sin que el resto lo note?
+7. **Aviso previo a alumnos y familias:** ¿quién lo redacta y cuándo se entrega? Debe decir qué se registra y qué se penaliza.
+8. **¿Quieres el panel en vivo** (quién está conectado y cuántas incidencias lleva) desde la primera versión?
